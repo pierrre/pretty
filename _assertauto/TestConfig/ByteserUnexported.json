@@ -1,0 +1,14 @@
+{
+	"entries": [
+		{
+			"equal": {
+				"value": "(pretty.testUnexported) {\n\tv: (*pretty.testByteser) => (pretty.testByteser) {\n\t\tb: ([]uint8) <nil>,\n\t},\n}"
+			}
+		},
+		{
+			"equal": {
+				"value": 0
+			}
+		}
+	]
+}

@@ -1,0 +1,14 @@
+{
+	"entries": [
+		{
+			"equal": {
+				"value": "([]int) (len=0 cap=0) {\n}"
+			}
+		},
+		{
+			"equal": {
+				"value": 0
+			}
+		}
+	]
+}

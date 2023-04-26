@@ -1,0 +1,14 @@
+{
+	"entries": [
+		{
+			"equal": {
+				"value": "(uint) 123"
+			}
+		},
+		{
+			"equal": {
+				"value": 0
+			}
+		}
+	]
+}

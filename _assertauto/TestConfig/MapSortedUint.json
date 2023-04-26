@@ -1,0 +1,14 @@
+{
+	"entries": [
+		{
+			"equal": {
+				"value": "(map[uint]int) (len=3) {\n\t(uint) 1: (int) 2,\n\t(uint) 3: (int) 4,\n\t(uint) 5: (int) 6,\n}"
+			}
+		},
+		{
+			"equal": {
+				"value": 7
+			}
+		}
+	]
+}

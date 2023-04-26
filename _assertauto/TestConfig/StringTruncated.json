@@ -1,0 +1,14 @@
+{
+	"entries": [
+		{
+			"equal": {
+				"value": "(string) (len=4) \"te\" <truncated>"
+			}
+		},
+		{
+			"equal": {
+				"value": 0
+			}
+		}
+	]
+}
