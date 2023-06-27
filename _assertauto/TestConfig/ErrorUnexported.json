@@ -1,0 +1,14 @@
+{
+	"entries": [
+		{
+			"equal": {
+				"value": "(pretty.testUnexported) {\n\tv: (*pretty.testError) => (pretty.testError) {\n\t},\n}"
+			}
+		},
+		{
+			"equal": {
+				"value": 0
+			}
+		}
+	]
+}

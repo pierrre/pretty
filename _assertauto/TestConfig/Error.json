@@ -1,0 +1,14 @@
+{
+	"entries": [
+		{
+			"equal": {
+				"value": "(*pretty.testError) => .Error() => \"test\""
+			}
+		},
+		{
+			"equal": {
+				"value": 0
+			}
+		}
+	]
+}

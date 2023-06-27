@@ -1,0 +1,14 @@
+{
+	"entries": [
+		{
+			"equal": {
+				"value": "(map[int]interface {}) (len=1) {\n\t(int) 0: (map[int]interface {}) <recursion>,\n}"
+			}
+		},
+		{
+			"equal": {
+				"value": 0
+			}
+		}
+	]
+}
