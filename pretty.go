@@ -105,10 +105,10 @@ func (c *Config) string(v reflect.Value) string {
 }
 
 // Formatter returns a fmt.Formatter for the value.
-func (c *Config) Formatter(v any) fmt.Formatter {
+func (c *Config) Formatter(vi any) fmt.Formatter {
 	return &formatter{
 		config: c,
-		value:  v,
+		value:  vi,
 	}
 }
 
