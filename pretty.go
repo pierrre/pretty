@@ -674,6 +674,22 @@ func writeStringer(w io.Writer, v reflect.Value, maxLen int) bool {
 	return true
 }
 
+// NewFilterValueWriter returns a ValueWriter that calls the provided ValueWriter if f returns true.
+//
+// It allows to enable/disable a ValueWriter for specific values/types.
+func NewFilterValueWriter(vw ValueWriter, f func(v reflect.Value) bool) ValueWriter {
+	return func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+		return writeFilter(c, w, st, v, vw, f)
+	}
+}
+
+func writeFilter(c *Config, w io.Writer, st *State, v reflect.Value, vw ValueWriter, f func(v reflect.Value) bool) bool {
+	if !f(v) {
+		return false
+	}
+	return vw(c, w, st, v)
+}
+
 type formatter struct {
 	config *Config
 	value  any

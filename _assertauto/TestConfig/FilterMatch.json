@@ -1,0 +1,14 @@
+{
+	"entries": [
+		{
+			"equal": {
+				"value": "(*pretty.testStringer) => .String() => (len=4) \"test\""
+			}
+		},
+		{
+			"equal": {
+				"value": 0
+			}
+		}
+	]
+}

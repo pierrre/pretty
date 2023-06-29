@@ -409,6 +409,24 @@ var testCases = []testCase{
 			c.ValueWriters = []ValueWriter{NewStringerValueWriter(0)}
 		},
 	},
+	{
+		name:  "FilterMatch",
+		value: &testStringer{s: "test"},
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{NewFilterValueWriter(NewStringerValueWriter(0), func(v reflect.Value) bool {
+				return v.Type() == reflect.TypeOf(&testStringer{})
+			})}
+		},
+	},
+	{
+		name:  "FilterNoMatch",
+		value: &testStringer{s: "test"},
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{NewFilterValueWriter(NewStringerValueWriter(0), func(v reflect.Value) bool {
+				return v.Type() != reflect.TypeOf(&testStringer{})
+			})}
+		},
+	},
 }
 
 func TestConfig(t *testing.T) {
