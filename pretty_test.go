@@ -427,6 +427,16 @@ var testCases = []testCase{
 			})}
 		},
 	},
+	{
+		name:  "Default",
+		value: &testStringer{s: "test"},
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{
+				NewDefaultValueWriter(),
+				NewStringerValueWriter(0),
+			}
+		},
+	},
 }
 
 func TestConfig(t *testing.T) {

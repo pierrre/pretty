@@ -1,0 +1,14 @@
+{
+	"entries": [
+		{
+			"equal": {
+				"value": "(*pretty.testStringer) => (pretty.testStringer) {\n\ts: (string) (len=4) \"test\",\n}"
+			}
+		},
+		{
+			"equal": {
+				"value": 0
+			}
+		}
+	]
+}

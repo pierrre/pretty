@@ -179,7 +179,7 @@ func (c *Config) writeValue(w io.Writer, st *State, v reflect.Value) {
 	if c.writeValueWithValueWriter(w, st, v) {
 		return
 	}
-	c.writeValueWithKind(w, st, v)
+	c.writeValueDefault(w, st, v)
 }
 
 func (c *Config) writeValueWithValueWriter(w io.Writer, st *State, v reflect.Value) bool {
@@ -193,7 +193,7 @@ func (c *Config) writeValueWithValueWriter(w io.Writer, st *State, v reflect.Val
 }
 
 //nolint:gocyclo // We need to handle all kinds.
-func (c *Config) writeValueWithKind(w io.Writer, st *State, v reflect.Value) {
+func (c *Config) writeValueDefault(w io.Writer, st *State, v reflect.Value) {
 	switch v.Kind() { //nolint:exhaustive // All kinds are handled, Invalid and Interface should not happen.
 	case reflect.Bool:
 		c.writeBool(w, v)
@@ -688,6 +688,16 @@ func writeFilter(c *Config, w io.Writer, st *State, v reflect.Value, vw ValueWri
 		return false
 	}
 	return vw(c, w, st, v)
+}
+
+// NewDefaultValueWriter returns a ValueWriter that writes the value with the default behavior, bypassing all ValueWriters.
+//
+// It should be used with NewFilterValueWriter() in order to filter specific types.
+func NewDefaultValueWriter() ValueWriter {
+	return func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+		c.writeValueDefault(w, st, v)
+		return true
+	}
 }
 
 type formatter struct {
