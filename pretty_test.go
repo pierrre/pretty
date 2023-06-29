@@ -320,42 +320,49 @@ var testCases = []testCase{
 		name:  "ReflectValue",
 		value: reflect.ValueOf(123),
 		configure: func(c *Config) {
-			c.ValueWriters = append(c.ValueWriters, NewReflectValueValueWriter())
+			c.ValueWriters = []ValueWriter{NewReflectValueValueWriter()}
 		},
 	},
 	{
 		name:  "Bytes",
 		value: bytes.Repeat([]byte("test"), 100),
 		configure: func(c *Config) {
-			c.ValueWriters = append(c.ValueWriters, NewBytesValueWriter(0))
+			c.ValueWriters = []ValueWriter{NewBytesValueWriter(0)}
 		},
 	},
 	{
 		name:  "BytesNil",
 		value: []byte(nil),
 		configure: func(c *Config) {
-			c.ValueWriters = append(c.ValueWriters, NewBytesValueWriter(0))
+			c.ValueWriters = []ValueWriter{NewBytesValueWriter(0)}
 		},
 	},
 	{
 		name:  "BytesTruncated",
 		value: []byte("test"),
 		configure: func(c *Config) {
-			c.ValueWriters = append(c.ValueWriters, NewBytesValueWriter(2))
+			c.ValueWriters = []ValueWriter{NewBytesValueWriter(2)}
 		},
 	},
 	{
 		name:  "Byteser",
 		value: &testByteser{b: bytes.Repeat([]byte("test"), 100)},
 		configure: func(c *Config) {
-			c.ValueWriters = append(c.ValueWriters, NewByteserValueWriter(0))
+			c.ValueWriters = []ValueWriter{NewByteserValueWriter(0)}
 		},
 	},
 	{
 		name:  "ByteserNil",
 		value: &testByteser{},
 		configure: func(c *Config) {
-			c.ValueWriters = append(c.ValueWriters, NewByteserValueWriter(0))
+			c.ValueWriters = []ValueWriter{NewByteserValueWriter(0)}
+		},
+	},
+	{
+		name:  "ByteserTruncated",
+		value: &testByteser{b: []byte("test")},
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{NewByteserValueWriter(2)}
 		},
 	},
 	{
@@ -364,35 +371,42 @@ var testCases = []testCase{
 			v: &testByteser{},
 		},
 		configure: func(c *Config) {
-			c.ValueWriters = append(c.ValueWriters, NewByteserValueWriter(0))
+			c.ValueWriters = []ValueWriter{NewByteserValueWriter(0)}
 		},
 	},
 	{
 		name:  "Error",
 		value: &testError{},
 		configure: func(c *Config) {
-			c.ValueWriters = append(c.ValueWriters, NewErrorValueWriter())
+			c.ValueWriters = []ValueWriter{NewErrorValueWriter()}
 		},
 	},
 	{
 		name:  "ErrorUnexported",
 		value: testUnexported{v: &testError{}},
 		configure: func(c *Config) {
-			c.ValueWriters = append(c.ValueWriters, NewErrorValueWriter())
+			c.ValueWriters = []ValueWriter{NewErrorValueWriter()}
 		},
 	},
 	{
 		name:  "Stringer",
 		value: &testStringer{s: "test"},
 		configure: func(c *Config) {
-			c.ValueWriters = append(c.ValueWriters, NewStringerValueWriter(0))
+			c.ValueWriters = []ValueWriter{NewStringerValueWriter(0)}
+		},
+	},
+	{
+		name:  "StringerTruncated",
+		value: &testStringer{s: "test"},
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{NewStringerValueWriter(2)}
 		},
 	},
 	{
 		name:  "StringerUnexported",
 		value: testUnexported{v: &testStringer{}},
 		configure: func(c *Config) {
-			c.ValueWriters = append(c.ValueWriters, NewStringerValueWriter(0))
+			c.ValueWriters = []ValueWriter{NewStringerValueWriter(0)}
 		},
 	},
 }
