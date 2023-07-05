@@ -280,6 +280,17 @@ var testCases = []testCase{
 		},
 	},
 	{
+		name: "StructUnexportedDisabled",
+		value: testStruct{
+			Foo:        123,
+			Bar:        123.456,
+			unexported: 123,
+		},
+		configure: func(c *Config) {
+			c.StructUnexported = false
+		},
+	},
+	{
 		name: "MaxDepth",
 		value: func() any {
 			var v1 any

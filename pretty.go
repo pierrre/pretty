@@ -56,6 +56,9 @@ type Config struct {
 	// MapMaxLen is the maximum length of maps.
 	// Default: 0 (no limit).
 	MapMaxLen int
+	// StructUnexported prints unexported fields of structs.
+	// Default: true.
+	StructUnexported bool
 	// ValueWriters is the list of ValueWriter used to write values.
 	// Default: reflect.Value, error, []byte, interface{ Bytes() []byte }, fmt.Stringer.
 	ValueWriters []ValueWriter
@@ -64,7 +67,8 @@ type Config struct {
 // NewConfig creates a new Config initialized with default values.
 func NewConfig() *Config {
 	return &Config{
-		Indent: "\t",
+		Indent:           "\t",
+		StructUnexported: true,
 		ValueWriters: []ValueWriter{
 			NewReflectValueValueWriter(),
 			NewErrorValueWriter(),
@@ -475,10 +479,13 @@ func (c *Config) writeMapEntry(w io.Writer, st *State, key reflect.Value, value 
 func (c *Config) writeStruct(w io.Writer, st *State, v reflect.Value) {
 	_, _ = writeString(w, "{\n")
 	st.Indent++
-	names := getStructFieldNames(v.Type())
-	for i, name := range names {
+	fields := getStructFields(v.Type())
+	for i, field := range fields {
+		if !c.StructUnexported && !field.IsExported() {
+			continue
+		}
 		c.writeIndent(w, st)
-		_, _ = w.Write(name)
+		_, _ = writeString(w, field.Name)
 		_, _ = writeString(w, ": ")
 		c.writeTypeAndValue(w, st, v.Field(i))
 		_, _ = writeString(w, ",\n")
@@ -489,22 +496,22 @@ func (c *Config) writeStruct(w io.Writer, st *State, v reflect.Value) {
 }
 
 var (
-	structFieldNamesCacheLock sync.Mutex
-	structFieldNamesCache     = map[reflect.Type][][]byte{}
+	structFieldsCacheLock sync.Mutex
+	structFieldsCache     = map[reflect.Type][]reflect.StructField{}
 )
 
-func getStructFieldNames(typ reflect.Type) [][]byte {
-	structFieldNamesCacheLock.Lock()
-	names, ok := structFieldNamesCache[typ]
+func getStructFields(typ reflect.Type) []reflect.StructField {
+	structFieldsCacheLock.Lock()
+	fields, ok := structFieldsCache[typ]
 	if !ok {
-		names = make([][]byte, typ.NumField())
+		fields = make([]reflect.StructField, typ.NumField())
 		for i := 0; i < typ.NumField(); i++ {
-			names[i] = []byte(typ.Field(i).Name)
+			fields[i] = typ.Field(i)
 		}
-		structFieldNamesCache[typ] = names
+		structFieldsCache[typ] = fields
 	}
-	structFieldNamesCacheLock.Unlock()
-	return names
+	structFieldsCacheLock.Unlock()
+	return fields
 }
 
 var statePool = &sync.Pool{

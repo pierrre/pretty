@@ -1,0 +1,14 @@
+{
+	"entries": [
+		{
+			"equal": {
+				"value": "(pretty.testStruct) {\n\tFoo: (int) 123,\n\tBar: (float64) 123.456,\n}"
+			}
+		},
+		{
+			"equal": {
+				"value": 0
+			}
+		}
+	]
+}
