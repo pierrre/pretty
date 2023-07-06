@@ -434,6 +434,14 @@ func (c *Config) lessDefault(a, b reflect.Value) bool {
 	return c.string(a) < c.string(b)
 }
 
+func (c *Config) writeMapUnsorted(w io.Writer, st *State, v reflect.Value) {
+	if v.CanInterface() {
+		c.writeMapUnsortedExported(w, st, v)
+	} else {
+		c.writeMapUnsortedUnexported(w, st, v)
+	}
+}
+
 var typeInterface = reflect.TypeOf((*any)(nil)).Elem()
 
 var reflectValuePool = &sync.Pool{
@@ -442,7 +450,7 @@ var reflectValuePool = &sync.Pool{
 	},
 }
 
-func (c *Config) writeMapUnsorted(w io.Writer, st *State, v reflect.Value) {
+func (c *Config) writeMapUnsortedExported(w io.Writer, st *State, v reflect.Value) {
 	iter := v.MapRange()
 	keyItf := reflectValuePool.Get()
 	valueItf := reflectValuePool.Get()
@@ -460,6 +468,18 @@ func (c *Config) writeMapUnsorted(w io.Writer, st *State, v reflect.Value) {
 	value.SetZero()
 	reflectValuePool.Put(keyItf)
 	reflectValuePool.Put(valueItf)
+}
+
+func (c *Config) writeMapUnsortedUnexported(w io.Writer, st *State, v reflect.Value) {
+	iter := v.MapRange()
+	for i := 0; iter.Next(); i++ {
+		key := iter.Key()
+		value := iter.Value()
+		ok := c.writeMapEntry(w, st, key, value, i)
+		if !ok {
+			break
+		}
+	}
 }
 
 func (c *Config) writeMapEntry(w io.Writer, st *State, key reflect.Value, value reflect.Value, i int) bool {

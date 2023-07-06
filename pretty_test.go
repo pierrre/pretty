@@ -222,6 +222,10 @@ var testCases = []testCase{
 		value: map[int]int{1: 2},
 	},
 	{
+		name:  "MapUnsortedUnexported",
+		value: testUnexported{v: map[int]int{1: 2}},
+	},
+	{
 		name:  "MapSortedBool",
 		value: map[bool]int{false: 1, true: 2},
 		configure: func(c *Config) {
