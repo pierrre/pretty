@@ -3,17 +3,18 @@ package pretty
 
 import (
 	"bytes"
+	"cmp"
 	"encoding/hex"
 	"fmt"
 	"io"
 	"reflect"
 	"runtime"
+	"slices"
 	"sync"
 	"unsafe" //nolint:depguard // Required for string to []byte conversion.
 
 	"github.com/pierrre/go-libs/bufpool"
 	"github.com/pierrre/go-libs/strconvio"
-	"golang.org/x/exp/slices" // TODO use stdlib when Go 1.21 is available.
 )
 
 // Write writes the value to the writer with DefaultConfig.
@@ -389,49 +390,57 @@ func (c *Config) writeMapSorted(w io.Writer, st *State, v reflect.Value) {
 }
 
 func (c *Config) sortValues(typ reflect.Type, vs []reflect.Value) {
-	less := c.getLess(typ)
-	slices.SortFunc(vs, less)
+	cmpFunc := c.getCmp(typ)
+	slices.SortFunc(vs, cmpFunc)
 }
 
-func (c *Config) getLess(typ reflect.Type) func(a, b reflect.Value) bool {
+func (c *Config) getCmp(typ reflect.Type) func(a, b reflect.Value) int {
 	switch typ.Kind() { //nolint:exhaustive // Optimized for common kinds, the default case is less optimized.
 	case reflect.Bool:
-		return lessBool
+		return cpmBool
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return lessInt
+		return cmpInt
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
-		return lessUint
+		return cmpUint
 	case reflect.Float32, reflect.Float64:
-		return lessFloat
+		return cmpFloat
 	case reflect.String:
-		return lessString
+		return cmpString
 	default:
-		return c.lessDefault
+		return c.cmpDefault
 	}
 }
 
-func lessBool(a, b reflect.Value) bool {
-	return !a.Bool() && b.Bool()
+func cpmBool(a, b reflect.Value) int {
+	ab := a.Bool()
+	bb := b.Bool()
+	if !ab && bb {
+		return -1
+	}
+	if ab && !bb {
+		return 1
+	}
+	return 0
 }
 
-func lessInt(a, b reflect.Value) bool {
-	return a.Int() < b.Int()
+func cmpInt(a, b reflect.Value) int {
+	return cmp.Compare(a.Int(), b.Int())
 }
 
-func lessUint(a, b reflect.Value) bool {
-	return a.Uint() < b.Uint()
+func cmpUint(a, b reflect.Value) int {
+	return cmp.Compare(a.Uint(), b.Uint())
 }
 
-func lessFloat(a, b reflect.Value) bool {
-	return a.Float() < b.Float()
+func cmpFloat(a, b reflect.Value) int {
+	return cmp.Compare(a.Float(), b.Float())
 }
 
-func lessString(a, b reflect.Value) bool {
-	return a.String() < b.String()
+func cmpString(a, b reflect.Value) int {
+	return cmp.Compare(a.String(), b.String())
 }
 
-func (c *Config) lessDefault(a, b reflect.Value) bool {
-	return c.string(a) < c.string(b)
+func (c *Config) cmpDefault(a, b reflect.Value) int {
+	return cmp.Compare(c.string(a), c.string(b))
 }
 
 func (c *Config) writeMapUnsorted(w io.Writer, st *State, v reflect.Value) {
