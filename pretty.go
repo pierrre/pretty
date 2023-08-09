@@ -397,50 +397,38 @@ func (c *Config) sortValues(typ reflect.Type, vs []reflect.Value) {
 func (c *Config) getCmp(typ reflect.Type) func(a, b reflect.Value) int {
 	switch typ.Kind() { //nolint:exhaustive // Optimized for common kinds, the default case is less optimized.
 	case reflect.Bool:
-		return cpmBool
+		return func(a, b reflect.Value) int {
+			ab := a.Bool()
+			bb := b.Bool()
+			if !ab && bb {
+				return -1
+			}
+			if ab && !bb {
+				return 1
+			}
+			return 0
+		}
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return cmpInt
+		return func(a, b reflect.Value) int {
+			return cmp.Compare(a.Int(), b.Int())
+		}
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
-		return cmpUint
+		return func(a, b reflect.Value) int {
+			return cmp.Compare(a.Uint(), b.Uint())
+		}
 	case reflect.Float32, reflect.Float64:
-		return cmpFloat
+		return func(a, b reflect.Value) int {
+			return cmp.Compare(a.Float(), b.Float())
+		}
 	case reflect.String:
-		return cmpString
+		return func(a, b reflect.Value) int {
+			return cmp.Compare(a.String(), b.String())
+		}
 	default:
-		return c.cmpDefault
+		return func(a, b reflect.Value) int {
+			return cmp.Compare(c.string(a), c.string(b))
+		}
 	}
-}
-
-func cpmBool(a, b reflect.Value) int {
-	ab := a.Bool()
-	bb := b.Bool()
-	if !ab && bb {
-		return -1
-	}
-	if ab && !bb {
-		return 1
-	}
-	return 0
-}
-
-func cmpInt(a, b reflect.Value) int {
-	return cmp.Compare(a.Int(), b.Int())
-}
-
-func cmpUint(a, b reflect.Value) int {
-	return cmp.Compare(a.Uint(), b.Uint())
-}
-
-func cmpFloat(a, b reflect.Value) int {
-	return cmp.Compare(a.Float(), b.Float())
-}
-
-func cmpString(a, b reflect.Value) int {
-	return cmp.Compare(a.String(), b.String())
-}
-
-func (c *Config) cmpDefault(a, b reflect.Value) int {
-	return cmp.Compare(c.string(a), c.string(b))
 }
 
 func (c *Config) writeMapUnsorted(w io.Writer, st *State, v reflect.Value) {
