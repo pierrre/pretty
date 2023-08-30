@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "(*pretty.testByteser) => .Bytes() => <nil>"
-			}
+			"equal": "(*pretty.testByteser) => .Bytes() => <nil>"
 		},
 		{
-			"equal": {
-				"value": 0
-			}
+			"equal": 0
 		}
 	]
 }

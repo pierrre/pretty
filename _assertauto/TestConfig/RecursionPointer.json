@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "(*interface {}) => (*interface {}) <recursion>"
-			}
+			"equal": "(*interface {}) => (*interface {}) <recursion>"
 		},
 		{
-			"equal": {
-				"value": 0
-			}
+			"equal": 0
 		}
 	]
 }

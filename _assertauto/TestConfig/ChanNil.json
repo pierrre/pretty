@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "(chan int) <nil>"
-			}
+			"equal": "(chan int) <nil>"
 		},
 		{
-			"equal": {
-				"value": 0
-			}
+			"equal": 0
 		}
 	]
 }

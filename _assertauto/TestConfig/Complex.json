@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "(complex128) (123.456+789.123i)"
-			}
+			"equal": "(complex128) (123.456+789.123i)"
 		},
 		{
-			"equal": {
-				"value": 1
-			}
+			"equal": 1
 		}
 	]
 }

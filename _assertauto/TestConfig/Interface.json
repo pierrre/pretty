@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "([1]interface {}) {\n\t(int) 123,\n}"
-			}
+			"equal": "([1]interface {}) {\n\t(int) 123,\n}"
 		},
 		{
-			"equal": {
-				"value": 0
-			}
+			"equal": 0
 		}
 	]
 }

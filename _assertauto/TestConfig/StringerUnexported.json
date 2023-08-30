@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "(pretty.testUnexported) {\n\tv: (*pretty.testStringer) => (pretty.testStringer) {\n\t\ts: (string) (len=0) \"\",\n\t},\n}"
-			}
+			"equal": "(pretty.testUnexported) {\n\tv: (*pretty.testStringer) => (pretty.testStringer) {\n\t\ts: (string) (len=0) \"\",\n\t},\n}"
 		},
 		{
-			"equal": {
-				"value": 0
-			}
+			"equal": 0
 		}
 	]
 }

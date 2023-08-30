@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "(unsafe.Pointer) 0x0"
-			}
+			"equal": "(unsafe.Pointer) 0x0"
 		},
 		{
-			"equal": {
-				"value": 0
-			}
+			"equal": 0
 		}
 	]
 }

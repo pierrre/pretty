@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "(pretty.testStruct) {\n\tFoo: (int) 123,\n\tBar: (float64) 123.456,\n\tunexported: (int) 123,\n}"
-			}
+			"equal": "(pretty.testStruct) {\n\tFoo: (int) 123,\n\tBar: (float64) 123.456,\n\tunexported: (int) 123,\n}"
 		},
 		{
-			"equal": {
-				"value": 0
-			}
+			"equal": 0
 		}
 	]
 }

@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "(*pretty.testStringer) => .String() => (len=4) \"te\" <truncated>"
-			}
+			"equal": "(*pretty.testStringer) => .String() => (len=4) \"te\" <truncated>"
 		},
 		{
-			"equal": {
-				"value": 0
-			}
+			"equal": 0
 		}
 	]
 }

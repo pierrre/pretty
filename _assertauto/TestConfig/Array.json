@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "([3]int) {\n\t(int) 1,\n\t(int) 2,\n\t(int) 3,\n}"
-			}
+			"equal": "([3]int) {\n\t(int) 1,\n\t(int) 2,\n\t(int) 3,\n}"
 		},
 		{
-			"equal": {
-				"value": 0
-			}
+			"equal": 0
 		}
 	]
 }

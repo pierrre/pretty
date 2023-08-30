@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "(map[bool]int) (len=2) {\n\t(bool) false: (int) 1,\n\t(bool) true: (int) 2,\n}"
-			}
+			"equal": "(map[bool]int) (len=2) {\n\t(bool) false: (int) 1,\n\t(bool) true: (int) 2,\n}"
 		},
 		{
-			"equal": {
-				"value": 5
-			}
+			"equal": 5
 		}
 	]
 }

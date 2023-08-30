@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "([]int) (len=3 cap=3) {\n\t(int) 1,\n\t(int) 2,\n\t(int) 3,\n}"
-			}
+			"equal": "([]int) (len=3 cap=3) {\n\t(int) 1,\n\t(int) 2,\n\t(int) 3,\n}"
 		},
 		{
-			"equal": {
-				"value": 0
-			}
+			"equal": 0
 		}
 	]
 }

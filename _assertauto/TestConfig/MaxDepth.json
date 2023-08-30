@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "(***interface {}) => (**interface {}) => <max depth>"
-			}
+			"equal": "(***interface {}) => (**interface {}) => <max depth>"
 		},
 		{
-			"equal": {
-				"value": 0
-			}
+			"equal": 0
 		}
 	]
 }

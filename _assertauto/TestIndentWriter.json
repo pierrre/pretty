@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "\taabb\n\tc\n\tc\n\tdd"
-			}
+			"equal": "\taabb\n\tc\n\tc\n\tdd"
 		},
 		{
-			"equal": {
-				"value": 0
-			}
+			"equal": 0
 		}
 	]
 }

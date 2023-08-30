@@ -1,14 +1,10 @@
 {
 	"entries": [
 		{
-			"equal": {
-				"value": "(map[float64]int) (len=3) {\n\t(float64) 1: (int) 2,\n\t(float64) 3: (int) 4,\n\t(float64) 5: (int) 6,\n}"
-			}
+			"equal": "(map[float64]int) (len=3) {\n\t(float64) 1: (int) 2,\n\t(float64) 3: (int) 4,\n\t(float64) 5: (int) 6,\n}"
 		},
 		{
-			"equal": {
-				"value": 7
-			}
+			"equal": 7
 		}
 	]
 }
