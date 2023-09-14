@@ -379,8 +379,7 @@ func (c *Config) writeMap(w io.Writer, st *State, v reflect.Value) {
 }
 
 func (c *Config) writeMapSorted(w io.Writer, st *State, v reflect.Value) {
-	keys := v.MapKeys()
-	c.sortValues(v.Type().Key(), keys)
+	keys := c.getSortedMapKeys(v)
 	for i, key := range keys {
 		ok := c.writeMapEntry(w, st, key, v.MapIndex(key), i)
 		if !ok {
@@ -389,24 +388,30 @@ func (c *Config) writeMapSorted(w io.Writer, st *State, v reflect.Value) {
 	}
 }
 
-func (c *Config) sortValues(typ reflect.Type, vs []reflect.Value) {
-	cmpFunc := c.getCmp(typ)
+func (c *Config) getSortedMapKeys(v reflect.Value) []reflect.Value {
+	keys := v.MapKeys()
+	c.sortMapKeys(v.Type().Key(), keys)
+	return keys
+}
+
+func (c *Config) sortMapKeys(typ reflect.Type, vs []reflect.Value) {
+	cmpFunc := c.getMapKeysSortCmp(typ)
 	slices.SortFunc(vs, cmpFunc)
 }
 
-func (c *Config) getCmp(typ reflect.Type) func(a, b reflect.Value) int {
+func (c *Config) getMapKeysSortCmp(typ reflect.Type) func(a, b reflect.Value) int {
 	switch typ.Kind() { //nolint:exhaustive // Optimized for common kinds, the default case is less optimized.
 	case reflect.Bool:
 		return func(a, b reflect.Value) int {
 			ab := a.Bool()
 			bb := b.Bool()
-			if !ab && bb {
+			if ab == bb {
+				return 0
+			}
+			if !ab {
 				return -1
 			}
-			if ab && !bb {
-				return 1
-			}
-			return 0
+			return 1
 		}
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		return func(a, b reflect.Value) int {
