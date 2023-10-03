@@ -143,16 +143,16 @@ func (c *Config) writeIndent(w io.Writer, st *State) {
 
 func (c *Config) checkRecursion(w io.Writer, st *State, v reflect.Value) bool {
 	vp := v.Pointer()
-	if slices.Contains(st.Pointers, vp) {
+	if slices.Contains(st.Visited, vp) {
 		_, _ = writeString(w, "<recursion>")
 		return true
 	}
-	st.Pointers = append(st.Pointers, vp)
+	st.Visited = append(st.Visited, vp)
 	return false
 }
 
 func (c *Config) endRecursion(st *State) {
-	st.Pointers = st.Pointers[:len(st.Pointers)-1]
+	st.Visited = st.Visited[:len(st.Visited)-1]
 }
 
 func (c *Config) writeTypeAndValue(w io.Writer, st *State, v reflect.Value) {
@@ -546,15 +546,15 @@ var statePool = &sync.Pool{
 //
 // Functions must restore the original state when they return.
 type State struct {
-	Depth    int
-	Indent   int
-	Pointers []uintptr
+	Depth   int
+	Indent  int
+	Visited []uintptr
 }
 
 func (st *State) reset() {
 	st.Depth = 0
 	st.Indent = 0
-	st.Pointers = st.Pointers[:0]
+	st.Visited = st.Visited[:0]
 }
 
 // ValueWriter is a function that writes a value.
