@@ -1,7 +1,7 @@
 {
 	"entries": [
 		{
-			"equal": "(pretty.testUnexported) {\n\tv: (*pretty.testByteser) => (pretty.testByteser) {\n\t\tb: ([]uint8) <nil>,\n\t},\n}"
+			"equal": "(pretty_test.testUnexported) {\n\tv: (*pretty_test.testByteser) => (pretty_test.testByteser) {\n\t\tb: ([]uint8) <nil>,\n\t},\n}"
 		},
 		{
 			"equal": 0

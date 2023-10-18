@@ -1,4 +1,4 @@
-package pretty
+package pretty_test
 
 import (
 	"bytes"
@@ -13,6 +13,7 @@ import (
 
 	"github.com/pierrre/assert"
 	"github.com/pierrre/assert/assertauto"
+	. "github.com/pierrre/pretty"
 )
 
 func init() {
@@ -39,7 +40,7 @@ func Example() {
 	}
 	s := String(v)
 	fmt.Println(s)
-	// Output: (pretty.exampleStruct) {
+	// Output: (pretty_test.exampleStruct) {
 	// 	Int: (int) 123,
 	// 	Float: (float64) 123.456,
 	// 	String: (string) (len=4) "test",
@@ -491,11 +492,11 @@ func TestConfigWriteIndent(t *testing.T) {
 				Indent: indent,
 			}
 			buf := new(bytes.Buffer)
-			c.writeIndent(buf, st)
+			c.WriteIndent(buf, st)
 			assert.Equal(t, buf.String(), strings.Repeat(c.Indent, indent))
 			allocs := testing.AllocsPerRun(100, func() {
 				t.Helper()
-				c.writeIndent(io.Discard, st)
+				c.WriteIndent(io.Discard, st)
 			})
 			assert.Equal(t, allocs, 0)
 		})
@@ -510,7 +511,7 @@ func BenchmarkConfigWriteIndent(b *testing.B) {
 				Indent: indent,
 			}
 			for i := 0; i < b.N; i++ {
-				c.writeIndent(io.Discard, st)
+				c.WriteIndent(io.Discard, st)
 			}
 		})
 	}

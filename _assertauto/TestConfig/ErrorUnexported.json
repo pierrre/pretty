@@ -1,7 +1,7 @@
 {
 	"entries": [
 		{
-			"equal": "(pretty.testUnexported) {\n\tv: (*pretty.testError) => (pretty.testError) {\n\t},\n}"
+			"equal": "(pretty_test.testUnexported) {\n\tv: (*pretty_test.testError) => (pretty_test.testError) {\n\t},\n}"
 		},
 		{
 			"equal": 0

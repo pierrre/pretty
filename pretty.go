@@ -122,7 +122,8 @@ var (
 	indentCache     = map[string][]byte{}
 )
 
-func (c *Config) writeIndent(w io.Writer, st *State) {
+// WriteIndent writes the indentation to the writer.
+func (c *Config) WriteIndent(w io.Writer, st *State) {
 	if st.Indent <= 0 {
 		return
 	}
@@ -324,18 +325,18 @@ func (c *Config) writeArray(w io.Writer, st *State, v reflect.Value) {
 	if v.Len() > 0 {
 		st.Indent++
 		for i := 0; i < l; i++ {
-			c.writeIndent(w, st)
+			c.WriteIndent(w, st)
 			c.writeTypeAndValue(w, st, v.Index(i))
 			_, _ = writeString(w, ",\n")
 		}
 		if truncated {
-			c.writeIndent(w, st)
+			c.WriteIndent(w, st)
 			writeTruncated(w)
 			_, _ = writeString(w, "\n")
 		}
 		st.Indent--
 	}
-	c.writeIndent(w, st)
+	c.WriteIndent(w, st)
 	_, _ = writeString(w, "}")
 }
 
@@ -373,7 +374,7 @@ func (c *Config) writeMap(w io.Writer, st *State, v reflect.Value) {
 		}
 		st.Indent--
 	}
-	c.writeIndent(w, st)
+	c.WriteIndent(w, st)
 	_, _ = writeString(w, "}")
 	c.endRecursion(st)
 }
@@ -485,7 +486,7 @@ func (c *Config) writeMapUnsortedUnexported(w io.Writer, st *State, v reflect.Va
 }
 
 func (c *Config) writeMapEntry(w io.Writer, st *State, key reflect.Value, value reflect.Value, i int) bool {
-	c.writeIndent(w, st)
+	c.WriteIndent(w, st)
 	if c.MapMaxLen > 0 && i >= c.MapMaxLen {
 		writeTruncated(w)
 		_, _ = writeString(w, "\n")
@@ -506,14 +507,14 @@ func (c *Config) writeStruct(w io.Writer, st *State, v reflect.Value) {
 		if !c.StructUnexported && !field.IsExported() {
 			continue
 		}
-		c.writeIndent(w, st)
+		c.WriteIndent(w, st)
 		_, _ = writeString(w, field.Name)
 		_, _ = writeString(w, ": ")
 		c.writeTypeAndValue(w, st, v.Field(i))
 		_, _ = writeString(w, ",\n")
 	}
 	st.Indent--
-	c.writeIndent(w, st)
+	c.WriteIndent(w, st)
 	_, _ = writeString(w, "}")
 }
 
@@ -674,7 +675,7 @@ func writeBytesCommon(c *Config, w io.Writer, st *State, b []byte, maxLen int) {
 	_ = d.Close()
 	iw.Release()
 	if truncated {
-		c.writeIndent(w, st)
+		c.WriteIndent(w, st)
 		writeTruncated(w)
 	}
 	st.Indent--
@@ -750,7 +751,7 @@ func (iw *indentWriter) Write(p []byte) (int, error) {
 	l := len(p)
 	for len(p) > 0 {
 		if !iw.indented {
-			iw.config.writeIndent(iw.writer, iw.state)
+			iw.config.WriteIndent(iw.writer, iw.state)
 			iw.indented = true
 		}
 		i := bytes.IndexByte(p, '\n')

@@ -1,7 +1,7 @@
 {
 	"entries": [
 		{
-			"equal": "(pretty.testUnexported) {\n\tv: (map[int]int) (len=1) {\n\t\t(int) 1: (int) 2,\n\t},\n}"
+			"equal": "(pretty_test.testUnexported) {\n\tv: (map[int]int) (len=1) {\n\t\t(int) 1: (int) 2,\n\t},\n}"
 		},
 		{
 			"equal": 2

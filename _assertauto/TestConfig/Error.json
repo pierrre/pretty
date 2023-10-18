@@ -1,7 +1,7 @@
 {
 	"entries": [
 		{
-			"equal": "(*pretty.testError) => .Error() => \"test\""
+			"equal": "(*pretty_test.testError) => .Error() => \"test\""
 		},
 		{
 			"equal": 0
