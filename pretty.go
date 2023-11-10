@@ -17,27 +17,27 @@ import (
 	"github.com/pierrre/go-libs/strconvio"
 )
 
-// Write writes the value to the writer with DefaultConfig.
+// Write writes the value to the writer with [DefaultConfig].
 func Write(w io.Writer, vi any) {
 	DefaultConfig.Write(w, vi)
 }
 
-// String returns the value as a string with DefaultConfig.
+// String returns the value as a string with [DefaultConfig].
 func String(vi any) string {
 	return DefaultConfig.String(vi)
 }
 
-// Formatter returns a fmt.Formatter for the value with DefaultConfig.
+// Formatter returns a [fmt.Formatter] for the value with [DefaultConfig].
 func Formatter(vi any) fmt.Formatter {
 	return DefaultConfig.Formatter(vi)
 }
 
-// DefaultConfig is the default config.
+// DefaultConfig is the default [Config].
 var DefaultConfig = NewConfig()
 
 // Config is a configuration used to pretty print values.
 //
-// It should be created with NewConfig().
+// It should be created with [NewConfig].
 type Config struct {
 	// Indent is the string used to indent.
 	// Default: "\t".
@@ -60,12 +60,12 @@ type Config struct {
 	// StructUnexported prints unexported fields of structs.
 	// Default: true.
 	StructUnexported bool
-	// ValueWriters is the list of ValueWriter used to write values.
-	// Default: reflect.Value, error, []byte, interface{ Bytes() []byte }, fmt.Stringer.
+	// ValueWriters is the list of [ValueWriter] used to write values.
+	// Default: [reflect.Value], error, []byte, interface{ Bytes() []byte }, [fmt.Stringer].
 	ValueWriters []ValueWriter
 }
 
-// NewConfig creates a new Config initialized with default values.
+// NewConfig creates a new [Config] initialized with default values.
 func NewConfig() *Config {
 	return &Config{
 		Indent:           "\t",
@@ -109,7 +109,7 @@ func (c *Config) string(v reflect.Value) string {
 	return buf.String()
 }
 
-// Formatter returns a fmt.Formatter for the value.
+// Formatter returns a [fmt.Formatter] for the value.
 func (c *Config) Formatter(vi any) fmt.Formatter {
 	return &formatter{
 		config: c,
@@ -563,12 +563,12 @@ func (st *State) reset() {
 //
 // It returns true if it handled the value, false otherwise.
 //
-// Implementations must check v.CanInterface() before using v.Interface().
+// Implementations must check [reflect.Value.CanInterface] before using [reflect.Value.Interface].
 type ValueWriter func(c *Config, w io.Writer, st *State, v reflect.Value) bool
 
 var typeReflectValue = reflect.TypeOf(reflect.Value{})
 
-// NewReflectValueValueWriter returns a ValueWriter that writes reflect.Value.
+// NewReflectValueValueWriter returns a [ValueWriter] that writes [reflect.Value].
 func NewReflectValueValueWriter() ValueWriter {
 	return writeReflectValue
 }
@@ -588,7 +588,7 @@ func writeReflectValue(c *Config, w io.Writer, st *State, v reflect.Value) bool 
 
 var typeError = reflect.TypeOf((*error)(nil)).Elem()
 
-// NewErrorValueWriter returns a ValueWriter that writes error.
+// NewErrorValueWriter returns a [ValueWriter] that writes error.
 func NewErrorValueWriter() ValueWriter {
 	return writeError
 }
@@ -608,7 +608,7 @@ func writeError(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 
 var bytesType = reflect.TypeOf([]byte(nil))
 
-// NewBytesValueWriter returns a ValueWriter that writes []byte with encoding/hex.Dumper.
+// NewBytesValueWriter returns a [ValueWriter] that writes []byte with [encoding/hex.Dumper].
 func NewBytesValueWriter(maxLen int) ValueWriter {
 	return func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 		return writeBytes(c, w, st, v, maxLen)
@@ -635,7 +635,7 @@ type byteser interface {
 
 var byteserType = reflect.TypeOf((*byteser)(nil)).Elem()
 
-// NewByteserValueWriter returns a ValueWriter that writes interface { Bytes() []byte } with encoding/hex.Dumper.
+// NewByteserValueWriter returns a [ValueWriter] that writes interface { Bytes() []byte } with [encoding/hex.Dumper].
 func NewByteserValueWriter(maxLen int) ValueWriter {
 	return func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 		return writeByteser(c, w, st, v, maxLen)
@@ -683,7 +683,7 @@ func writeBytesCommon(c *Config, w io.Writer, st *State, b []byte, maxLen int) {
 
 var typeStringer = reflect.TypeOf((*fmt.Stringer)(nil)).Elem()
 
-// NewStringerValueWriter returns a ValueWriter that writes fmt.Stringer.
+// NewStringerValueWriter returns a [ValueWriter] that writes [fmt.Stringer].
 func NewStringerValueWriter(maxLen int) ValueWriter {
 	return func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 		return writeStringer(w, v, maxLen)
@@ -704,9 +704,9 @@ func writeStringer(w io.Writer, v reflect.Value, maxLen int) bool {
 	return true
 }
 
-// NewFilterValueWriter returns a ValueWriter that calls the provided ValueWriter if f returns true.
+// NewFilterValueWriter returns a [ValueWriter] that calls the provided [ValueWriter] if f returns true.
 //
-// It allows to enable/disable a ValueWriter for specific values/types.
+// It allows to enable/disable a [ValueWriter] for specific values/types.
 func NewFilterValueWriter(vw ValueWriter, f func(v reflect.Value) bool) ValueWriter {
 	return func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 		return writeFilter(c, w, st, v, vw, f)
@@ -720,9 +720,9 @@ func writeFilter(c *Config, w io.Writer, st *State, v reflect.Value, vw ValueWri
 	return vw(c, w, st, v)
 }
 
-// NewDefaultValueWriter returns a ValueWriter that writes the value with the default behavior, bypassing all ValueWriters.
+// NewDefaultValueWriter returns a [ValueWriter] that writes the value with the default behavior, bypassing all [ValueWriter]s.
 //
-// It should be used with NewFilterValueWriter() in order to filter specific types.
+// It should be used with [NewFilterValueWriter] in order to filter specific types.
 func NewDefaultValueWriter() ValueWriter {
 	return func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 		c.writeValueDefault(w, st, v)
