@@ -60,8 +60,8 @@ type Config struct {
 	// StructUnexported prints unexported fields of structs.
 	// Default: true.
 	StructUnexported bool
-	// ValueWriters is the list of [ValueWriter] used to write values.
-	// Default: [reflect.Value], error, []byte, interface{ Bytes() []byte }, [fmt.Stringer].
+	// ValueWriters is the list of ValueWriter used to write values.
+	// Default: reflect.Value, error, []byte, interface{ Bytes() []byte }, fmt.Stringer.
 	ValueWriters []ValueWriter
 }
 
@@ -720,7 +720,7 @@ func writeFilter(c *Config, w io.Writer, st *State, v reflect.Value, vw ValueWri
 	return vw(c, w, st, v)
 }
 
-// NewDefaultValueWriter returns a [ValueWriter] that writes the value with the default behavior, bypassing all [ValueWriter]s.
+// NewDefaultValueWriter returns a [ValueWriter] that writes the value with the default behavior, bypassing all ValueWriters.
 //
 // It should be used with [NewFilterValueWriter] in order to filter specific types.
 func NewDefaultValueWriter() ValueWriter {
