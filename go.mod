@@ -8,4 +8,4 @@ require (
 	github.com/pierrre/go-libs v0.2.15
 )
 
-require github.com/pierrre/compare v1.4.2 // indirect
+require github.com/pierrre/compare v1.4.5 // indirect
