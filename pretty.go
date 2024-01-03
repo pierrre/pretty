@@ -649,6 +649,9 @@ func writeByteser(c *Config, w io.Writer, st *State, v reflect.Value, maxLen int
 	if !v.Type().Implements(byteserType) {
 		return false
 	}
+	if v.Kind() == reflect.Pointer && v.IsNil() {
+		return false
+	}
 	br := v.Interface().(byteser) //nolint:forcetypeassert // Checked above.
 	b := br.Bytes()
 	_, _ = writeString(w, "=> .Bytes() => ")
@@ -695,6 +698,9 @@ func writeStringer(w io.Writer, v reflect.Value, maxLen int) bool {
 		return false
 	}
 	if !v.Type().Implements(typeStringer) {
+		return false
+	}
+	if v.Kind() == reflect.Pointer && v.IsNil() {
 		return false
 	}
 	sr := v.Interface().(fmt.Stringer) //nolint:forcetypeassert // Checked above.

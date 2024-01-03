@@ -369,6 +369,13 @@ var testCases = []testCase{
 	},
 	{
 		name:  "ByteserNil",
+		value: (*testByteser)(nil),
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{NewByteserValueWriter(0)}
+		},
+	},
+	{
+		name:  "ByteserNilBytes",
 		value: &testByteser{},
 		configure: func(c *Config) {
 			c.ValueWriters = []ValueWriter{NewByteserValueWriter(0)}
@@ -407,6 +414,13 @@ var testCases = []testCase{
 	{
 		name:  "Stringer",
 		value: &testStringer{s: "test"},
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{NewStringerValueWriter(0)}
+		},
+	},
+	{
+		name:  "StringerNil",
+		value: (*testStringer)(nil),
 		configure: func(c *Config) {
 			c.ValueWriters = []ValueWriter{NewStringerValueWriter(0)}
 		},

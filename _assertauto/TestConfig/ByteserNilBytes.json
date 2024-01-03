@@ -1,0 +1,10 @@
+{
+	"entries": [
+		{
+			"equal": "(*pretty_test.testByteser) => .Bytes() => <nil>"
+		},
+		{
+			"equal": 0
+		}
+	]
+}
