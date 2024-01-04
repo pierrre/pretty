@@ -600,6 +600,9 @@ func writeError(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 	if !v.Type().Implements(typeError) {
 		return false
 	}
+	if v.Kind() == reflect.Pointer && v.IsNil() {
+		return false
+	}
 	err := v.Interface().(error) //nolint:forcetypeassert // Checked above.
 	_, _ = writeString(w, "=> .Error() => ")
 	_, _ = strconvio.WriteQuote(w, err.Error())

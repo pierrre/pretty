@@ -1,0 +1,10 @@
+{
+	"entries": [
+		{
+			"equal": "(*pretty_test.testError) => <nil>"
+		},
+		{
+			"equal": 0
+		}
+	]
+}

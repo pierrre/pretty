@@ -36,6 +36,9 @@ func write(c *pretty.Config, w io.Writer, st *pretty.State, v reflect.Value) boo
 	if !v.Type().Implements(typeError) {
 		return false
 	}
+	if v.Kind() == reflect.Pointer && v.IsNil() {
+		return false
+	}
 	err := v.Interface().(error) //nolint:forcetypeassert // Checked above.
 	st.Indent++
 	iw := pretty.GetIndentWriter(w, c, st, true)

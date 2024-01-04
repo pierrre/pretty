@@ -405,6 +405,13 @@ var testCases = []testCase{
 		},
 	},
 	{
+		name:  "ErrorNil",
+		value: (*testError)(nil),
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{NewErrorValueWriter()}
+		},
+	},
+	{
 		name:  "ErrorUnexported",
 		value: testUnexported{v: &testError{}},
 		configure: func(c *Config) {
