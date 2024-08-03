@@ -496,7 +496,7 @@ func BenchmarkConfig(b *testing.B) {
 	for _, tc := range testCases {
 		b.Run(tc.name, func(b *testing.B) {
 			c := tc.newConfig()
-			for i := 0; i < b.N; i++ {
+			for range b.N {
 				c.Write(io.Discard, tc.value)
 			}
 		})
@@ -531,7 +531,7 @@ func BenchmarkConfigWriteIndent(b *testing.B) {
 			st := &State{
 				Indent: indent,
 			}
-			for i := 0; i < b.N; i++ {
+			for range b.N {
 				c.WriteIndent(io.Discard, st)
 			}
 		})
@@ -627,7 +627,7 @@ func BenchmarkIndentWriter(b *testing.B) {
 		Indent: 1,
 	}
 	iw := GetIndentWriter(io.Discard, c, st, false)
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		for _, b := range testIndentWriterValues {
 			_, _ = iw.Write(b)
 		}

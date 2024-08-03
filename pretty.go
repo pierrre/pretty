@@ -324,7 +324,7 @@ func (c *Config) writeArray(w io.Writer, st *State, v reflect.Value) {
 	_, _ = writeString(w, "{\n")
 	if v.Len() > 0 {
 		st.Indent++
-		for i := 0; i < l; i++ {
+		for i := range l {
 			c.WriteIndent(w, st)
 			c.writeTypeAndValue(w, st, v.Index(i))
 			_, _ = writeString(w, ",\n")
@@ -528,7 +528,7 @@ func getStructFields(typ reflect.Type) []reflect.StructField {
 	fields, ok := structFieldsCache[typ]
 	if !ok {
 		fields = make([]reflect.StructField, typ.NumField())
-		for i := 0; i < typ.NumField(); i++ {
+		for i := range typ.NumField() {
 			fields[i] = typ.Field(i)
 		}
 		structFieldsCache[typ] = fields
