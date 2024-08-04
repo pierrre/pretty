@@ -296,6 +296,17 @@ var testCases = []testCase{
 		},
 	},
 	{
+		name: "TypeFullName",
+		value: testStruct{
+			Foo:        123,
+			Bar:        123.456,
+			unexported: 123,
+		},
+		configure: func(c *Config) {
+			c.TypeFullName = true
+		},
+	},
+	{
 		name: "MaxDepth",
 		value: func() any {
 			var v1 any

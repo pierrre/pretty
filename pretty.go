@@ -14,6 +14,7 @@ import (
 	"unsafe" //nolint:depguard // Required for string to []byte conversion.
 
 	"github.com/pierrre/go-libs/bufpool"
+	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/strconvio"
 )
 
@@ -39,6 +40,9 @@ var DefaultConfig = NewConfig()
 //
 // It should be created with [NewConfig].
 type Config struct {
+	// TypeFullName prints the full type name if true.
+	// Default: false.
+	TypeFullName bool
 	// Indent is the string used to indent.
 	// Default: "\t".
 	Indent string
@@ -178,7 +182,13 @@ func (c *Config) writeTypeAndValue(w io.Writer, st *State, v reflect.Value) {
 }
 
 func (c *Config) writeType(w io.Writer, typ reflect.Type) {
-	_, _ = writeString(w, typ.String())
+	var s string
+	if c.TypeFullName {
+		s = reflectutil.TypeFullName(typ)
+	} else {
+		s = typ.String()
+	}
+	_, _ = writeString(w, s)
 }
 
 func (c *Config) writeValue(w io.Writer, st *State, v reflect.Value) {
