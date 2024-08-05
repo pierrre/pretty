@@ -39,7 +39,10 @@ var DefaultConfig = NewConfig()
 //
 // It should be created with [NewConfig].
 type Config struct {
-	// TypeFullName prints the full type name if true.
+	// PanicRecover recovers from panics and writes it to the writer.
+	// Default: true.
+	PanicRecover bool
+	// TypeFullName prints the full type name.
 	// Default: false.
 	TypeFullName bool
 	// Indent is the string used to indent.
@@ -71,6 +74,7 @@ type Config struct {
 // NewConfig creates a new [Config] initialized with default values.
 func NewConfig() *Config {
 	return &Config{
+		PanicRecover:     true,
 		Indent:           "\t",
 		StructUnexported: true,
 		ValueWriters: []ValueWriter{
@@ -162,9 +166,11 @@ func (c *Config) runRecursion(w io.Writer, st *State, v reflect.Value, f func(st
 //
 // It writes "(TYPE) VALUE".
 func (c *Config) WriteTypeAndValue(w io.Writer, st *State, v reflect.Value) {
-	defer func() {
-		c.checkRecover(w, recover())
-	}()
+	if c.PanicRecover {
+		defer func() {
+			c.checkRecover(w, recover())
+		}()
+	}
 	if !v.IsValid() {
 		WriteNil(w)
 		return
