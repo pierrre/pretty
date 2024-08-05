@@ -1,0 +1,10 @@
+{
+	"entries": [
+		{
+			"equal": "(string) <panic>: 123\n"
+		},
+		{
+			"equal": 0
+		}
+	]
+}

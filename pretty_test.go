@@ -115,6 +115,34 @@ var testCases = []testCase{
 		value: nil,
 	},
 	{
+		name:  "PanicString",
+		value: "test",
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+				panic("string")
+			}}
+		},
+	},
+	{
+		name:  "PanicError",
+		value: "test",
+		configure: func(c *Config) {
+			err := errors.New("error")
+			c.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+				panic(err)
+			}}
+		},
+	},
+	{
+		name:  "PanicOther",
+		value: "test",
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+				panic(123)
+			}}
+		},
+	},
+	{
 		name:  "Bool",
 		value: true,
 	},
