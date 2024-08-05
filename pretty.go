@@ -424,12 +424,7 @@ func (c *Config) getMapKeysSortCmp(typ reflect.Type) func(a, b reflect.Value) in
 	switch typ.Kind() { //nolint:exhaustive // Optimized for common kinds, the default case is less optimized.
 	case reflect.Bool:
 		return func(a, b reflect.Value) int {
-			ab := a.Bool()
-			bb := b.Bool()
-			if ab == bb {
-				return 0
-			}
-			if !ab {
+			if !a.Bool() {
 				return -1
 			}
 			return 1
