@@ -28,7 +28,7 @@ func NewValueWriter() pretty.ValueWriter {
 	return write
 }
 
-var typeError = reflect.TypeOf((*error)(nil)).Elem()
+var typeError = reflect.TypeFor[error]()
 
 func write(c *pretty.Config, w io.Writer, st *pretty.State, v reflect.Value) bool {
 	if !v.CanInterface() {
