@@ -171,19 +171,13 @@ func (c *Config) WriteTypeAndValue(w io.Writer, st *State, v reflect.Value) {
 			c.checkRecover(w, recover())
 		}()
 	}
-	if !v.IsValid() {
-		WriteNil(w)
+	if c.checkValid(w, v) {
 		return
 	}
-	if v.Kind() == reflect.Interface {
-		c.WriteTypeAndValue(w, st, v.Elem())
+	if c.checkInterface(w, st, v) {
 		return
 	}
-	if c.MaxDepth > 0 && st.Depth >= c.MaxDepth {
-		_, _ = WriteString(w, "<max depth>")
-		return
-	}
-	st.RunDepth(func(st *State) {
+	c.runCheckDepth(w, st, func(st *State) {
 		_, _ = WriteString(w, "(")
 		c.WriteType(w, v.Type())
 		_, _ = WriteString(w, ") ")
@@ -205,6 +199,30 @@ func (c *Config) checkRecover(w io.Writer, r any) {
 		_, _ = fmt.Fprint(w, r)
 	}
 	_, _ = WriteString(w, "\n")
+}
+
+func (c *Config) checkValid(w io.Writer, v reflect.Value) bool {
+	if !v.IsValid() {
+		WriteNil(w)
+		return true
+	}
+	return false
+}
+
+func (c *Config) checkInterface(w io.Writer, st *State, v reflect.Value) bool {
+	if v.Kind() == reflect.Interface {
+		c.WriteTypeAndValue(w, st, v.Elem())
+		return true
+	}
+	return false
+}
+
+func (c *Config) runCheckDepth(w io.Writer, st *State, f func(st *State)) {
+	if c.MaxDepth > 0 && st.Depth >= c.MaxDepth {
+		_, _ = WriteString(w, "<max depth>")
+		return
+	}
+	st.RunDepth(f)
 }
 
 // WriteType writes the type to the writer.
