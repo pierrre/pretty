@@ -532,41 +532,6 @@ func BenchmarkConfig(b *testing.B) {
 	}
 }
 
-var writeIndentValues = []int{0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000}
-
-func TestConfigWriteIndent(t *testing.T) {
-	c := newTestConfig()
-	for _, indent := range writeIndentValues {
-		t.Run(strconv.Itoa(indent), func(t *testing.T) {
-			st := &State{
-				Indent: indent,
-			}
-			buf := new(bytes.Buffer)
-			c.WriteIndent(buf, st)
-			assert.Equal(t, buf.String(), strings.Repeat(c.Indent, indent))
-			allocs := testing.AllocsPerRun(100, func() {
-				t.Helper()
-				c.WriteIndent(io.Discard, st)
-			})
-			assert.Equal(t, allocs, 0)
-		})
-	}
-}
-
-func BenchmarkConfigWriteIndent(b *testing.B) {
-	c := newTestConfig()
-	for _, indent := range []int{0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000} {
-		b.Run(strconv.Itoa(indent), func(b *testing.B) {
-			st := &State{
-				Indent: indent,
-			}
-			for range b.N {
-				c.WriteIndent(io.Discard, st)
-			}
-		})
-	}
-}
-
 func TestWrite(t *testing.T) {
 	buf := new(bytes.Buffer)
 	Write(buf, "test")
@@ -604,6 +569,34 @@ func TestFormatter(t *testing.T) {
 	assertauto.Equal(t, allocs)
 }
 
+var (
+	testWriteIndentString = "\t"
+	testWriteIndentCounts = []int{0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000}
+)
+
+func TestWriteIndent(t *testing.T) {
+	for _, count := range testWriteIndentCounts {
+		t.Run(strconv.Itoa(count), func(t *testing.T) {
+			buf := new(bytes.Buffer)
+			WriteIndent(buf, testWriteIndentString, count)
+			assert.Equal(t, buf.String(), strings.Repeat(testWriteIndentString, count))
+			assert.AllocsPerRun(t, 100, func() {
+				WriteIndent(io.Discard, testWriteIndentString, count)
+			}, 0)
+		})
+	}
+}
+
+func BenchmarkWriteIndent(b *testing.B) {
+	for _, count := range []int{0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000} {
+		b.Run(strconv.Itoa(count), func(b *testing.B) {
+			for range b.N {
+				WriteIndent(io.Discard, testWriteIndentString, count)
+			}
+		})
+	}
+}
+
 func TestIndentWriter(t *testing.T) {
 	buf := new(bytes.Buffer)
 	c := newTestConfig()
@@ -611,43 +604,70 @@ func TestIndentWriter(t *testing.T) {
 		Indent: 1,
 	}
 	testIndentWriter(t, c, buf, st)
-	assertauto.Equal(t, buf.String())
-	allocs := testing.AllocsPerRun(100, func() {
+	assert.Equal(t, buf.String(), "\taabb\n\tc\n\tc\n\tdd") //nolint:dupword // Test data.
+	assert.AllocsPerRun(t, 100, func() {
 		t.Helper()
 		testIndentWriter(t, c, io.Discard, st)
-	})
-	assertauto.Equal(t, allocs)
+	}, 0)
 }
 
-var testIndentWriterValues = [][]byte{
-	[]byte("aa"),
-	[]byte("bb\n"),
-	[]byte("c\nc"),
-	[]byte("\ndd"),
+var testIndentWriterValues = []struct {
+	b         []byte
+	expectedN int
+}{
+	{
+		b:         []byte("aa"),
+		expectedN: 3,
+	},
+	{
+		b:         []byte("bb\n"),
+		expectedN: 3,
+	},
+	{
+		b:         []byte("c\nc"),
+		expectedN: 5,
+	},
+	{
+		b:         []byte("\ndd"),
+		expectedN: 4,
+	},
 }
 
 func testIndentWriter(tb testing.TB, c *Config, w io.Writer, st *State) {
 	tb.Helper()
 	iw := GetIndentWriter(w, c, st, false)
-	for _, b := range testIndentWriterValues {
-		n, err := iw.Write(b)
+	defer iw.Release()
+	for _, v := range testIndentWriterValues {
+		n, err := iw.Write(v.b)
 		assert.NoError(tb, err)
-		assert.Equal(tb, n, len(b))
+		assert.Equal(tb, n, v.expectedN)
 	}
-	iw.Release()
 }
 
-func TestIndentWriterError(t *testing.T) {
+func TestIndentWriterErrorIndent(t *testing.T) {
 	w := &testErrorWriter{}
 	c := newTestConfig()
 	st := &State{
 		Indent: 1,
 	}
 	iw := GetIndentWriter(w, c, st, false)
+	defer iw.Release()
 	n, err := iw.Write([]byte("test"))
 	assert.Error(t, err)
 	assert.Equal(t, n, 0)
-	iw.Release()
+}
+
+func TestIndentWriterErrorWrite(t *testing.T) {
+	w := &testErrorWriter{}
+	c := newTestConfig()
+	st := &State{
+		Indent: 1,
+	}
+	iw := GetIndentWriter(w, c, st, true)
+	defer iw.Release()
+	n, err := iw.Write([]byte("test"))
+	assert.Error(t, err)
+	assert.Equal(t, n, 0)
 }
 
 func BenchmarkIndentWriter(b *testing.B) {
@@ -656,12 +676,18 @@ func BenchmarkIndentWriter(b *testing.B) {
 		Indent: 1,
 	}
 	iw := GetIndentWriter(io.Discard, c, st, false)
+	defer iw.Release()
 	for range b.N {
-		for _, b := range testIndentWriterValues {
-			_, _ = iw.Write(b)
+		for _, v := range testIndentWriterValues {
+			_, _ = iw.Write(v.b)
 		}
 	}
-	iw.Release()
+}
+
+func TestNoErrorPanic(t *testing.T) {
+	assert.Panics(t, func() {
+		WriteBytes(&testErrorWriter{}, []byte("test"))
+	})
 }
 
 type testStruct struct {

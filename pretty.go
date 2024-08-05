@@ -124,39 +124,15 @@ func (c *Config) Formatter(vi any) fmt.Formatter {
 	}
 }
 
-var (
-	indentCacheLock sync.Mutex
-	indentCache     = map[string][]byte{}
-)
-
-func getIndent(s string, n int) []byte {
-	indentCacheLock.Lock()
-	defer indentCacheLock.Unlock()
-	b := indentCache[s]
-	l := len(s) * n
-	if len(b) < l {
-		b = bytes.Repeat([]byte(s), n)
-		indentCache[s] = b
-	}
-	return b[:l]
-}
-
 // WriteIndent writes the indentation to the writer.
 func (c *Config) WriteIndent(w io.Writer, st *State) {
-	if st.Indent <= 0 {
-		return
-	}
-	if st.Indent == 1 {
-		_, _ = WriteString(w, c.Indent)
-		return
-	}
-	_, _ = w.Write(getIndent(c.Indent, st.Indent))
+	WriteIndent(w, c.Indent, st.Indent)
 }
 
 func (c *Config) runRecursion(w io.Writer, st *State, v reflect.Value, f func(st *State)) {
 	vp := v.Pointer()
 	if slices.Contains(st.Visited, vp) {
-		_, _ = WriteString(w, "<recursion>")
+		WriteString(w, "<recursion>")
 		return
 	}
 	st.RunVisited(vp, f)
@@ -178,9 +154,9 @@ func (c *Config) WriteTypeAndValue(w io.Writer, st *State, v reflect.Value) {
 		return
 	}
 	c.runCheckDepth(w, st, func(st *State) {
-		_, _ = WriteString(w, "(")
+		WriteString(w, "(")
 		c.WriteType(w, v.Type())
-		_, _ = WriteString(w, ") ")
+		WriteString(w, ") ")
 		c.WriteValue(w, st, v)
 	})
 }
@@ -189,16 +165,16 @@ func (c *Config) checkRecover(w io.Writer, r any) {
 	if r == nil {
 		return
 	}
-	_, _ = WriteString(w, "<panic>: ")
+	WriteString(w, "<panic>: ")
 	switch r := r.(type) {
 	case string:
-		_, _ = WriteString(w, r)
+		WriteString(w, r)
 	case error:
-		_, _ = WriteString(w, r.Error())
+		WriteString(w, r.Error())
 	default:
-		_, _ = fmt.Fprint(w, r)
+		noErrorWrite(fmt.Fprint(w, r))
 	}
-	_, _ = WriteString(w, "\n")
+	WriteString(w, "\n")
 }
 
 func (c *Config) checkValid(w io.Writer, v reflect.Value) bool {
@@ -219,7 +195,7 @@ func (c *Config) checkInterface(w io.Writer, st *State, v reflect.Value) bool {
 
 func (c *Config) runCheckDepth(w io.Writer, st *State, f func(st *State)) {
 	if c.MaxDepth > 0 && st.Depth >= c.MaxDepth {
-		_, _ = WriteString(w, "<max depth>")
+		WriteString(w, "<max depth>")
 		return
 	}
 	st.RunDepth(f)
@@ -233,7 +209,7 @@ func (c *Config) WriteType(w io.Writer, typ reflect.Type) {
 	} else {
 		s = typ.String()
 	}
-	_, _ = WriteString(w, s)
+	WriteString(w, s)
 }
 
 // WriteValue writes the value to the writer.
@@ -299,29 +275,29 @@ func (c *Config) WriteValueDefault(w io.Writer, st *State, v reflect.Value) {
 }
 
 func (c *Config) writeBool(w io.Writer, v reflect.Value) {
-	_, _ = strconvio.WriteBool(w, v.Bool())
+	noErrorWrite(strconvio.WriteBool(w, v.Bool()))
 }
 
 func (c *Config) writeInt(w io.Writer, v reflect.Value) {
-	_, _ = strconvio.WriteInt(w, v.Int(), 10)
+	noErrorWrite(strconvio.WriteInt(w, v.Int(), 10))
 }
 
 func (c *Config) writeUint(w io.Writer, v reflect.Value) {
-	_, _ = strconvio.WriteUint(w, v.Uint(), 10)
+	noErrorWrite(strconvio.WriteUint(w, v.Uint(), 10))
 }
 
 func (c *Config) writeUintptr(w io.Writer, v reflect.Value) {
-	_, _ = WriteString(w, "0x")
-	_, _ = strconvio.WriteUint(w, v.Uint(), 16)
+	WriteString(w, "0x")
+	noErrorWrite(strconvio.WriteUint(w, v.Uint(), 16))
 }
 
 func (c *Config) writeFloat(w io.Writer, v reflect.Value) {
 	bitSize := v.Type().Bits()
-	_, _ = strconvio.WriteFloat(w, v.Float(), 'g', -1, bitSize)
+	noErrorWrite(strconvio.WriteFloat(w, v.Float(), 'g', -1, bitSize))
 }
 
 func (c *Config) writeComplex(w io.Writer, v reflect.Value) {
-	_, _ = fmt.Fprintf(w, "%g", v.Complex())
+	noErrorWrite(fmt.Fprintf(w, "%g", v.Complex()))
 }
 
 func (c *Config) writeString(w io.Writer, v reflect.Value) {
@@ -330,17 +306,17 @@ func (c *Config) writeString(w io.Writer, v reflect.Value) {
 }
 
 func writeStringValue(w io.Writer, s string, maxLen int) {
-	_, _ = WriteString(w, "(len=")
-	_, _ = strconvio.WriteInt(w, int64(len(s)), 10)
-	_, _ = WriteString(w, ") ")
+	WriteString(w, "(len=")
+	noErrorWrite(strconvio.WriteInt(w, int64(len(s)), 10))
+	WriteString(w, ") ")
 	truncated := false
 	if maxLen > 0 && len(s) > maxLen {
 		s = s[:maxLen]
 		truncated = true
 	}
-	_, _ = strconvio.WriteQuote(w, s)
+	noErrorWrite(strconvio.WriteQuote(w, s))
 	if truncated {
-		_, _ = WriteString(w, " ")
+		WriteString(w, " ")
 		writeTruncated(w)
 	}
 }
@@ -359,7 +335,7 @@ func (c *Config) writeFunc(w io.Writer, v reflect.Value) {
 		return
 	}
 	name := runtime.FuncForPC(v.Pointer()).Name()
-	_, _ = WriteString(w, name)
+	WriteString(w, name)
 }
 
 func (c *Config) writePointer(w io.Writer, st *State, v reflect.Value) {
@@ -370,8 +346,8 @@ func (c *Config) writePointer(w io.Writer, st *State, v reflect.Value) {
 }
 
 func (c *Config) writeUnsafePointer(w io.Writer, v reflect.Value) {
-	_, _ = WriteString(w, "0x")
-	_, _ = strconvio.WriteUint(w, uint64(uintptr(v.UnsafePointer())), 16)
+	WriteString(w, "0x")
+	noErrorWrite(strconvio.WriteUint(w, uint64(uintptr(v.UnsafePointer())), 16))
 }
 
 func (c *Config) writeArray(w io.Writer, st *State, v reflect.Value) {
@@ -381,23 +357,23 @@ func (c *Config) writeArray(w io.Writer, st *State, v reflect.Value) {
 		l = c.SliceMaxLen
 		truncated = true
 	}
-	_, _ = WriteString(w, "{\n")
+	WriteString(w, "{\n")
 	if v.Len() > 0 {
 		st.RunIndent(func(st *State) {
 			for i := range l {
 				c.WriteIndent(w, st)
 				c.WriteTypeAndValue(w, st, v.Index(i))
-				_, _ = WriteString(w, ",\n")
+				WriteString(w, ",\n")
 			}
 			if truncated {
 				c.WriteIndent(w, st)
 				writeTruncated(w)
-				_, _ = WriteString(w, "\n")
+				WriteString(w, "\n")
 			}
 		})
 	}
 	c.WriteIndent(w, st)
-	_, _ = WriteString(w, "}")
+	WriteString(w, "}")
 }
 
 func (c *Config) writeSlice(w io.Writer, st *State, v reflect.Value) {
@@ -407,7 +383,7 @@ func (c *Config) writeSlice(w io.Writer, st *State, v reflect.Value) {
 	}
 	c.runRecursion(w, st, v, func(st *State) {
 		writeLenCapReflect(w, v)
-		_, _ = WriteString(w, " ")
+		WriteString(w, " ")
 		c.writeArray(w, st, v)
 	})
 }
@@ -418,9 +394,9 @@ func (c *Config) writeMap(w io.Writer, st *State, v reflect.Value) {
 		return
 	}
 	c.runRecursion(w, st, v, func(st *State) {
-		_, _ = WriteString(w, "(len=")
-		_, _ = strconvio.WriteInt(w, int64(v.Len()), 10)
-		_, _ = WriteString(w, ") {\n")
+		WriteString(w, "(len=")
+		noErrorWrite(strconvio.WriteInt(w, int64(v.Len()), 10))
+		WriteString(w, ") {\n")
 		if v.Len() > 0 {
 			st.RunIndent(func(st *State) {
 				if c.MapSortKeys {
@@ -431,7 +407,7 @@ func (c *Config) writeMap(w io.Writer, st *State, v reflect.Value) {
 			})
 		}
 		c.WriteIndent(w, st)
-		_, _ = WriteString(w, "}")
+		WriteString(w, "}")
 	})
 }
 
@@ -542,18 +518,18 @@ func (c *Config) writeMapEntry(w io.Writer, st *State, key reflect.Value, value 
 	c.WriteIndent(w, st)
 	if c.MapMaxLen > 0 && i >= c.MapMaxLen {
 		writeTruncated(w)
-		_, _ = WriteString(w, "\n")
+		WriteString(w, "\n")
 		return false
 	}
 	c.WriteTypeAndValue(w, st, key)
-	_, _ = WriteString(w, ": ")
+	WriteString(w, ": ")
 	c.WriteTypeAndValue(w, st, value)
-	_, _ = WriteString(w, ",\n")
+	WriteString(w, ",\n")
 	return true
 }
 
 func (c *Config) writeStruct(w io.Writer, st *State, v reflect.Value) {
-	_, _ = WriteString(w, "{\n")
+	WriteString(w, "{\n")
 	st.RunIndent(func(st *State) {
 		fields := getStructFields(v.Type())
 		for i, field := range fields {
@@ -561,14 +537,14 @@ func (c *Config) writeStruct(w io.Writer, st *State, v reflect.Value) {
 				continue
 			}
 			c.WriteIndent(w, st)
-			_, _ = WriteString(w, field.Name)
-			_, _ = WriteString(w, ": ")
+			WriteString(w, field.Name)
+			WriteString(w, ": ")
 			c.WriteTypeAndValue(w, st, v.Field(i))
-			_, _ = WriteString(w, ",\n")
+			WriteString(w, ",\n")
 		}
 	})
 	c.WriteIndent(w, st)
-	_, _ = WriteString(w, "}")
+	WriteString(w, "}")
 }
 
 var (
@@ -686,7 +662,7 @@ func writeError(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 	}
 	err := v.Interface().(error) //nolint:forcetypeassert // Checked above.
 	writeArrowWrappedString(w, ".Error() ")
-	_, _ = strconvio.WriteQuote(w, err.Error())
+	noErrorWrite(strconvio.WriteQuote(w, err.Error()))
 	return true
 }
 
@@ -754,13 +730,13 @@ func writeBytesHexCommon(c *Config, w io.Writer, st *State, b []byte, maxLen int
 		b = b[:maxLen]
 		truncated = true
 	}
-	_, _ = WriteString(w, "\n")
+	WriteString(w, "\n")
 	st.RunIndent(func(st *State) {
 		iw := GetIndentWriter(w, c, st, false)
 		defer iw.Release()
 		d := hex.Dumper(iw)
-		_, _ = d.Write(b)
-		_ = d.Close()
+		WriteBytes(d, b)
+		noError(d.Close())
 		if truncated {
 			c.WriteIndent(w, st)
 			writeTruncated(w)
@@ -827,11 +803,14 @@ type indentWriter struct {
 	indented bool
 }
 
-func (iw *indentWriter) Write(p []byte) (int, error) {
-	l := len(p)
+func (iw *indentWriter) Write(p []byte) (n int, err error) {
 	for len(p) > 0 {
 		if !iw.indented {
-			iw.config.WriteIndent(iw.writer, iw.state)
+			nn, err := writeIndent(iw.writer, iw.config.Indent, iw.state.Indent)
+			n += nn
+			if err != nil {
+				return n, err
+			}
 			iw.indented = true
 		}
 		i := bytes.IndexByte(p, '\n')
@@ -841,13 +820,14 @@ func (iw *indentWriter) Write(p []byte) (int, error) {
 			i++
 			iw.indented = false
 		}
-		_, err := iw.writer.Write(p[:i])
+		nn, err := iw.writer.Write(p[:i])
+		n += nn
 		if err != nil {
-			return 0, err //nolint:wrapcheck // The error is not wrapped.
+			return n, err //nolint:wrapcheck // The error is not wrapped.
 		}
 		p = p[i:]
 	}
-	return l, nil
+	return n, nil
 }
 
 var indentWriterPool = &sync.Pool{
@@ -880,22 +860,22 @@ func (iw *indentWriter) Release() {
 
 // WriteArrow writes "=> " to the writer.
 func WriteArrow(w io.Writer) {
-	_, _ = WriteString(w, "=> ")
+	WriteString(w, "=> ")
 }
 
 func writeArrowWrappedString(w io.Writer, s string) {
 	WriteArrow(w)
-	_, _ = WriteString(w, s)
+	WriteString(w, s)
 	WriteArrow(w)
 }
 
 // WriteNil writes "<nil>" to the writer.
 func WriteNil(w io.Writer) {
-	_, _ = WriteString(w, "<nil>")
+	WriteString(w, "<nil>")
 }
 
 func writeTruncated(w io.Writer) {
-	_, _ = WriteString(w, "<truncated>")
+	WriteString(w, "<truncated>")
 }
 
 func writeLenCapReflect(w io.Writer, v reflect.Value) {
@@ -903,14 +883,60 @@ func writeLenCapReflect(w io.Writer, v reflect.Value) {
 }
 
 func writeLenCap(w io.Writer, ln int, cp int) {
-	_, _ = WriteString(w, "(len=")
-	_, _ = strconvio.WriteInt(w, int64(ln), 10)
-	_, _ = WriteString(w, " cap=")
-	_, _ = strconvio.WriteInt(w, int64(cp), 10)
-	_, _ = WriteString(w, ")")
+	WriteString(w, "(len=")
+	noErrorWrite(strconvio.WriteInt(w, int64(ln), 10))
+	WriteString(w, " cap=")
+	noErrorWrite(strconvio.WriteInt(w, int64(cp), 10))
+	WriteString(w, ")")
 }
 
 // WriteString writes a string to the writer.
-func WriteString(w io.Writer, s string) (int, error) {
-	return writeString(w, s)
+func WriteString(w io.Writer, s string) {
+	noErrorWrite(writeString(w, s))
+}
+
+// WriteBytes writes []byte to the writer.
+func WriteBytes(w io.Writer, b []byte) {
+	noErrorWrite(w.Write(b))
+}
+
+var (
+	indentCacheLock sync.Mutex
+	indentCache     = map[string][]byte{}
+)
+
+func getIndent(s string, n int) []byte {
+	indentCacheLock.Lock()
+	defer indentCacheLock.Unlock()
+	b := indentCache[s]
+	l := len(s) * n
+	if len(b) < l {
+		b = bytes.Repeat([]byte(s), n)
+		indentCache[s] = b
+	}
+	return b[:l]
+}
+
+func WriteIndent(w io.Writer, s string, n int) {
+	noErrorWrite(writeIndent(w, s, n))
+}
+
+func writeIndent(w io.Writer, s string, n int) (int, error) {
+	if n <= 0 {
+		return 0, nil
+	}
+	if n == 1 {
+		return writeString(w, s)
+	}
+	return w.Write(getIndent(s, n)) //nolint:wrapcheck // The error is not wrapped.
+}
+
+func noError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func noErrorWrite(_ int, err error) {
+	noError(err)
 }
