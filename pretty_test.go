@@ -490,7 +490,7 @@ var testCases = []testCase{
 		value: &testStringer{s: "test"},
 		configure: func(c *Config) {
 			c.ValueWriters = []ValueWriter{NewFilterValueWriter(NewStringerValueWriter(0), func(v reflect.Value) bool {
-				return v.Type() == reflect.TypeOf(&testStringer{})
+				return v.Type() == reflect.TypeFor[*testStringer]()
 			})}
 		},
 	},
@@ -499,7 +499,7 @@ var testCases = []testCase{
 		value: &testStringer{s: "test"},
 		configure: func(c *Config) {
 			c.ValueWriters = []ValueWriter{NewFilterValueWriter(NewStringerValueWriter(0), func(v reflect.Value) bool {
-				return v.Type() != reflect.TypeOf(&testStringer{})
+				return v.Type() != reflect.TypeFor[*testStringer]()
 			})}
 		},
 	},
