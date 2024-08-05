@@ -11,7 +11,6 @@ import (
 	"runtime"
 	"slices"
 	"sync"
-	"unsafe" //nolint:depguard // Required for string to []byte conversion.
 
 	"github.com/pierrre/go-libs/bufpool"
 	"github.com/pierrre/go-libs/reflectutil"
@@ -854,9 +853,5 @@ func writeLenCap(w io.Writer, ln int, cp int) {
 
 // WriteString writes a string to the writer.
 func WriteString(w io.Writer, s string) (int, error) {
-	return w.Write(unsafeStringToBytes(s)) //nolint:wrapcheck // The error is not wrapped.
-}
-
-func unsafeStringToBytes(s string) []byte {
-	return unsafe.Slice(unsafe.StringData(s), len(s))
+	return writeString(w, s)
 }
