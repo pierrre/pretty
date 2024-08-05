@@ -619,7 +619,7 @@ func writeError(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 		return false
 	}
 	err := v.Interface().(error) //nolint:forcetypeassert // Checked above.
-	_, _ = WriteString(w, "=> .Error() => ")
+	writeArrowWrappedString(w, ".Error() ")
 	_, _ = strconvio.WriteQuote(w, err.Error())
 	return true
 }
@@ -672,7 +672,7 @@ func writeByteser(c *Config, w io.Writer, st *State, v reflect.Value, maxLen int
 	}
 	br := v.Interface().(byteser) //nolint:forcetypeassert // Checked above.
 	b := br.Bytes()
-	_, _ = WriteString(w, "=> .Bytes() => ")
+	writeArrowWrappedString(w, ".Bytes() ")
 	if b == nil {
 		WriteNil(w)
 		return true
@@ -723,7 +723,7 @@ func writeStringer(w io.Writer, v reflect.Value, maxLen int) bool {
 	}
 	sr := v.Interface().(fmt.Stringer) //nolint:forcetypeassert // Checked above.
 	s := sr.String()
-	_, _ = WriteString(w, "=> .String() => ")
+	writeArrowWrappedString(w, ".String() ")
 	writeStringValue(w, s, maxLen)
 	return true
 }
@@ -815,6 +815,12 @@ func (iw *indentWriter) Release() {
 // WriteArrow writes "=> " to the writer.
 func WriteArrow(w io.Writer) {
 	_, _ = WriteString(w, "=> ")
+}
+
+func writeArrowWrappedString(w io.Writer, s string) {
+	WriteArrow(w)
+	_, _ = writeString(w, s)
+	WriteArrow(w)
 }
 
 // WriteNil writes "<nil>" to the writer.
