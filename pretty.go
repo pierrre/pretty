@@ -129,7 +129,7 @@ func (c *Config) WriteIndent(w io.Writer, st *State) {
 	WriteIndent(w, c.Indent, st.Indent)
 }
 
-func (c *Config) runRecursion(w io.Writer, st *State, v reflect.Value, f func(st *State)) {
+func (c *Config) runCheckRecursion(w io.Writer, st *State, v reflect.Value, f func(st *State)) {
 	vp := v.Pointer()
 	if slices.Contains(st.Visited, vp) {
 		WriteString(w, "<recursion>")
@@ -339,7 +339,7 @@ func (c *Config) writeFunc(w io.Writer, v reflect.Value) {
 }
 
 func (c *Config) writePointer(w io.Writer, st *State, v reflect.Value) {
-	c.runRecursion(w, st, v, func(st *State) {
+	c.runCheckRecursion(w, st, v, func(st *State) {
 		WriteArrow(w)
 		c.WriteTypeAndValue(w, st, v.Elem())
 	})
@@ -381,7 +381,7 @@ func (c *Config) writeSlice(w io.Writer, st *State, v reflect.Value) {
 		WriteNil(w)
 		return
 	}
-	c.runRecursion(w, st, v, func(st *State) {
+	c.runCheckRecursion(w, st, v, func(st *State) {
 		writeLenCapReflect(w, v)
 		WriteString(w, " ")
 		c.writeArray(w, st, v)
@@ -393,7 +393,7 @@ func (c *Config) writeMap(w io.Writer, st *State, v reflect.Value) {
 		WriteNil(w)
 		return
 	}
-	c.runRecursion(w, st, v, func(st *State) {
+	c.runCheckRecursion(w, st, v, func(st *State) {
 		WriteString(w, "(len=")
 		noErrorWrite(strconvio.WriteInt(w, int64(v.Len()), 10))
 		WriteString(w, ") {\n")
