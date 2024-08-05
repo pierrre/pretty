@@ -4,23 +4,24 @@ package pierrreerrors
 import (
 	"io"
 	"reflect"
+	"slices"
 
 	"github.com/pierrre/errors/errverbose"
 	"github.com/pierrre/pretty"
 )
 
-// ConfigureDefault calls Configure() with pretty.DefaultConfig.
+// ConfigureDefault calls [Configure] with [pretty.DefaultConfig].
 func ConfigureDefault() {
 	Configure(pretty.DefaultConfig)
 }
 
-// Configure configures a pretty.Config with NewValueWriter().
-// It prepends the ValueWriter at the beginning of the ValueWriters slice.
+// Configure configures a [pretty.Config] with [NewValueWriter].
+// It prepends the [pretty.ValueWriter] at the beginning of ValueWriter slice.
 func Configure(c *pretty.Config) {
-	c.ValueWriters = append([]pretty.ValueWriter{NewValueWriter()}, c.ValueWriters...)
+	c.ValueWriters = slices.Insert(c.ValueWriters, 0, NewValueWriter())
 }
 
-// NewValueWriter creates a new pretty.ValueWriter for github.com/pierrre/errors.
+// NewValueWriter creates a new [pretty.ValueWriter] for github.com/pierrre/errors.
 //
 // It prints the verbose representation of the error.
 func NewValueWriter() pretty.ValueWriter {
@@ -40,10 +41,10 @@ func write(c *pretty.Config, w io.Writer, st *pretty.State, v reflect.Value) boo
 		return false
 	}
 	err := v.Interface().(error) //nolint:forcetypeassert // Checked above.
-	st.Indent++
-	iw := pretty.GetIndentWriter(w, c, st, true)
-	errverbose.Write(iw, err)
-	iw.Release()
-	st.Indent--
+	st.RunIndent(func(st *pretty.State) {
+		iw := pretty.GetIndentWriter(w, c, st, true)
+		defer iw.Release()
+		errverbose.Write(iw, err)
+	})
 	return true
 }
