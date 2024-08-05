@@ -713,6 +713,9 @@ func writeByteserHex(c *Config, w io.Writer, st *State, v reflect.Value, maxLen 
 	if v.Kind() == reflect.Pointer && v.IsNil() {
 		return false
 	}
+	if v.Type() == typeReflectValue {
+		return false
+	}
 	br := v.Interface().(byteser) //nolint:forcetypeassert // Checked above.
 	b := br.Bytes()
 	writeArrowWrappedString(w, ".Bytes() ")
@@ -762,6 +765,9 @@ func writeStringer(w io.Writer, v reflect.Value, maxLen int) bool {
 		return false
 	}
 	if v.Kind() == reflect.Pointer && v.IsNil() {
+		return false
+	}
+	if v.Type() == typeReflectValue {
 		return false
 	}
 	sr := v.Interface().(fmt.Stringer) //nolint:forcetypeassert // Checked above.

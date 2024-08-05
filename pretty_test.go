@@ -446,6 +446,16 @@ var testCases = []testCase{
 		},
 	},
 	{
+		name:  "ByteserHexReflectValue",
+		value: reflect.ValueOf(123),
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{
+				NewByteserHexValueWriter(0),
+				NewReflectValueValueWriter(),
+			}
+		},
+	},
+	{
 		name:  "Error",
 		value: &testError{},
 		configure: func(c *Config) {
@@ -492,6 +502,16 @@ var testCases = []testCase{
 		value: testUnexported{v: &testStringer{}},
 		configure: func(c *Config) {
 			c.ValueWriters = []ValueWriter{NewStringerValueWriter(0)}
+		},
+	},
+	{
+		name:  "StringerReflectValue",
+		value: reflect.ValueOf(123),
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{
+				NewStringerValueWriter(0),
+				NewReflectValueValueWriter(),
+			}
 		},
 	},
 	{
