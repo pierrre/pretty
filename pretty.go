@@ -138,6 +138,14 @@ func (c *Config) runCheckRecursion(w io.Writer, st *State, v reflect.Value, f fu
 	st.RunVisited(vp, f)
 }
 
+func (c *Config) checkNil(w io.Writer, v reflect.Value) bool {
+	if v.IsNil() {
+		WriteNil(w)
+		return true
+	}
+	return false
+}
+
 // WriteTypeAndValue writes the type and value to the writer.
 //
 // It writes "(TYPE) VALUE".
@@ -322,16 +330,14 @@ func writeStringValue(w io.Writer, s string, maxLen int) {
 }
 
 func (c *Config) writeChan(w io.Writer, v reflect.Value) {
-	if v.IsNil() {
-		WriteNil(w)
+	if c.checkNil(w, v) {
 		return
 	}
 	writeLenCapReflect(w, v)
 }
 
 func (c *Config) writeFunc(w io.Writer, v reflect.Value) {
-	if v.IsNil() {
-		WriteNil(w)
+	if c.checkNil(w, v) {
 		return
 	}
 	name := runtime.FuncForPC(v.Pointer()).Name()
@@ -377,8 +383,7 @@ func (c *Config) writeArray(w io.Writer, st *State, v reflect.Value) {
 }
 
 func (c *Config) writeSlice(w io.Writer, st *State, v reflect.Value) {
-	if v.IsNil() {
-		WriteNil(w)
+	if c.checkNil(w, v) {
 		return
 	}
 	c.runCheckRecursion(w, st, v, func(st *State) {
@@ -389,8 +394,7 @@ func (c *Config) writeSlice(w io.Writer, st *State, v reflect.Value) {
 }
 
 func (c *Config) writeMap(w io.Writer, st *State, v reflect.Value) {
-	if v.IsNil() {
-		WriteNil(w)
+	if c.checkNil(w, v) {
 		return
 	}
 	c.runCheckRecursion(w, st, v, func(st *State) {
@@ -680,8 +684,7 @@ func writeBytesHex(c *Config, w io.Writer, st *State, v reflect.Value, maxLen in
 	if v.Type() != bytesType {
 		return false
 	}
-	if v.IsNil() {
-		WriteNil(w)
+	if c.checkNil(w, v) {
 		return true
 	}
 	writeLenCapReflect(w, v)
