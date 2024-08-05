@@ -95,7 +95,7 @@ func (c *Config) write(w io.Writer, v reflect.Value) {
 	defer statePool.Put(stItf)
 	st := stItf.(*State) //nolint:forcetypeassert // The pool only contains *State.
 	st.reset()
-	c.writeTypeAndValue(w, st, v)
+	c.WriteTypeAndValue(w, st, v)
 }
 
 var bufPool = &bufpool.Pool{}
@@ -132,7 +132,7 @@ func (c *Config) WriteIndent(w io.Writer, st *State) {
 		return
 	}
 	if st.Indent == 1 {
-		_, _ = writeString(w, c.Indent)
+		_, _ = WriteString(w, c.Indent)
 		return
 	}
 	indentCacheLock.Lock()
@@ -149,7 +149,7 @@ func (c *Config) WriteIndent(w io.Writer, st *State) {
 func (c *Config) checkRecursion(w io.Writer, st *State, v reflect.Value) bool {
 	vp := v.Pointer()
 	if slices.Contains(st.Visited, vp) {
-		_, _ = writeString(w, "<recursion>")
+		_, _ = WriteString(w, "<recursion>")
 		return true
 	}
 	st.Visited = append(st.Visited, vp)
@@ -160,42 +160,47 @@ func (c *Config) endRecursion(st *State) {
 	st.Visited = st.Visited[:len(st.Visited)-1]
 }
 
-func (c *Config) writeTypeAndValue(w io.Writer, st *State, v reflect.Value) {
+// WriteTypeAndValue writes the type and value to the writer.
+func (c *Config) WriteTypeAndValue(w io.Writer, st *State, v reflect.Value) {
 	if !v.IsValid() {
-		writeNil(w)
+		WriteNil(w)
 		return
 	}
 	if v.Kind() == reflect.Interface {
-		c.writeTypeAndValue(w, st, v.Elem())
+		c.WriteTypeAndValue(w, st, v.Elem())
 		return
 	}
 	if c.MaxDepth > 0 && st.Depth >= c.MaxDepth {
-		_, _ = writeString(w, "<max depth>")
+		_, _ = WriteString(w, "<max depth>")
 		return
 	}
 	st.Depth++
-	_, _ = writeString(w, "(")
-	c.writeType(w, v.Type())
-	_, _ = writeString(w, ") ")
-	c.writeValue(w, st, v)
+	_, _ = WriteString(w, "(")
+	c.WriteType(w, v.Type())
+	_, _ = WriteString(w, ") ")
+	c.WriteValue(w, st, v)
 	st.Depth--
 }
 
-func (c *Config) writeType(w io.Writer, typ reflect.Type) {
+// WriteType writes the type to the writer.
+func (c *Config) WriteType(w io.Writer, typ reflect.Type) {
 	var s string
 	if c.TypeFullName {
 		s = reflectutil.TypeFullName(typ)
 	} else {
 		s = typ.String()
 	}
-	_, _ = writeString(w, s)
+	_, _ = WriteString(w, s)
 }
 
-func (c *Config) writeValue(w io.Writer, st *State, v reflect.Value) {
+// WriteValue writes the value to the writer.
+//
+// It checks if any of the [ValueWriter] can handle the value, then call [Config.WriteValueDefault].
+func (c *Config) WriteValue(w io.Writer, st *State, v reflect.Value) {
 	if c.writeValueWithValueWriter(w, st, v) {
 		return
 	}
-	c.writeValueDefault(w, st, v)
+	c.WriteValueDefault(w, st, v)
 }
 
 func (c *Config) writeValueWithValueWriter(w io.Writer, st *State, v reflect.Value) bool {
@@ -208,8 +213,12 @@ func (c *Config) writeValueWithValueWriter(w io.Writer, st *State, v reflect.Val
 	return false
 }
 
+// WriteValueDefault writes the value to the writer with the default behavior.
+//
+// It skips all the [ValueWriter].
+//
 //nolint:gocyclo // We need to handle all kinds.
-func (c *Config) writeValueDefault(w io.Writer, st *State, v reflect.Value) {
+func (c *Config) WriteValueDefault(w io.Writer, st *State, v reflect.Value) {
 	switch v.Kind() { //nolint:exhaustive // All kinds are handled, Invalid and Interface should not happen.
 	case reflect.Bool:
 		c.writeBool(w, v)
@@ -259,7 +268,7 @@ func (c *Config) writeUint(w io.Writer, v reflect.Value) {
 }
 
 func (c *Config) writeUintptr(w io.Writer, v reflect.Value) {
-	_, _ = writeString(w, "0x")
+	_, _ = WriteString(w, "0x")
 	_, _ = strconvio.WriteUint(w, v.Uint(), 16)
 }
 
@@ -278,9 +287,9 @@ func (c *Config) writeString(w io.Writer, v reflect.Value) {
 }
 
 func writeStringValue(w io.Writer, s string, maxLen int) {
-	_, _ = writeString(w, "(len=")
+	_, _ = WriteString(w, "(len=")
 	_, _ = strconvio.WriteInt(w, int64(len(s)), 10)
-	_, _ = writeString(w, ") ")
+	_, _ = WriteString(w, ") ")
 	truncated := false
 	if maxLen > 0 && len(s) > maxLen {
 		s = s[:maxLen]
@@ -288,14 +297,14 @@ func writeStringValue(w io.Writer, s string, maxLen int) {
 	}
 	_, _ = strconvio.WriteQuote(w, s)
 	if truncated {
-		_, _ = writeString(w, " ")
+		_, _ = WriteString(w, " ")
 		writeTruncated(w)
 	}
 }
 
 func (c *Config) writeChan(w io.Writer, v reflect.Value) {
 	if v.IsNil() {
-		writeNil(w)
+		WriteNil(w)
 		return
 	}
 	writeLenCapReflect(w, v)
@@ -303,24 +312,24 @@ func (c *Config) writeChan(w io.Writer, v reflect.Value) {
 
 func (c *Config) writeFunc(w io.Writer, v reflect.Value) {
 	if v.IsNil() {
-		writeNil(w)
+		WriteNil(w)
 		return
 	}
 	name := runtime.FuncForPC(v.Pointer()).Name()
-	_, _ = writeString(w, name)
+	_, _ = WriteString(w, name)
 }
 
 func (c *Config) writePointer(w io.Writer, st *State, v reflect.Value) {
 	if c.checkRecursion(w, st, v) {
 		return
 	}
-	writeArrow(w)
-	c.writeTypeAndValue(w, st, v.Elem())
+	WriteArrow(w)
+	c.WriteTypeAndValue(w, st, v.Elem())
 	c.endRecursion(st)
 }
 
 func (c *Config) writeUnsafePointer(w io.Writer, v reflect.Value) {
-	_, _ = writeString(w, "0x")
+	_, _ = WriteString(w, "0x")
 	_, _ = strconvio.WriteUint(w, uint64(uintptr(v.UnsafePointer())), 16)
 }
 
@@ -331,50 +340,50 @@ func (c *Config) writeArray(w io.Writer, st *State, v reflect.Value) {
 		l = c.SliceMaxLen
 		truncated = true
 	}
-	_, _ = writeString(w, "{\n")
+	_, _ = WriteString(w, "{\n")
 	if v.Len() > 0 {
 		st.Indent++
 		for i := range l {
 			c.WriteIndent(w, st)
-			c.writeTypeAndValue(w, st, v.Index(i))
-			_, _ = writeString(w, ",\n")
+			c.WriteTypeAndValue(w, st, v.Index(i))
+			_, _ = WriteString(w, ",\n")
 		}
 		if truncated {
 			c.WriteIndent(w, st)
 			writeTruncated(w)
-			_, _ = writeString(w, "\n")
+			_, _ = WriteString(w, "\n")
 		}
 		st.Indent--
 	}
 	c.WriteIndent(w, st)
-	_, _ = writeString(w, "}")
+	_, _ = WriteString(w, "}")
 }
 
 func (c *Config) writeSlice(w io.Writer, st *State, v reflect.Value) {
 	if v.IsNil() {
-		writeNil(w)
+		WriteNil(w)
 		return
 	}
 	if c.checkRecursion(w, st, v) {
 		return
 	}
 	writeLenCapReflect(w, v)
-	_, _ = writeString(w, " ")
+	_, _ = WriteString(w, " ")
 	c.writeArray(w, st, v)
 	c.endRecursion(st)
 }
 
 func (c *Config) writeMap(w io.Writer, st *State, v reflect.Value) {
 	if v.IsNil() {
-		writeNil(w)
+		WriteNil(w)
 		return
 	}
 	if c.checkRecursion(w, st, v) {
 		return
 	}
-	_, _ = writeString(w, "(len=")
+	_, _ = WriteString(w, "(len=")
 	_, _ = strconvio.WriteInt(w, int64(v.Len()), 10)
-	_, _ = writeString(w, ") {\n")
+	_, _ = WriteString(w, ") {\n")
 	if v.Len() > 0 {
 		st.Indent++
 		if c.MapSortKeys {
@@ -385,7 +394,7 @@ func (c *Config) writeMap(w io.Writer, st *State, v reflect.Value) {
 		st.Indent--
 	}
 	c.WriteIndent(w, st)
-	_, _ = writeString(w, "}")
+	_, _ = WriteString(w, "}")
 	c.endRecursion(st)
 }
 
@@ -499,18 +508,18 @@ func (c *Config) writeMapEntry(w io.Writer, st *State, key reflect.Value, value 
 	c.WriteIndent(w, st)
 	if c.MapMaxLen > 0 && i >= c.MapMaxLen {
 		writeTruncated(w)
-		_, _ = writeString(w, "\n")
+		_, _ = WriteString(w, "\n")
 		return false
 	}
-	c.writeTypeAndValue(w, st, key)
-	_, _ = writeString(w, ": ")
-	c.writeTypeAndValue(w, st, value)
-	_, _ = writeString(w, ",\n")
+	c.WriteTypeAndValue(w, st, key)
+	_, _ = WriteString(w, ": ")
+	c.WriteTypeAndValue(w, st, value)
+	_, _ = WriteString(w, ",\n")
 	return true
 }
 
 func (c *Config) writeStruct(w io.Writer, st *State, v reflect.Value) {
-	_, _ = writeString(w, "{\n")
+	_, _ = WriteString(w, "{\n")
 	st.Indent++
 	fields := getStructFields(v.Type())
 	for i, field := range fields {
@@ -518,14 +527,14 @@ func (c *Config) writeStruct(w io.Writer, st *State, v reflect.Value) {
 			continue
 		}
 		c.WriteIndent(w, st)
-		_, _ = writeString(w, field.Name)
-		_, _ = writeString(w, ": ")
-		c.writeTypeAndValue(w, st, v.Field(i))
-		_, _ = writeString(w, ",\n")
+		_, _ = WriteString(w, field.Name)
+		_, _ = WriteString(w, ": ")
+		c.WriteTypeAndValue(w, st, v.Field(i))
+		_, _ = WriteString(w, ",\n")
 	}
 	st.Indent--
 	c.WriteIndent(w, st)
-	_, _ = writeString(w, "}")
+	_, _ = WriteString(w, "}")
 }
 
 var (
@@ -591,8 +600,8 @@ func writeReflectValue(c *Config, w io.Writer, st *State, v reflect.Value) bool 
 		return false
 	}
 	rv := v.Interface().(reflect.Value) //nolint:forcetypeassert // Checked above.
-	writeArrow(w)
-	c.writeTypeAndValue(w, st, rv)
+	WriteArrow(w)
+	c.WriteTypeAndValue(w, st, rv)
 	return true
 }
 
@@ -614,7 +623,7 @@ func writeError(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 		return false
 	}
 	err := v.Interface().(error) //nolint:forcetypeassert // Checked above.
-	_, _ = writeString(w, "=> .Error() => ")
+	_, _ = WriteString(w, "=> .Error() => ")
 	_, _ = strconvio.WriteQuote(w, err.Error())
 	return true
 }
@@ -633,7 +642,7 @@ func writeBytes(c *Config, w io.Writer, st *State, v reflect.Value, maxLen int) 
 		return false
 	}
 	if v.IsNil() {
-		writeNil(w)
+		WriteNil(w)
 		return true
 	}
 	writeLenCapReflect(w, v)
@@ -667,9 +676,9 @@ func writeByteser(c *Config, w io.Writer, st *State, v reflect.Value, maxLen int
 	}
 	br := v.Interface().(byteser) //nolint:forcetypeassert // Checked above.
 	b := br.Bytes()
-	_, _ = writeString(w, "=> .Bytes() => ")
+	_, _ = WriteString(w, "=> .Bytes() => ")
 	if b == nil {
-		writeNil(w)
+		WriteNil(w)
 		return true
 	}
 	writeLenCap(w, len(b), cap(b))
@@ -683,7 +692,7 @@ func writeBytesCommon(c *Config, w io.Writer, st *State, b []byte, maxLen int) {
 		b = b[:maxLen]
 		truncated = true
 	}
-	_, _ = writeString(w, "\n")
+	_, _ = WriteString(w, "\n")
 	st.Indent++
 	iw := GetIndentWriter(w, c, st, false)
 	d := hex.Dumper(iw)
@@ -718,7 +727,7 @@ func writeStringer(w io.Writer, v reflect.Value, maxLen int) bool {
 	}
 	sr := v.Interface().(fmt.Stringer) //nolint:forcetypeassert // Checked above.
 	s := sr.String()
-	_, _ = writeString(w, "=> .String() => ")
+	_, _ = WriteString(w, "=> .String() => ")
 	writeStringValue(w, s, maxLen)
 	return true
 }
@@ -744,7 +753,7 @@ func writeFilter(c *Config, w io.Writer, st *State, v reflect.Value, vw ValueWri
 // It should be used with [NewFilterValueWriter] in order to filter specific types.
 func NewDefaultValueWriter() ValueWriter {
 	return func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
-		c.writeValueDefault(w, st, v)
+		c.WriteValueDefault(w, st, v)
 		return true
 	}
 }
@@ -817,16 +826,18 @@ func (iw *indentWriter) Release() {
 	indentWriterPool.Put(iw)
 }
 
-func writeArrow(w io.Writer) {
-	_, _ = writeString(w, "=> ")
+// WriteArrow writes "=> " to the writer.
+func WriteArrow(w io.Writer) {
+	_, _ = WriteString(w, "=> ")
 }
 
-func writeNil(w io.Writer) {
-	_, _ = writeString(w, "<nil>")
+// WriteNil writes "<nil>" to the writer.
+func WriteNil(w io.Writer) {
+	_, _ = WriteString(w, "<nil>")
 }
 
 func writeTruncated(w io.Writer) {
-	_, _ = writeString(w, "<truncated>")
+	_, _ = WriteString(w, "<truncated>")
 }
 
 func writeLenCapReflect(w io.Writer, v reflect.Value) {
@@ -834,14 +845,15 @@ func writeLenCapReflect(w io.Writer, v reflect.Value) {
 }
 
 func writeLenCap(w io.Writer, ln int, cp int) {
-	_, _ = writeString(w, "(len=")
+	_, _ = WriteString(w, "(len=")
 	_, _ = strconvio.WriteInt(w, int64(ln), 10)
-	_, _ = writeString(w, " cap=")
+	_, _ = WriteString(w, " cap=")
 	_, _ = strconvio.WriteInt(w, int64(cp), 10)
-	_, _ = writeString(w, ")")
+	_, _ = WriteString(w, ")")
 }
 
-func writeString(w io.Writer, s string) (int, error) {
+// WriteString writes a string to the writer.
+func WriteString(w io.Writer, s string) (int, error) {
 	return w.Write(unsafeStringToBytes(s)) //nolint:wrapcheck // The error is not wrapped.
 }
 
