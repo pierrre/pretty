@@ -664,8 +664,7 @@ var testIndentWriterValues = []struct {
 
 func testIndentWriter(tb testing.TB, c *Config, w io.Writer, st *State) {
 	tb.Helper()
-	iw := GetIndentWriter(w, c, st, false)
-	defer iw.Release()
+	iw := NewIndentWriter(w, c, st, false)
 	for _, v := range testIndentWriterValues {
 		n, err := iw.Write(v.b)
 		assert.NoError(tb, err)
@@ -679,8 +678,7 @@ func TestIndentWriterErrorIndent(t *testing.T) {
 	st := &State{
 		Indent: 1,
 	}
-	iw := GetIndentWriter(w, c, st, false)
-	defer iw.Release()
+	iw := NewIndentWriter(w, c, st, false)
 	n, err := iw.Write([]byte("test"))
 	assert.Error(t, err)
 	assert.Equal(t, n, 0)
@@ -692,8 +690,7 @@ func TestIndentWriterErrorWrite(t *testing.T) {
 	st := &State{
 		Indent: 1,
 	}
-	iw := GetIndentWriter(w, c, st, true)
-	defer iw.Release()
+	iw := NewIndentWriter(w, c, st, true)
 	n, err := iw.Write([]byte("test"))
 	assert.Error(t, err)
 	assert.Equal(t, n, 0)
@@ -704,8 +701,7 @@ func BenchmarkIndentWriter(b *testing.B) {
 	st := &State{
 		Indent: 1,
 	}
-	iw := GetIndentWriter(io.Discard, c, st, false)
-	defer iw.Release()
+	iw := NewIndentWriter(io.Discard, c, st, false)
 	for range b.N {
 		for _, v := range testIndentWriterValues {
 			_, _ = iw.Write(v.b)

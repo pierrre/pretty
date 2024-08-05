@@ -802,15 +802,39 @@ func (ft *formatter) Format(f fmt.State, verb rune) {
 	ft.config.Write(f, ft.value)
 }
 
-// indentWriter is a io.Writer that indents.
-type indentWriter struct {
+// IndentWriter is a [io.Writer] that indents.
+//
+// It is exposed for internal use.
+// It should not be used outside of this package.
+type IndentWriter struct {
 	writer   io.Writer
 	config   *Config
 	state    *State
 	indented bool
 }
 
-func (iw *indentWriter) Write(p []byte) (n int, err error) {
+// NewIndentWriter creates a new [IndentWriter].
+func NewIndentWriter(w io.Writer, c *Config, st *State, indented bool) *IndentWriter {
+	iw := &IndentWriter{}
+	iw.init(w, c, st, indented)
+	return iw
+}
+
+func (iw *IndentWriter) init(w io.Writer, c *Config, st *State, indented bool) {
+	iw.writer = w
+	iw.config = c
+	iw.state = st
+	iw.indented = indented
+}
+
+func (iw *IndentWriter) reset() {
+	iw.writer = nil
+	iw.config = nil
+	iw.state = nil
+	iw.indented = false
+}
+
+func (iw *IndentWriter) Write(p []byte) (n int, err error) {
 	for len(p) > 0 {
 		if !iw.indented {
 			nn, err := writeIndent(iw.writer, iw.config.Indent, iw.state.Indent)
@@ -839,29 +863,22 @@ func (iw *indentWriter) Write(p []byte) (n int, err error) {
 
 var indentWriterPool = &sync.Pool{
 	New: func() any {
-		return &indentWriter{}
+		return &IndentWriter{}
 	},
 }
 
-// GetIndentWriter returns an indentWriter from the pool.
+// GetIndentWriter returns a [IndentWriter] from a pool.
 //
-// It is exposed for internal use.
-// It should not be used outside of this package.
-func GetIndentWriter(w io.Writer, c *Config, st *State, indented bool) *indentWriter {
-	iw := indentWriterPool.Get().(*indentWriter) //nolint:forcetypeassert // The pool only contains *indentWriter.
-	iw.writer = w
-	iw.config = c
-	iw.state = st
-	iw.indented = indented
+// The caller must call [IndentWriter.Release] after using it.
+func GetIndentWriter(w io.Writer, c *Config, st *State, indented bool) *IndentWriter {
+	iw := indentWriterPool.Get().(*IndentWriter) //nolint:forcetypeassert // The pool only contains *indentWriter.
+	iw.init(w, c, st, indented)
 	return iw
 }
 
-// Release releases the indentWriter to the pool.
-func (iw *indentWriter) Release() {
-	iw.writer = nil
-	iw.config = nil
-	iw.state = nil
-	iw.indented = false
+// Release releases the [IndentWriter] to the pool.
+func (iw *IndentWriter) Release() {
+	iw.reset()
 	indentWriterPool.Put(iw)
 }
 
