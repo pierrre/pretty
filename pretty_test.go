@@ -550,6 +550,12 @@ func TestConfig(t *testing.T) {
 	}
 }
 
+func TestConfigPanicWriterError(t *testing.T) {
+	c := newTestConfig()
+	w := &testErrorWriter{}
+	c.Write(w, "test")
+}
+
 func BenchmarkConfig(b *testing.B) {
 	for _, tc := range testCases {
 		b.Run(tc.name, func(b *testing.B) {

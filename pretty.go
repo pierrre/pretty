@@ -165,16 +165,16 @@ func (c *Config) checkRecover(w io.Writer, r any) {
 	if r == nil {
 		return
 	}
-	WriteString(w, "<panic>: ")
+	_, _ = writeString(w, "<panic>: ")
 	switch r := r.(type) {
 	case string:
-		WriteString(w, r)
+		_, _ = writeString(w, r)
 	case error:
-		WriteString(w, r.Error())
+		_, _ = writeString(w, r.Error())
 	default:
-		noErrorWrite(fmt.Fprint(w, r))
+		_, _ = fmt.Fprint(w, r)
 	}
-	WriteString(w, "\n")
+	_, _ = writeString(w, "\n")
 }
 
 func (c *Config) checkValid(w io.Writer, v reflect.Value) bool {
