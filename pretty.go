@@ -668,7 +668,7 @@ func writeError(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 
 var bytesType = reflect.TypeFor[[]byte]()
 
-// NewBytesValueWriter returns a [ValueWriter] that writes []byte with [encoding/hex.Dumper].
+// NewBytesValueWriter returns a [ValueWriter] that writes []byte with [hex.Dumper].
 func NewBytesValueWriter(maxLen int) ValueWriter {
 	return func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 		return writeBytes(c, w, st, v, maxLen)
@@ -695,7 +695,7 @@ type byteser interface {
 
 var byteserType = reflect.TypeFor[byteser]()
 
-// NewByteserValueWriter returns a [ValueWriter] that writes interface { Bytes() []byte } with [encoding/hex.Dumper].
+// NewByteserValueWriter returns a [ValueWriter] that writes interface { Bytes() []byte } with [hex.Dumper].
 func NewByteserValueWriter(maxLen int) ValueWriter {
 	return func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 		return writeByteser(c, w, st, v, maxLen)
