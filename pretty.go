@@ -76,8 +76,8 @@ func NewConfig() *Config {
 		ValueWriters: []ValueWriter{
 			NewReflectValueValueWriter(),
 			NewErrorValueWriter(),
-			NewBytesValueWriter(0),
-			NewByteserValueWriter(0),
+			NewBytesHexValueWriter(0),
+			NewByteserHexValueWriter(0),
 			NewStringerValueWriter(0),
 		},
 	}
@@ -668,14 +668,14 @@ func writeError(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 
 var bytesType = reflect.TypeFor[[]byte]()
 
-// NewBytesValueWriter returns a [ValueWriter] that writes []byte with [hex.Dumper].
-func NewBytesValueWriter(maxLen int) ValueWriter {
+// NewBytesHexValueWriter returns a [ValueWriter] that writes []byte with [hex.Dumper].
+func NewBytesHexValueWriter(maxLen int) ValueWriter {
 	return func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
-		return writeBytes(c, w, st, v, maxLen)
+		return writeBytesHex(c, w, st, v, maxLen)
 	}
 }
 
-func writeBytes(c *Config, w io.Writer, st *State, v reflect.Value, maxLen int) bool {
+func writeBytesHex(c *Config, w io.Writer, st *State, v reflect.Value, maxLen int) bool {
 	if v.Type() != bytesType {
 		return false
 	}
@@ -685,7 +685,7 @@ func writeBytes(c *Config, w io.Writer, st *State, v reflect.Value, maxLen int) 
 	}
 	writeLenCapReflect(w, v)
 	b := v.Bytes()
-	writeBytesCommon(c, w, st, b, maxLen)
+	writeBytesHexCommon(c, w, st, b, maxLen)
 	return true
 }
 
@@ -695,14 +695,14 @@ type byteser interface {
 
 var byteserType = reflect.TypeFor[byteser]()
 
-// NewByteserValueWriter returns a [ValueWriter] that writes interface { Bytes() []byte } with [hex.Dumper].
-func NewByteserValueWriter(maxLen int) ValueWriter {
+// NewByteserHexValueWriter returns a [ValueWriter] that writes interface { Bytes() []byte } with [hex.Dumper].
+func NewByteserHexValueWriter(maxLen int) ValueWriter {
 	return func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
-		return writeByteser(c, w, st, v, maxLen)
+		return writeByteserHex(c, w, st, v, maxLen)
 	}
 }
 
-func writeByteser(c *Config, w io.Writer, st *State, v reflect.Value, maxLen int) bool {
+func writeByteserHex(c *Config, w io.Writer, st *State, v reflect.Value, maxLen int) bool {
 	if !v.CanInterface() {
 		return false
 	}
@@ -720,11 +720,11 @@ func writeByteser(c *Config, w io.Writer, st *State, v reflect.Value, maxLen int
 		return true
 	}
 	writeLenCap(w, len(b), cap(b))
-	writeBytesCommon(c, w, st, b, maxLen)
+	writeBytesHexCommon(c, w, st, b, maxLen)
 	return true
 }
 
-func writeBytesCommon(c *Config, w io.Writer, st *State, b []byte, maxLen int) {
+func writeBytesHexCommon(c *Config, w io.Writer, st *State, b []byte, maxLen int) {
 	truncated := false
 	if maxLen > 0 && len(b) > maxLen {
 		b = b[:maxLen]

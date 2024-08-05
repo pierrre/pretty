@@ -379,61 +379,61 @@ var testCases = []testCase{
 		},
 	},
 	{
-		name:  "Bytes",
+		name:  "BytesHex",
 		value: bytes.Repeat([]byte("test"), 100),
 		configure: func(c *Config) {
-			c.ValueWriters = []ValueWriter{NewBytesValueWriter(0)}
+			c.ValueWriters = []ValueWriter{NewBytesHexValueWriter(0)}
 		},
 	},
 	{
-		name:  "BytesNil",
+		name:  "BytesHexNil",
 		value: []byte(nil),
 		configure: func(c *Config) {
-			c.ValueWriters = []ValueWriter{NewBytesValueWriter(0)}
+			c.ValueWriters = []ValueWriter{NewBytesHexValueWriter(0)}
 		},
 	},
 	{
-		name:  "BytesTruncated",
+		name:  "BytesHexTruncated",
 		value: []byte("test"),
 		configure: func(c *Config) {
-			c.ValueWriters = []ValueWriter{NewBytesValueWriter(2)}
+			c.ValueWriters = []ValueWriter{NewBytesHexValueWriter(2)}
 		},
 	},
 	{
-		name:  "Byteser",
+		name:  "ByteserHex",
 		value: &testByteser{b: bytes.Repeat([]byte("test"), 100)},
 		configure: func(c *Config) {
-			c.ValueWriters = []ValueWriter{NewByteserValueWriter(0)}
+			c.ValueWriters = []ValueWriter{NewByteserHexValueWriter(0)}
 		},
 	},
 	{
-		name:  "ByteserNil",
+		name:  "ByteserHexNil",
 		value: (*testByteser)(nil),
 		configure: func(c *Config) {
-			c.ValueWriters = []ValueWriter{NewByteserValueWriter(0)}
+			c.ValueWriters = []ValueWriter{NewByteserHexValueWriter(0)}
 		},
 	},
 	{
-		name:  "ByteserNilBytes",
+		name:  "ByteserHexNilBytes",
 		value: &testByteser{},
 		configure: func(c *Config) {
-			c.ValueWriters = []ValueWriter{NewByteserValueWriter(0)}
+			c.ValueWriters = []ValueWriter{NewByteserHexValueWriter(0)}
 		},
 	},
 	{
-		name:  "ByteserTruncated",
+		name:  "ByteserHexTruncated",
 		value: &testByteser{b: []byte("test")},
 		configure: func(c *Config) {
-			c.ValueWriters = []ValueWriter{NewByteserValueWriter(2)}
+			c.ValueWriters = []ValueWriter{NewByteserHexValueWriter(2)}
 		},
 	},
 	{
-		name: "ByteserUnexported",
+		name: "ByteserHexUnexported",
 		value: testUnexported{
 			v: &testByteser{},
 		},
 		configure: func(c *Config) {
-			c.ValueWriters = []ValueWriter{NewByteserValueWriter(0)}
+			c.ValueWriters = []ValueWriter{NewByteserHexValueWriter(0)}
 		},
 	},
 	{
