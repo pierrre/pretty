@@ -189,7 +189,7 @@ func (c *Config) checkRecover(w io.Writer, r any) {
 	if r == nil {
 		return
 	}
-	_, _ = writeString(w, "<panic>: ")
+	_, _ = WriteString(w, "<panic>: ")
 	switch r := r.(type) {
 	case string:
 		_, _ = WriteString(w, r)
@@ -861,7 +861,7 @@ func WriteArrow(w io.Writer) {
 
 func writeArrowWrappedString(w io.Writer, s string) {
 	WriteArrow(w)
-	_, _ = writeString(w, s)
+	_, _ = WriteString(w, s)
 	WriteArrow(w)
 }
 
