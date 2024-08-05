@@ -472,7 +472,7 @@ func (c *Config) writeMapUnsorted(w io.Writer, st *State, v reflect.Value) {
 	}
 }
 
-var typeInterface = reflect.TypeOf((*any)(nil)).Elem()
+var typeInterface = reflect.TypeFor[any]()
 
 var reflectValuePool = &sync.Pool{
 	New: func() any {
@@ -623,7 +623,7 @@ func (st *State) reset() {
 // Implementations must check [reflect.Value.CanInterface] before using [reflect.Value.Interface].
 type ValueWriter func(c *Config, w io.Writer, st *State, v reflect.Value) bool
 
-var typeReflectValue = reflect.TypeOf(reflect.Value{})
+var typeReflectValue = reflect.TypeFor[reflect.Value]()
 
 // NewReflectValueValueWriter returns a [ValueWriter] that writes [reflect.Value].
 func NewReflectValueValueWriter() ValueWriter {
@@ -643,7 +643,7 @@ func writeReflectValue(c *Config, w io.Writer, st *State, v reflect.Value) bool 
 	return true
 }
 
-var typeError = reflect.TypeOf((*error)(nil)).Elem()
+var typeError = reflect.TypeFor[error]()
 
 // NewErrorValueWriter returns a [ValueWriter] that writes error.
 func NewErrorValueWriter() ValueWriter {
@@ -666,7 +666,7 @@ func writeError(c *Config, w io.Writer, st *State, v reflect.Value) bool {
 	return true
 }
 
-var bytesType = reflect.TypeOf([]byte(nil))
+var bytesType = reflect.TypeFor[[]byte]()
 
 // NewBytesValueWriter returns a [ValueWriter] that writes []byte with [encoding/hex.Dumper].
 func NewBytesValueWriter(maxLen int) ValueWriter {
@@ -693,7 +693,7 @@ type byteser interface {
 	Bytes() []byte
 }
 
-var byteserType = reflect.TypeOf((*byteser)(nil)).Elem()
+var byteserType = reflect.TypeFor[byteser]()
 
 // NewByteserValueWriter returns a [ValueWriter] that writes interface { Bytes() []byte } with [encoding/hex.Dumper].
 func NewByteserValueWriter(maxLen int) ValueWriter {
@@ -744,7 +744,7 @@ func writeBytesCommon(c *Config, w io.Writer, st *State, b []byte, maxLen int) {
 	})
 }
 
-var typeStringer = reflect.TypeOf((*fmt.Stringer)(nil)).Elem()
+var typeStringer = reflect.TypeFor[fmt.Stringer]()
 
 // NewStringerValueWriter returns a [ValueWriter] that writes [fmt.Stringer].
 func NewStringerValueWriter(maxLen int) ValueWriter {
