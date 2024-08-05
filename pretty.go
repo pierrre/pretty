@@ -158,9 +158,7 @@ func (c *Config) WriteTypeAndValue(w io.Writer, st *State, v reflect.Value) {
 	if c.checkValid(w, v) {
 		return
 	}
-	if c.checkInterface(w, st, v) {
-		return
-	}
+	v = c.convertInterface(v)
 	c.runCheckDepth(w, st, func(st *State) {
 		WriteString(w, "(")
 		c.WriteType(w, v.Type())
@@ -193,12 +191,11 @@ func (c *Config) checkValid(w io.Writer, v reflect.Value) bool {
 	return false
 }
 
-func (c *Config) checkInterface(w io.Writer, st *State, v reflect.Value) bool {
+func (c *Config) convertInterface(v reflect.Value) reflect.Value {
 	if v.Kind() == reflect.Interface {
-		c.WriteTypeAndValue(w, st, v.Elem())
-		return true
+		return v.Elem()
 	}
-	return false
+	return v
 }
 
 func (c *Config) runCheckDepth(w io.Writer, st *State, f func(st *State)) {
