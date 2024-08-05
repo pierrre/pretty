@@ -160,6 +160,8 @@ func (c *Config) endRecursion(st *State) {
 }
 
 // WriteTypeAndValue writes the type and value to the writer.
+//
+// It writes "(TYPE) VALUE".
 func (c *Config) WriteTypeAndValue(w io.Writer, st *State, v reflect.Value) {
 	if !v.IsValid() {
 		WriteNil(w)
