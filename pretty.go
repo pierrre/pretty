@@ -631,11 +631,12 @@ func NewReflectValueValueWriter() ValueWriter {
 }
 
 func writeReflectValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
-	if !v.CanInterface() {
-		return false
-	}
 	if v.Type() != typeReflectValue {
 		return false
+	}
+	if !v.CanInterface() {
+		WriteUnexported(w)
+		return true
 	}
 	rv := v.Interface().(reflect.Value) //nolint:forcetypeassert // Checked above.
 	WriteArrow(w)
@@ -876,6 +877,11 @@ func WriteNil(w io.Writer) {
 
 func writeTruncated(w io.Writer) {
 	WriteString(w, "<truncated>")
+}
+
+// WriteUnexported writes "<unexported>" to the writer.
+func WriteUnexported(w io.Writer) {
+	WriteString(w, "<unexported>")
 }
 
 func writeLenCapReflect(w io.Writer, v reflect.Value) {

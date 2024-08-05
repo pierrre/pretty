@@ -1,0 +1,10 @@
+{
+	"entries": [
+		{
+			"equal": "(pretty_test.testUnexported) {\n\tv: (reflect.Value) <unexported>,\n}"
+		},
+		{
+			"equal": 0
+		}
+	]
+}

@@ -379,6 +379,15 @@ var testCases = []testCase{
 		},
 	},
 	{
+		name: "ReflectValueUnexported",
+		value: testUnexported{
+			v: reflect.ValueOf(123),
+		},
+		configure: func(c *Config) {
+			c.ValueWriters = []ValueWriter{NewReflectValueValueWriter()}
+		},
+	},
+	{
 		name:  "BytesHex",
 		value: bytes.Repeat([]byte("test"), 100),
 		configure: func(c *Config) {
