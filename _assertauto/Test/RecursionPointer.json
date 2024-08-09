@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(*interface {}) => <recursion>"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

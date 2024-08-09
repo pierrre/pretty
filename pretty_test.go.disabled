@@ -1,0 +1,139 @@
+package pretty_test
+
+import (
+	"bytes"
+	"errors"
+	"fmt"
+	"io"
+	"reflect"
+	"strconv"
+	"strings"
+	"testing"
+	"unsafe" //nolint:depguard // Required for test.
+
+	"github.com/pierrre/assert"
+	"github.com/pierrre/assert/assertauto"
+	. "github.com/pierrre/pretty"
+)
+
+func init() {
+	DefaultConfig.MapSortKeys = true // Makes tests more deterministic.
+}
+
+func Example() {
+	type exampleStruct struct {
+		Int    int
+		Float  float64
+		String string
+		Map    map[string]int
+		Slice  []int
+	}
+	v := exampleStruct{
+		Int:    123,
+		Float:  123.456,
+		String: "test",
+		Map: map[string]int{
+			"foo": 1,
+			"bar": 2,
+		},
+		Slice: []int{1, 2, 3},
+	}
+	s := String(v)
+	fmt.Println(s)
+	// Output: (pretty_test.exampleStruct) {
+	// 	Int: (int) 123,
+	// 	Float: (float64) 123.456,
+	// 	String: (string) (len=4) "test",
+	// 	Map: (map[string]int) (len=2) {
+	// 		(string) (len=3) "bar": (int) 2,
+	// 		(string) (len=3) "foo": (int) 1,
+	// 	},
+	// 	Slice: ([]int) (len=3 cap=3) {
+	// 		(int) 1,
+	// 		(int) 2,
+	// 		(int) 3,
+	// 	},
+	// }
+}
+
+func ExampleString() {
+	s := String("test")
+	fmt.Println(s)
+	// Output: (string) (len=4) "test"
+}
+
+func ExampleWrite() {
+	buf := new(bytes.Buffer)
+	Write(buf, "test")
+	s := buf.String()
+	fmt.Println(s)
+	// Output: (string) (len=4) "test"
+}
+
+func ExampleFormatter() {
+	f := Formatter("test")
+	s := fmt.Sprintf("%v", f)
+	fmt.Println(s)
+	// Output: (string) (len=4) "test"
+}
+
+func ExampleValueWriter() {
+	vw := func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+		WriteString(w, "example")
+		return true
+	}
+	c := NewConfig()
+	c.ValueWriters = []ValueWriter{vw}
+	s := c.String("test")
+	fmt.Println(s)
+	// Output: (string) example
+}
+
+func TestConfigPanicWriterError(t *testing.T) {
+	c := newTestConfig()
+	w := &testErrorWriter{}
+	c.Write(w, "test")
+}
+
+func TestWrite(t *testing.T) {
+	buf := new(bytes.Buffer)
+	Write(buf, "test")
+	s := buf.String()
+	assertauto.Equal(t, s)
+	allocs := testing.AllocsPerRun(100, func() {
+		t.Helper()
+		Write(io.Discard, "test")
+	})
+	assertauto.Equal(t, allocs)
+}
+
+func TestString(t *testing.T) {
+	s := String("test")
+	assertauto.Equal(t, s)
+	allocs := testing.AllocsPerRun(100, func() {
+		t.Helper()
+		String("test")
+	})
+	assertauto.Equal(t, allocs)
+}
+
+func TestFormatter(t *testing.T) {
+	buf := new(bytes.Buffer)
+	f := Formatter("test")
+	_, err := fmt.Fprintf(buf, "%v", f)
+	assert.NoError(t, err)
+	s := buf.String()
+	assertauto.Equal(t, s)
+	allocs := testing.AllocsPerRun(100, func() {
+		t.Helper()
+		_, err := fmt.Fprintf(io.Discard, "%v", f)
+		assert.NoError(t, err)
+	})
+	assertauto.Equal(t, allocs)
+}
+
+func TestNoErrorPanic(t *testing.T) {
+	assert.Panics(t, func() {
+		WriteBytes(&testErrorWriter{}, []byte("test"))
+	})
+}

@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(func()) <nil>"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

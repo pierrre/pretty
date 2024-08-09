@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(chan int) <nil>"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

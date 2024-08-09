@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(reflect.Value) => (int) 123"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

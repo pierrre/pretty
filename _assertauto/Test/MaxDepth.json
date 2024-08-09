@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(***interface {}) => (**interface {}) => <max depth>"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(string) <invalid>"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

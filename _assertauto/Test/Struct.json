@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(pretty_test.testStruct) {\n\tFoo: (int) 123,\n\tBar: (float64) 123.456,\n\tunexported: (int) 123,\n}"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

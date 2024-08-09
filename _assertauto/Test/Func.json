@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(func() *pretty.Config) github.com/pierrre/pretty.NewConfig"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

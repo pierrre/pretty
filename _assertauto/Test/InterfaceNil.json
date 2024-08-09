@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "([1]interface {}) {\n\t(interface {}) => <nil>,\n}"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

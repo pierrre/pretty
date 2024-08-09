@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "([]uint8) <nil>"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(map[int]int) <nil>"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

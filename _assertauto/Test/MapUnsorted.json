@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(map[int]int) (len=1) {\n\t(int) 1: (int) 2,\n}"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

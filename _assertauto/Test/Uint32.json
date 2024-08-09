@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(uint32) 123"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(unsafe.Pointer) 0x0"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

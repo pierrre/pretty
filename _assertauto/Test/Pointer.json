@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(*int) => (int) 123"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

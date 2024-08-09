@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(string) <panic>: error\n"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

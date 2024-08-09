@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(struct {}) {}"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

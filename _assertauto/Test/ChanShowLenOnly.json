@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(chan int) (len=1)"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

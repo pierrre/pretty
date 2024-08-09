@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(*pretty_test.testBytesable) => .Bytes() => (len=400 cap=400) \n\t00000000  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000010  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000020  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000030  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000040  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000050  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000060  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000070  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000080  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000090  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t000000a0  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t000000b0  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t000000c0  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t000000d0  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t000000e0  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t000000f0  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000100  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000110  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000120  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000130  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000140  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000150  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000160  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000170  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n\t00000180  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|\n"
+		},
+		{
+			"name": "allocs",
+			"equal": 1
+		}
+	]
+}
