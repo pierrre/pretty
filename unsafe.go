@@ -7,7 +7,7 @@ import (
 	"unsafe" //nolint:depguard // Required for string to []byte conversion.
 )
 
-func writeString(w io.Writer, s string) (int, error) {
+func writeStringErr(w io.Writer, s string) (int, error) {
 	return w.Write(unsafeStringToBytes(s)) //nolint:wrapcheck // The error is not wrapped.
 }
 

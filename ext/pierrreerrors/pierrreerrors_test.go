@@ -8,31 +8,27 @@ import (
 	"github.com/pierrre/pretty"
 )
 
+func init() {
+	ConfigureDefault()
+	pretty.DefaultCommonValueWriter.ConfigureTest()
+}
+
 func TestValueWriter(t *testing.T) {
-	c := pretty.NewConfig()
-	c.ValueWriters = nil
-	Configure(c)
 	err := errors.New("error")
-	s := c.String(err)
+	s := pretty.String(err)
 	assert.StringHasPrefix(t, s, "(*errstack.stack) error\n\tstack\n")
 }
 
 func TestValueWriterNil(t *testing.T) {
-	c := pretty.NewConfig()
-	c.ValueWriters = nil
-	Configure(c)
 	var err error = (*testError)(nil)
-	s := c.String(err)
-	assert.Equal(t, s, "(*pierrreerrors.testError) => <nil>")
+	s := pretty.String(err)
+	assert.Equal(t, s, "(*pierrreerrors.testError) <nil>")
 }
 
 func TestValueWriterUnexported(t *testing.T) {
-	c := pretty.NewConfig()
-	c.ValueWriters = nil
-	Configure(c)
 	err := errors.New("error")
 	v := &testUnexported{v: err}
-	s := c.String(v)
+	s := pretty.String(v)
 	assert.StringHasPrefix(t, s, "(*pierrreerrors.testUnexported) => (pierrreerrors.testUnexported) {\n\tv: (*errstack.stack) => (errstack.stack) {\n\t\terror: (*errors.errorString) => (errors.errorString)")
 }
 

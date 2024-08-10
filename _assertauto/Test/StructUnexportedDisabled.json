@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(string) (len=4) \"test\""
+			"equal": "(pretty_test.testStruct) {\n\tFoo: (int) 123,\n\tBar: (float64) 123.456,\n}"
 		},
 		{
 			"name": "allocs",

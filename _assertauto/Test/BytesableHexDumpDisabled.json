@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(*pretty_test.testBytesable) => (pretty_test.testBytesable) {\n\tb: ([]uint8) (len=4 cap=4) \n\t\t00000000  74 65 73 74                                       |test|\n,\n}"
+		},
+		{
+			"name": "allocs",
+			"equal": 1
+		}
+	]
+}

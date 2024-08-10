@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(string) (len=4) \"test\""
+			"equal": "([]int) (len=3 cap=3) {\n\t(int) 1,\n\t(int) 2,\n\t<truncated>\n}"
 		},
 		{
 			"name": "allocs",

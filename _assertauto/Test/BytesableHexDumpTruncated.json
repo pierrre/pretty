@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(*pretty_test.testBytesable) => .Bytes() => (len=4 cap=4) \n\t00000000  74 65                                             |te|\n\t<truncated>"
+		},
+		{
+			"name": "allocs",
+			"equal": 1
+		}
+	]
+}

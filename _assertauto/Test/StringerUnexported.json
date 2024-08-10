@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(pretty_test.testUnexported) {\n\tv: (*pretty_test.testStringer) => (pretty_test.testStringer) {\n\t\ts: (string) (len=0) \"\",\n\t},\n}"
+		},
+		{
+			"name": "allocs",
+			"equal": 0
+		}
+	]
+}

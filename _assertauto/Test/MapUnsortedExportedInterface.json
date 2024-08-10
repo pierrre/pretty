@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(string) (len=4) \"test\""
+			"equal": "(map[interface {}]interface {}) (len=1) {\n\t(int) 1: (int) 2,\n}"
 		},
 		{
 			"name": "allocs",

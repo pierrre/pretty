@@ -1,0 +1,12 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "(map[int]interface {}) (len=1) {\n\t(int) 0: <recursion>,\n}"
+		},
+		{
+			"name": "allocs",
+			"equal": 3
+		}
+	]
+}

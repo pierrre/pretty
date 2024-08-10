@@ -2,11 +2,11 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(string) (len=4) \"test\""
+			"equal": "(float32) 123.456"
 		},
 		{
 			"name": "allocs",
-			"equal": 1
+			"equal": 0
 		}
 	]
 }
