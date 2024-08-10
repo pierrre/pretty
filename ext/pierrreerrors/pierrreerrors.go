@@ -49,7 +49,7 @@ func NewValueWriter() *ValueWriter {
 var typeError = reflect.TypeFor[error]()
 
 // WriteValue implements [pretty.ValueWriter].
-func (vw *ValueWriter) WriteValue(c *pretty.Config, w io.Writer, st *pretty.State, v reflect.Value) bool {
+func (vw *ValueWriter) WriteValue(c *pretty.Config, w io.Writer, st pretty.State, v reflect.Value) bool {
 	if !v.Type().Implements(typeError) {
 		return false
 	}
@@ -60,10 +60,9 @@ func (vw *ValueWriter) WriteValue(c *pretty.Config, w io.Writer, st *pretty.Stat
 		return false
 	}
 	err := v.Interface().(error) //nolint:forcetypeassert // Checked above.
-	st.RunIndent(func(st *pretty.State) {
-		iw := pretty.GetIndentWriter(c, w, st, true)
-		defer iw.Release()
-		errverbose.Write(iw, err)
-	})
+	st.Indent++
+	iw := pretty.GetIndentWriter(c, w, st, true)
+	defer iw.Release()
+	errverbose.Write(iw, err)
 	return true
 }

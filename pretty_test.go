@@ -80,7 +80,7 @@ func ExampleFormatter() {
 
 func ExampleValueWriter() {
 	c := NewConfig()
-	vw := func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+	vw := func(c *Config, w io.Writer, st State, v reflect.Value) bool {
 		_, _ = io.WriteString(w, "example")
 		return true
 	}
@@ -127,7 +127,7 @@ var testCases = []testCase{
 		name:  "Invalid",
 		value: "test",
 		configure: func(vw *CommonValueWriter) {
-			vw.ValueWriters = ValueWriters{func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+			vw.ValueWriters = ValueWriters{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
 				return vw.Kind.WriteValue(c, w, st, reflect.ValueOf(nil))
 			}}
 		},
@@ -620,7 +620,7 @@ var testCases = []testCase{
 		value:        "test",
 		panicRecover: true,
 		configure: func(vw *CommonValueWriter) {
-			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
 				panic("string")
 			}}
 		},
@@ -631,7 +631,7 @@ var testCases = []testCase{
 		panicRecover: true,
 		configure: func(vw *CommonValueWriter) {
 			err := errors.New("error")
-			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
 				panic(err)
 			}}
 		},
@@ -641,7 +641,7 @@ var testCases = []testCase{
 		value:        "test",
 		panicRecover: true,
 		configure: func(vw *CommonValueWriter) {
-			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
 				panic(123)
 			}}
 		},
@@ -989,7 +989,7 @@ func Benchmark(b *testing.B) {
 
 func TestPrinterPanicNotHandled(t *testing.T) {
 	c := NewConfig()
-	vw := func(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+	vw := func(c *Config, w io.Writer, st State, v reflect.Value) bool {
 		return false
 	}
 	p := NewPrinter(c, vw)
@@ -1038,7 +1038,7 @@ func TestFormatter(t *testing.T) {
 func TestIndentWriter(t *testing.T) {
 	buf := new(bytes.Buffer)
 	c := NewConfig()
-	st := &State{
+	st := State{
 		Indent: 1,
 	}
 	testIndentWriter(t, c, buf, st)
@@ -1071,7 +1071,7 @@ var testIndentWriterValues = []struct {
 	},
 }
 
-func testIndentWriter(tb testing.TB, c *Config, w io.Writer, st *State) {
+func testIndentWriter(tb testing.TB, c *Config, w io.Writer, st State) {
 	tb.Helper()
 	iw := NewIndentWriter(c, w, st, false)
 	for _, v := range testIndentWriterValues {
@@ -1084,7 +1084,7 @@ func testIndentWriter(tb testing.TB, c *Config, w io.Writer, st *State) {
 func TestIndentWriterErrorIndent(t *testing.T) {
 	w := &testErrorWriter{}
 	c := NewConfig()
-	st := &State{
+	st := State{
 		Indent: 1,
 	}
 	iw := NewIndentWriter(c, w, st, false)
@@ -1096,7 +1096,7 @@ func TestIndentWriterErrorIndent(t *testing.T) {
 func TestIndentWriterErrorWrite(t *testing.T) {
 	w := &testErrorWriter{}
 	c := NewConfig()
-	st := &State{
+	st := State{
 		Indent: 1,
 	}
 	iw := NewIndentWriter(c, w, st, true)
@@ -1107,7 +1107,7 @@ func TestIndentWriterErrorWrite(t *testing.T) {
 
 func BenchmarkIndentWriter(b *testing.B) {
 	c := NewConfig()
-	st := &State{
+	st := State{
 		Indent: 1,
 	}
 	iw := NewIndentWriter(c, io.Discard, st, false)

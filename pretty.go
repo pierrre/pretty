@@ -67,10 +67,8 @@ func (p *Printer) Write(w io.Writer, vi any) {
 		writeNil(w)
 		return
 	}
-	stItf := statePool.Get()
-	defer statePool.Put(stItf)
-	st := stItf.(*State) //nolint:forcetypeassert // The pool only contains *State.
-	st.reset()
+	st := getState()
+	defer st.release()
 	mustHandle(p.ValueWriter(p.Config, w, st, v))
 }
 
@@ -125,14 +123,8 @@ func NewConfig() *Config {
 }
 
 // WriteIndent writes the indentation to the [io.Writer].
-func (c *Config) WriteIndent(w io.Writer, st *State) {
+func (c *Config) WriteIndent(w io.Writer, st State) {
 	WriteIndent(w, c.Indent, st.Indent)
-}
-
-var statePool = &sync.Pool{
-	New: func() any {
-		return &State{}
-	},
 }
 
 // State represents the state of the [Printer].
@@ -141,41 +133,47 @@ var statePool = &sync.Pool{
 type State struct {
 	Depth   int
 	Indent  int
-	Visited []uintptr
+	Visited *[]uintptr
 }
 
-// RunDepth runs the function with incremented depth and restores the original depth after.
-func (st *State) RunDepth(f func(st *State)) {
-	st.Depth++
-	defer func() {
-		st.Depth--
-	}()
-	f(st)
+func getState() State {
+	vs := getStateVisited()
+	*vs = (*vs)[:0]
+	return State{
+		Visited: vs,
+	}
 }
 
-// RunIndent runs the function with incremented indentation and restores the original indentation after.
-func (st *State) RunIndent(f func(st *State)) {
-	st.Indent++
-	defer func() {
-		st.Indent--
-	}()
-	f(st)
+func (st State) pushPopVisited(p uintptr) func() {
+	st.pushVisited(p)
+	return st.popVisited
 }
 
-// RunVisited runs the function with the visited pointer and restores the original visited pointers after.
-func (st *State) RunVisited(p uintptr, f func(st *State)) {
-	l := len(st.Visited)
-	st.Visited = append(st.Visited, p)
-	defer func() {
-		st.Visited = st.Visited[:l]
-	}()
-	f(st)
+func (st State) pushVisited(p uintptr) {
+	*st.Visited = append(*st.Visited, p)
 }
 
-func (st *State) reset() {
-	st.Depth = 0
-	st.Indent = 0
-	st.Visited = st.Visited[:0]
+func (st State) popVisited() {
+	s := *st.Visited
+	*st.Visited = s[:len(s)-1]
+}
+
+func (st State) release() {
+	releaseStateVisited(st.Visited)
+}
+
+var stateVisitedPool = &sync.Pool{
+	New: func() any {
+		return new([]uintptr)
+	},
+}
+
+func getStateVisited() *[]uintptr {
+	return stateVisitedPool.Get().(*[]uintptr) //nolint:forcetypeassert // The pool only contains *[]uintptr.
+}
+
+func releaseStateVisited(vs *[]uintptr) {
+	stateVisitedPool.Put(vs)
 }
 
 // ValueWriter is a function that writes a [reflect.Value] to a [io.Writer].
@@ -186,7 +184,7 @@ func (st *State) reset() {
 // Implementations must check [reflect.Value.CanInterface] before using [reflect.Value.Interface].
 //
 // Implentations can assume that the value is valid.
-type ValueWriter func(c *Config, w io.Writer, st *State, v reflect.Value) bool
+type ValueWriter func(c *Config, w io.Writer, st State, v reflect.Value) bool
 
 // KindValueWriter is a [ValueWriter] that writes the value with the kind-specific [ValueWriter].
 //
@@ -300,7 +298,7 @@ func NewKindValueWriter(vw ValueWriter) *KindValueWriter {
 // WriteValue implements [ValueWriter].
 //
 //nolint:gocyclo // We need to handle all kinds.
-func (vw *KindValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // All kinds are handled, "invalid" is in the default case.
 	case reflect.Bool:
 		mustHandle(vw.Bool(c, w, st, v))
@@ -360,71 +358,71 @@ func (vw *KindValueWriter) WriteValue(c *Config, w io.Writer, st *State, v refle
 	return true
 }
 
-func (vw *KindValueWriter) writeInvalid(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeInvalid(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseInvalid.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeBool(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeBool(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseBool.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeInt(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeInt(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseInt.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeUint(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeUint(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseUint.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeUintptr(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeUintptr(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseUintptr.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeFloat(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeFloat(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseFloat.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeComplex(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeComplex(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseComplex.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeArray(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeArray(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseArray.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeChan(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeChan(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseChan.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeFunc(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeFunc(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseFunc.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeInterface(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeInterface(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseInterface.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeMap(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeMap(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseMap.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writePointer(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writePointer(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BasePointer.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeSlice(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeSlice(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseSlice.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeString(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeString(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseString.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeStruct(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeStruct(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseStruct.WriteValue(c, w, st, v)
 }
 
-func (vw *KindValueWriter) writeUnsafePointer(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *KindValueWriter) writeUnsafePointer(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.BaseUnsafePointer.WriteValue(c, w, st, v)
 }
 
@@ -439,7 +437,7 @@ func NewInvalidValueWriter() *InvalidValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *InvalidValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *InvalidValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return checkInvalid(w, v)
 }
 
@@ -462,7 +460,7 @@ func NewBoolValueWriter() *BoolValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *BoolValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *BoolValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() != reflect.Bool {
 		return false
 	}
@@ -487,7 +485,7 @@ func NewIntValueWriter() *IntValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *IntValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *IntValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles int.
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		mustWrite(strconvio.WriteInt(w, v.Int(), vw.Base))
@@ -513,7 +511,7 @@ func NewUintValueWriter() *UintValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *UintValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *UintValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles uint.
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		mustWrite(strconvio.WriteUint(w, v.Uint(), vw.Base))
@@ -533,7 +531,7 @@ func NewUintptrValueWriter() *UintptrValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *UintptrValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *UintptrValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() != reflect.Uintptr {
 		return false
 	}
@@ -567,7 +565,7 @@ func NewFloatValueWriter() *FloatValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *FloatValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *FloatValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles float.
 	case reflect.Float32, reflect.Float64:
 		mustWrite(strconvio.WriteFloat(w, v.Float(), vw.Format, vw.Precision, v.Type().Bits()))
@@ -597,7 +595,7 @@ func NewComplexValueWriter() *ComplexValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ComplexValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *ComplexValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles complex.
 	case reflect.Complex64, reflect.Complex128:
 		writeString(w, strconv.FormatComplex(v.Complex(), vw.Format, vw.Precision, v.Type().Bits()))
@@ -625,7 +623,7 @@ func NewArrayValueWriter(vw ValueWriter) *ArrayValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ArrayValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *ArrayValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() != reflect.Array {
 		return false
 	}
@@ -633,7 +631,7 @@ func (vw *ArrayValueWriter) WriteValue(c *Config, w io.Writer, st *State, v refl
 	return true
 }
 
-func writeArray(c *Config, w io.Writer, st *State, v reflect.Value, maxLen int, vw ValueWriter) {
+func writeArray(c *Config, w io.Writer, st State, v reflect.Value, maxLen int, vw ValueWriter) {
 	l := v.Len()
 	truncated := false
 	if maxLen > 0 && l > maxLen {
@@ -643,18 +641,18 @@ func writeArray(c *Config, w io.Writer, st *State, v reflect.Value, maxLen int, 
 	writeString(w, "{")
 	if v.Len() > 0 {
 		writeString(w, "\n")
-		st.RunIndent(func(st *State) {
-			for i := range l {
-				c.WriteIndent(w, st)
-				mustHandle(vw(c, w, st, v.Index(i)))
-				writeString(w, ",\n")
-			}
-			if truncated {
-				c.WriteIndent(w, st)
-				writeTruncated(w)
-				writeString(w, "\n")
-			}
-		})
+		st.Indent++
+		for i := range l {
+			c.WriteIndent(w, st)
+			mustHandle(vw(c, w, st, v.Index(i)))
+			writeString(w, ",\n")
+		}
+		if truncated {
+			c.WriteIndent(w, st)
+			writeTruncated(w)
+			writeString(w, "\n")
+		}
+		st.Indent--
 		c.WriteIndent(w, st)
 	}
 	writeString(w, "}")
@@ -685,7 +683,7 @@ func NewChanValueWriter() *ChanValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ChanValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *ChanValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() != reflect.Chan {
 		return false
 	}
@@ -720,7 +718,7 @@ func NewFuncValueWriter() *FuncValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *FuncValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *FuncValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() != reflect.Func {
 		return false
 	}
@@ -752,7 +750,7 @@ func NewInterfaceValueWriter(vw ValueWriter) *InterfaceValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *InterfaceValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *InterfaceValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() != reflect.Interface {
 		return false
 	}
@@ -799,7 +797,7 @@ func NewMapValueWriter(vw ValueWriter) *MapValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *MapValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *MapValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() != reflect.Map {
 		return false
 	}
@@ -815,20 +813,20 @@ func (vw *MapValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflec
 	writeString(w, "{")
 	if v.Len() > 0 {
 		writeString(w, "\n")
-		st.RunIndent(func(st *State) {
-			if vw.SortKeys {
-				vw.writeSorted(c, w, st, v)
-			} else {
-				vw.writeUnsorted(c, w, st, v)
-			}
-		})
+		st.Indent++
+		if vw.SortKeys {
+			vw.writeSorted(c, w, st, v)
+		} else {
+			vw.writeUnsorted(c, w, st, v)
+		}
+		st.Indent--
 		c.WriteIndent(w, st)
 	}
 	writeString(w, "}")
 	return true
 }
 
-func (vw *MapValueWriter) writeSorted(c *Config, w io.Writer, st *State, v reflect.Value) {
+func (vw *MapValueWriter) writeSorted(c *Config, w io.Writer, st State, v reflect.Value) {
 	keys := vw.getSortedKeys(v)
 	for i, key := range keys {
 		ok := vw.writeEntry(c, w, st, key, v.MapIndex(key), i)
@@ -885,7 +883,7 @@ func mapSortKeysCmpDefault(a, b reflect.Value) int {
 	return cmp.Compare(fmt.Sprint(a), fmt.Sprint(b))
 }
 
-func (vw *MapValueWriter) writeUnsorted(c *Config, w io.Writer, st *State, v reflect.Value) {
+func (vw *MapValueWriter) writeUnsorted(c *Config, w io.Writer, st State, v reflect.Value) {
 	if v.CanInterface() {
 		vw.writeUnsortedExported(c, w, st, v)
 	} else {
@@ -901,7 +899,7 @@ var reflectValuePool = &sync.Pool{
 	},
 }
 
-func (vw *MapValueWriter) writeUnsortedExported(c *Config, w io.Writer, st *State, v reflect.Value) {
+func (vw *MapValueWriter) writeUnsortedExported(c *Config, w io.Writer, st State, v reflect.Value) {
 	iter := v.MapRange()
 	keyItf := reflectValuePool.Get()
 	valueItf := reflectValuePool.Get()
@@ -923,7 +921,7 @@ func (vw *MapValueWriter) writeUnsortedExported(c *Config, w io.Writer, st *Stat
 	}
 }
 
-func (vw *MapValueWriter) writeUnsortedUnexported(c *Config, w io.Writer, st *State, v reflect.Value) {
+func (vw *MapValueWriter) writeUnsortedUnexported(c *Config, w io.Writer, st State, v reflect.Value) {
 	iter := v.MapRange()
 	for i := 0; iter.Next(); i++ {
 		key := iter.Key()
@@ -935,7 +933,7 @@ func (vw *MapValueWriter) writeUnsortedUnexported(c *Config, w io.Writer, st *St
 	}
 }
 
-func (vw *MapValueWriter) writeEntry(c *Config, w io.Writer, st *State, key reflect.Value, value reflect.Value, i int) bool {
+func (vw *MapValueWriter) writeEntry(c *Config, w io.Writer, st State, key reflect.Value, value reflect.Value, i int) bool {
 	c.WriteIndent(w, st)
 	if vw.MaxLen > 0 && i >= vw.MaxLen {
 		writeTruncated(w)
@@ -968,7 +966,7 @@ func NewPointerValueWriter(vw ValueWriter) *PointerValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *PointerValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *PointerValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() != reflect.Pointer {
 		return false
 	}
@@ -1015,7 +1013,7 @@ func NewSliceValueWriter(vw ValueWriter) *SliceValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *SliceValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *SliceValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() != reflect.Slice {
 		return false
 	}
@@ -1059,7 +1057,7 @@ func NewStringValueWriter() *StringValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *StringValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *StringValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() != reflect.String {
 		return false
 	}
@@ -1108,7 +1106,7 @@ func NewStructValueWriter(vw ValueWriter) *StructValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *StructValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *StructValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() != reflect.Struct {
 		return false
 	}
@@ -1116,18 +1114,18 @@ func (vw *StructValueWriter) WriteValue(c *Config, w io.Writer, st *State, v ref
 	fields := getStructFields(v.Type())
 	if len(fields) > 0 {
 		writeString(w, "\n")
-		st.RunIndent(func(st *State) {
-			for i, field := range fields {
-				if !vw.Unexported && !field.IsExported() {
-					continue
-				}
-				c.WriteIndent(w, st)
-				writeString(w, field.Name)
-				writeString(w, ": ")
-				mustHandle(vw.ValueWriter(c, w, st, v.Field(i)))
-				writeString(w, ",\n")
+		st.Indent++
+		for i, field := range fields {
+			if !vw.Unexported && !field.IsExported() {
+				continue
 			}
-		})
+			c.WriteIndent(w, st)
+			writeString(w, field.Name)
+			writeString(w, ": ")
+			mustHandle(vw.ValueWriter(c, w, st, v.Field(i)))
+			writeString(w, ",\n")
+		}
+		st.Indent--
 		c.WriteIndent(w, st)
 	}
 	writeString(w, "}")
@@ -1164,7 +1162,7 @@ func NewUnsafePointerValueWriter() *UnsafePointerValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *UnsafePointerValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *UnsafePointerValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() != reflect.UnsafePointer {
 		return false
 	}
@@ -1181,7 +1179,7 @@ func (vw *UnsafePointerValueWriter) WriteValue(c *Config, w io.Writer, st *State
 type ValueWriters []ValueWriter
 
 // WriteValue implements [ValueWriter].
-func (vws ValueWriters) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vws ValueWriters) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	for _, vw := range vws {
 		ok := vw(c, w, st, v)
 		if ok {
@@ -1208,7 +1206,7 @@ func NewFilterValueWriter(vw ValueWriter, f func(v reflect.Value) bool) *FilterV
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *FilterValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *FilterValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if !vw.Filter(v) {
 		return false
 	}
@@ -1311,116 +1309,116 @@ func (vw *CommonValueWriter) ConfigureTest() {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *CommonValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.panicRecover(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) panicRecover(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) panicRecover(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.PanicRecover == nil {
 		return vw.postPanicRecover(c, w, st, v)
 	}
 	return vw.PanicRecover.WriteValue(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) postPanicRecover(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) postPanicRecover(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.unwrapInterface(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) loopback(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) loopback(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.unwrapInterface(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) unwrapInterface(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) unwrapInterface(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.UnwrapInterface == nil {
 		return vw.postUnwrapInterface(c, w, st, v)
 	}
 	return vw.UnwrapInterface.WriteValue(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) postUnwrapInterface(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) postUnwrapInterface(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.recursion(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) recursion(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) recursion(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.Recursion == nil {
 		return vw.postRecursion(c, w, st, v)
 	}
 	return vw.Recursion.WriteValue(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) postRecursion(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) postRecursion(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.maxDepth(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) maxDepth(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) maxDepth(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.MaxDepth == nil {
 		return vw.postMaxDepth(c, w, st, v)
 	}
 	return vw.MaxDepth.WriteValue(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) postMaxDepth(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) postMaxDepth(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.typeAndValue(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) writeType(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) writeType(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.Type.WriteValue(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) typeAndValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) typeAndValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.TypeAndValue == nil || vw.Type == nil {
 		return vw.postTypeAndValue(c, w, st, v)
 	}
 	return vw.TypeAndValue.WriteValue(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) postTypeAndValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) postTypeAndValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.internal(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) internal(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) internal(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.ValueWriters.WriteValue(c, w, st, v) {
 		return true
 	}
 	return vw.kind(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) kind(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) kind(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.Kind == nil {
 		return false
 	}
 	return vw.Kind.WriteValue(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) reflectValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) reflectValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.ReflectValue == nil {
 		return false
 	}
 	return vw.ReflectValue.WriteValue(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) error(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) error(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.Error == nil {
 		return false
 	}
 	return vw.Error.WriteValue(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) bytesHexDump(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) bytesHexDump(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.BytesHexDump == nil {
 		return false
 	}
 	return vw.BytesHexDump.WriteValue(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) bytesableHexDump(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) bytesableHexDump(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.BytesableHexDump == nil {
 		return false
 	}
 	return vw.BytesableHexDump.WriteValue(c, w, st, v)
 }
 
-func (vw *CommonValueWriter) stringer(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) stringer(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.Stringer == nil {
 		return false
 	}
@@ -1442,7 +1440,7 @@ func NewPanicRecoverValueWriter(vw ValueWriter) *PanicRecoverValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *PanicRecoverValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) (handled bool) {
+func (vw *PanicRecoverValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) (handled bool) {
 	defer func() {
 		r := recover()
 		if r == nil {
@@ -1479,7 +1477,7 @@ func NewUnwrapInterfaceValueWriter(vw ValueWriter) *UnwrapInterfaceValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *UnwrapInterfaceValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *UnwrapInterfaceValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Kind() == reflect.Interface {
 		if checkNil(w, v) {
 			return true
@@ -1504,22 +1502,19 @@ func NewRecursionValueWriter(vw ValueWriter) *RecursionValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *RecursionValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *RecursionValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles pointer kinds.
 	case reflect.Chan, reflect.Func, reflect.Map, reflect.Pointer, reflect.Slice, reflect.UnsafePointer:
 	default:
 		return vw.ValueWriter(c, w, st, v)
 	}
 	vp := v.Pointer()
-	if slices.Contains(st.Visited, vp) {
+	if slices.Contains(*st.Visited, vp) {
 		writeString(w, "<recursion>")
 		return true
 	}
-	var handled bool
-	st.RunVisited(vp, func(st *State) {
-		handled = vw.ValueWriter(c, w, st, v)
-	})
-	return handled
+	defer st.pushPopVisited(vp)()
+	return vw.ValueWriter(c, w, st, v)
 }
 
 // MaxDepthValueWriter is a [ValueWriter] that limits the depth.
@@ -1541,7 +1536,7 @@ func NewMaxDepthValueWriter(vw ValueWriter) *MaxDepthValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *MaxDepthValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *MaxDepthValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if vw.Max <= 0 {
 		return vw.ValueWriter(c, w, st, v)
 	}
@@ -1549,11 +1544,8 @@ func (vw *MaxDepthValueWriter) WriteValue(c *Config, w io.Writer, st *State, v r
 		writeString(w, "<max depth>")
 		return true
 	}
-	var handled bool
-	st.RunDepth(func(st *State) {
-		handled = vw.ValueWriter(c, w, st, v)
-	})
-	return handled
+	st.Depth++
+	return vw.ValueWriter(c, w, st, v)
 }
 
 // TypeAndValueWriter is a [ValueWriter] that writes the type and the value.
@@ -1573,7 +1565,7 @@ func NewTypeAndValueWriter(t, v ValueWriter) *TypeAndValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *TypeAndValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *TypeAndValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	writeString(w, "(")
 	mustHandle(vw.Type(c, w, st, v))
 	writeString(w, ") ")
@@ -1598,7 +1590,7 @@ func NewTypeValueWriter() *TypeValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *TypeValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *TypeValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	writeString(w, vw.Stringer(v.Type()))
 	return true
 }
@@ -1620,7 +1612,7 @@ func NewReflectValueWriter(vw ValueWriter) *ReflectValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ReflectValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *ReflectValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Type() != typeReflectValue {
 		return false
 	}
@@ -1650,7 +1642,7 @@ func NewErrorValueWriter() *ErrorValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ErrorValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *ErrorValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if !v.Type().Implements(typeError) {
 		return false
 	}
@@ -1693,7 +1685,7 @@ func NewBytesHexDumpValueWriter() *BytesHexDumpValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *BytesHexDumpValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *BytesHexDumpValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if v.Type() != bytesType {
 		return false
 	}
@@ -1737,7 +1729,7 @@ func NewBytesableHexDumpValueWriter() *BytesableHexDumpValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *BytesableHexDumpValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *BytesableHexDumpValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if !v.Type().Implements(bytesableType) {
 		return false
 	}
@@ -1761,7 +1753,7 @@ func (vw *BytesableHexDumpValueWriter) WriteValue(c *Config, w io.Writer, st *St
 	return true
 }
 
-func writeBytesHexDumpCommon(c *Config, w io.Writer, st *State, b []byte, showLen bool, showCap bool, maxLen int) {
+func writeBytesHexDumpCommon(c *Config, w io.Writer, st State, b []byte, showLen bool, showCap bool, maxLen int) {
 	infos{
 		showLen: showLen,
 		len:     len(b),
@@ -1774,17 +1766,16 @@ func writeBytesHexDumpCommon(c *Config, w io.Writer, st *State, b []byte, showLe
 		truncated = true
 	}
 	writeString(w, "\n")
-	st.RunIndent(func(st *State) {
-		iw := GetIndentWriter(c, w, st, false)
-		defer iw.Release()
-		d := hex.Dumper(iw)
-		mustWrite(d.Write(b))
-		must(d.Close())
-		if truncated {
-			c.WriteIndent(w, st)
-			writeTruncated(w)
-		}
-	})
+	st.Indent++
+	iw := GetIndentWriter(c, w, st, false)
+	defer iw.Release()
+	d := hex.Dumper(iw)
+	mustWrite(d.Write(b))
+	must(d.Close())
+	if truncated {
+		c.WriteIndent(w, st)
+		writeTruncated(w)
+	}
 }
 
 var typeStringer = reflect.TypeFor[fmt.Stringer]()
@@ -1814,7 +1805,7 @@ func NewStringerValueWriter() *StringerValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *StringerValueWriter) WriteValue(c *Config, w io.Writer, st *State, v reflect.Value) bool {
+func (vw *StringerValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	if !v.Type().Implements(typeStringer) {
 		return false
 	}
@@ -1850,18 +1841,18 @@ func (ft *formatter) Format(f fmt.State, verb rune) {
 type IndentWriter struct {
 	writer   io.Writer
 	config   *Config
-	state    *State
+	state    State
 	indented bool
 }
 
 // NewIndentWriter creates a new [IndentWriter].
-func NewIndentWriter(c *Config, w io.Writer, st *State, indented bool) *IndentWriter {
+func NewIndentWriter(c *Config, w io.Writer, st State, indented bool) *IndentWriter {
 	iw := &IndentWriter{}
 	iw.init(c, w, st, indented)
 	return iw
 }
 
-func (iw *IndentWriter) init(c *Config, w io.Writer, st *State, indented bool) {
+func (iw *IndentWriter) init(c *Config, w io.Writer, st State, indented bool) {
 	iw.writer = w
 	iw.config = c
 	iw.state = st
@@ -1871,7 +1862,8 @@ func (iw *IndentWriter) init(c *Config, w io.Writer, st *State, indented bool) {
 func (iw *IndentWriter) reset() {
 	iw.writer = nil
 	iw.config = nil
-	iw.state = nil
+	var zeroState State
+	iw.state = zeroState
 	iw.indented = false
 }
 
@@ -1912,7 +1904,7 @@ var indentWriterPool = &sync.Pool{
 // GetIndentWriter returns a [IndentWriter] from a pool.
 //
 // The caller must call [IndentWriter.Release] after using it.
-func GetIndentWriter(c *Config, w io.Writer, st *State, indented bool) *IndentWriter {
+func GetIndentWriter(c *Config, w io.Writer, st State, indented bool) *IndentWriter {
 	iw := indentWriterPool.Get().(*IndentWriter) //nolint:forcetypeassert // The pool only contains *indentWriter.
 	iw.init(c, w, st, indented)
 	return iw
