@@ -32,7 +32,7 @@ func Formatter(vi any) fmt.Formatter {
 	return DefaultPrinter.Formatter(vi)
 }
 
-// DefaultPrinter is the default [Printer] created with [NewPrinterCommon], [DefaultConfig] and [DefaultCommonValueWriter].
+// DefaultPrinter is the default [Printer].
 var DefaultPrinter = NewPrinterCommon(DefaultConfig, DefaultCommonValueWriter)
 
 // Printer pretty-prints values.
@@ -103,7 +103,7 @@ func (p *Printer) Formatter(vi any) fmt.Formatter {
 	}
 }
 
-// DefaultConfig is the default [Config] created with [NewConfig].
+// DefaultConfig is the default [Config].
 var DefaultConfig = NewConfig()
 
 // Config is a configuration used to pretty print values.
@@ -1213,7 +1213,7 @@ func (vw *FilterValueWriter) WriteValue(c *Config, w io.Writer, st State, v refl
 	return vw.ValueWriter(c, w, st, v)
 }
 
-// DefaultCommonValueWriter is the default [CommonValueWriter] created with [NewCommonValueWriter].
+// DefaultCommonValueWriter is the default [CommonValueWriter].
 var DefaultCommonValueWriter = NewCommonValueWriter()
 
 // CommonValueWriter is a [ValueWriter] with common [ValueWriter].
