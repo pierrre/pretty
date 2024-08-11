@@ -826,6 +826,14 @@ var testCases = []testCase{
 		},
 	},
 	{
+		name:  "BytesHexDumpShowAddr",
+		value: []byte("test"),
+		configure: func(vw *CommonValueWriter) {
+			vw.BytesHexDump.ShowAddr = true
+		},
+		ignoreResult: true,
+	},
+	{
 		name:  "BytesHexDumpDisabled",
 		value: []byte("test"),
 		configure: func(vw *CommonValueWriter) {
@@ -873,6 +881,14 @@ var testCases = []testCase{
 				vw.ReflectValue.WriteValue,
 			}
 		},
+	},
+	{
+		name:  "BytesableHexDumpShowAddr",
+		value: &testBytesable{b: []byte("test")},
+		configure: func(vw *CommonValueWriter) {
+			vw.BytesableHexDump.ShowAddr = true
+		},
+		ignoreResult: true,
 	},
 	{
 		name:  "BytesableHexDumpDisabled",

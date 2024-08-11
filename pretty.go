@@ -535,13 +535,13 @@ func (vw *UintptrValueWriter) WriteValue(c *Config, w io.Writer, st State, v ref
 	if v.Kind() != reflect.Uintptr {
 		return false
 	}
-	writeUintptr(w, v.Uint())
+	writeUintptr(w, uintptr(v.Uint()))
 	return true
 }
 
-func writeUintptr(w io.Writer, p uint64) {
+func writeUintptr(w io.Writer, p uintptr) {
 	writeString(w, "0x")
-	mustWrite(strconvio.WriteUint(w, p, 16))
+	mustWrite(strconvio.WriteUint(w, uint64(p), 16))
 }
 
 // FloatValueWriter is a [ValueWriter] that handles float values.
@@ -696,7 +696,7 @@ func (vw *ChanValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflec
 		showCap:  vw.ShowCap,
 		cap:      v.Cap(),
 		showAddr: vw.ShowAddr,
-		addr:     uint64(uintptr(v.UnsafePointer())),
+		addr:     uintptr(v.UnsafePointer()),
 	}.write(w)
 	return true
 }
@@ -728,7 +728,7 @@ func (vw *FuncValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflec
 	p := uintptr(v.UnsafePointer())
 	infos{
 		showAddr: vw.ShowAddr,
-		addr:     uint64(p),
+		addr:     p,
 	}.writeWithTrailingSpace(w)
 	name := runtime.FuncForPC(p).Name()
 	writeString(w, name)
@@ -808,7 +808,7 @@ func (vw *MapValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect
 		showLen:  vw.ShowLen,
 		len:      v.Len(),
 		showAddr: vw.ShowAddr,
-		addr:     uint64(uintptr(v.UnsafePointer())),
+		addr:     uintptr(v.UnsafePointer()),
 	}.writeWithTrailingSpace(w)
 	writeString(w, "{")
 	if v.Len() > 0 {
@@ -975,7 +975,7 @@ func (vw *PointerValueWriter) WriteValue(c *Config, w io.Writer, st State, v ref
 	}
 	infos{
 		showAddr: vw.ShowAddr,
-		addr:     uint64(uintptr(v.UnsafePointer())),
+		addr:     uintptr(v.UnsafePointer()),
 	}.writeWithTrailingSpace(w)
 	writeArrow(w)
 	mustHandle(vw.ValueWriter(c, w, st, v.Elem()))
@@ -1026,7 +1026,7 @@ func (vw *SliceValueWriter) WriteValue(c *Config, w io.Writer, st State, v refle
 		showCap:  vw.ShowCap,
 		cap:      v.Cap(),
 		showAddr: vw.ShowAddr,
-		addr:     uint64(uintptr(v.UnsafePointer())),
+		addr:     uintptr(v.UnsafePointer()),
 	}.writeWithTrailingSpace(w)
 	writeArray(c, w, st, v, vw.MaxLen, vw.ValueWriter)
 	return true
@@ -1169,7 +1169,7 @@ func (vw *UnsafePointerValueWriter) WriteValue(c *Config, w io.Writer, st State,
 	if checkNil(w, v) {
 		return true
 	}
-	writeUintptr(w, uint64(uintptr(v.UnsafePointer())))
+	writeUintptr(w, uintptr(v.UnsafePointer()))
 	return true
 }
 
@@ -1290,6 +1290,8 @@ func (vw *CommonValueWriter) SetShowAddr(show bool) {
 	vw.Kind.BaseMap.ShowAddr = show
 	vw.Kind.BasePointer.ShowAddr = show
 	vw.Kind.BaseSlice.ShowAddr = show
+	vw.BytesHexDump.ShowAddr = show
+	vw.BytesableHexDump.ShowAddr = show
 }
 
 // ConfigureWithPrinter configures the [CommonValueWriter] with a [Printer].
@@ -1670,6 +1672,9 @@ type BytesHexDumpValueWriter struct {
 	// ShowCap shows the cap.
 	// Default: true.
 	ShowCap bool
+	// ShowAddr shows the address.
+	// Default: true.
+	ShowAddr bool
 	// MaxLen is the maximum length of the bytes.
 	// Default: 0 (no limit).
 	MaxLen int
@@ -1678,9 +1683,10 @@ type BytesHexDumpValueWriter struct {
 // NewBytesHexDumpValueWriter creates a new [BytesHexDumpValueWriter].
 func NewBytesHexDumpValueWriter() *BytesHexDumpValueWriter {
 	return &BytesHexDumpValueWriter{
-		ShowLen: true,
-		ShowCap: true,
-		MaxLen:  0,
+		ShowLen:  true,
+		ShowCap:  true,
+		ShowAddr: true,
+		MaxLen:   0,
 	}
 }
 
@@ -1693,7 +1699,7 @@ func (vw *BytesHexDumpValueWriter) WriteValue(c *Config, w io.Writer, st State, 
 		return true
 	}
 	b := v.Bytes()
-	writeBytesHexDumpCommon(c, w, st, b, vw.ShowLen, vw.ShowCap, vw.MaxLen)
+	writeBytesHexDumpCommon(c, w, st, v, b, vw.ShowLen, vw.ShowCap, vw.ShowAddr, vw.MaxLen)
 	return true
 }
 
@@ -1714,6 +1720,9 @@ type BytesableHexDumpValueWriter struct {
 	// ShowCap shows the cap.
 	// Default: true.
 	ShowCap bool
+	// ShowAddr shows the address.
+	// Default: true.
+	ShowAddr bool
 	// MaxLen is the maximum length of the bytes.
 	// Default: 0 (no limit).
 	MaxLen int
@@ -1722,9 +1731,10 @@ type BytesableHexDumpValueWriter struct {
 // NewBytesableHexDumpValueWriter creates a new [BytesableHexDumpValueWriter].
 func NewBytesableHexDumpValueWriter() *BytesableHexDumpValueWriter {
 	return &BytesableHexDumpValueWriter{
-		ShowLen: true,
-		ShowCap: true,
-		MaxLen:  0,
+		ShowLen:  true,
+		ShowCap:  true,
+		ShowAddr: true,
+		MaxLen:   0,
 	}
 }
 
@@ -1749,16 +1759,18 @@ func (vw *BytesableHexDumpValueWriter) WriteValue(c *Config, w io.Writer, st Sta
 		writeNil(w)
 		return true
 	}
-	writeBytesHexDumpCommon(c, w, st, b, vw.ShowLen, vw.ShowCap, vw.MaxLen)
+	writeBytesHexDumpCommon(c, w, st, reflect.ValueOf(b), b, vw.ShowLen, vw.ShowCap, vw.ShowAddr, vw.MaxLen)
 	return true
 }
 
-func writeBytesHexDumpCommon(c *Config, w io.Writer, st State, b []byte, showLen bool, showCap bool, maxLen int) {
+func writeBytesHexDumpCommon(c *Config, w io.Writer, st State, v reflect.Value, b []byte, showLen bool, showCap bool, showAddr bool, maxLen int) {
 	infos{
-		showLen: showLen,
-		len:     len(b),
-		showCap: showCap,
-		cap:     cap(b),
+		showLen:  showLen,
+		len:      len(b),
+		showCap:  showCap,
+		cap:      cap(b),
+		showAddr: showAddr,
+		addr:     uintptr(v.UnsafePointer()),
 	}.writeWithTrailingSpace(w)
 	truncated := false
 	if maxLen > 0 && len(b) > maxLen {
@@ -1981,7 +1993,7 @@ type infos struct {
 	showCap  bool
 	cap      int
 	showAddr bool
-	addr     uint64
+	addr     uintptr
 }
 
 func (i infos) write(w io.Writer) bool {
