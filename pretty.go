@@ -118,7 +118,7 @@ type Config struct {
 // NewConfig creates a new [Config] initialized with default values.
 func NewConfig() *Config {
 	return &Config{
-		Indent: "\t",
+		Indent: defaultIndent,
 	}
 }
 
@@ -1767,8 +1767,8 @@ func writeBytesHexDumpCommon(c *Config, w io.Writer, st State, b []byte, showLen
 	}
 	writeString(w, "\n")
 	st.Indent++
-	iw := GetIndentWriter(c, w, st, false)
-	defer iw.Release()
+	iw := GetIndentWriter(w, c.Indent, st.Indent, false)
+	defer ReleaseIndentWriter(iw)
 	d := hex.Dumper(iw)
 	mustWrite(d.Write(b))
 	must(d.Close())
@@ -1834,36 +1834,37 @@ func (ft *formatter) Format(f fmt.State, verb rune) {
 	ft.printer.Write(f, ft.value)
 }
 
+const defaultIndent = "\t"
+
 // IndentWriter is a [io.Writer] that indents.
 //
 // It is exposed for internal use.
 // It should not be used outside of this package.
 type IndentWriter struct {
 	writer   io.Writer
-	config   *Config
-	state    State
+	indent   string
+	level    int
 	indented bool
 }
 
 // NewIndentWriter creates a new [IndentWriter].
-func NewIndentWriter(c *Config, w io.Writer, st State, indented bool) *IndentWriter {
+func NewIndentWriter(w io.Writer, indent string, level int, indented bool) *IndentWriter {
 	iw := &IndentWriter{}
-	iw.init(c, w, st, indented)
+	iw.init(w, indent, level, indented)
 	return iw
 }
 
-func (iw *IndentWriter) init(c *Config, w io.Writer, st State, indented bool) {
+func (iw *IndentWriter) init(w io.Writer, indent string, level int, indented bool) {
 	iw.writer = w
-	iw.config = c
-	iw.state = st
+	iw.indent = indent
+	iw.level = level
 	iw.indented = indented
 }
 
 func (iw *IndentWriter) reset() {
 	iw.writer = nil
-	iw.config = nil
-	var zeroState State
-	iw.state = zeroState
+	iw.indent = ""
+	iw.level = 0
 	iw.indented = false
 }
 
@@ -1871,7 +1872,7 @@ func (iw *IndentWriter) reset() {
 func (iw *IndentWriter) Write(p []byte) (n int, err error) {
 	for len(p) > 0 {
 		if !iw.indented {
-			nn, err := writeIndentErr(iw.writer, iw.config.Indent, iw.state.Indent)
+			nn, err := writeIndentErr(iw.writer, iw.indent, iw.level)
 			n += nn
 			if err != nil {
 				return n, err
@@ -1901,17 +1902,17 @@ var indentWriterPool = &sync.Pool{
 	},
 }
 
-// GetIndentWriter returns a [IndentWriter] from a pool.
+// GetIndentWriter returns a [IndentWriter] from the pool.
 //
 // The caller must call [IndentWriter.Release] after using it.
-func GetIndentWriter(c *Config, w io.Writer, st State, indented bool) *IndentWriter {
+func GetIndentWriter(w io.Writer, indent string, level int, indented bool) *IndentWriter {
 	iw := indentWriterPool.Get().(*IndentWriter) //nolint:forcetypeassert // The pool only contains *indentWriter.
-	iw.init(c, w, st, indented)
+	iw.init(w, indent, level, indented)
 	return iw
 }
 
 // Release releases the [IndentWriter] to the pool.
-func (iw *IndentWriter) Release() {
+func ReleaseIndentWriter(iw *IndentWriter) {
 	iw.reset()
 	indentWriterPool.Put(iw)
 }

@@ -61,8 +61,8 @@ func (vw *ValueWriter) WriteValue(c *pretty.Config, w io.Writer, st pretty.State
 	}
 	err := v.Interface().(error) //nolint:forcetypeassert // Checked above.
 	st.Indent++
-	iw := pretty.GetIndentWriter(c, w, st, true)
-	defer iw.Release()
+	iw := pretty.GetIndentWriter(w, c.Indent, st.Indent, true)
+	defer pretty.ReleaseIndentWriter(iw)
 	errverbose.Write(iw, err)
 	return true
 }
