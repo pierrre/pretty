@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "allocs",
-			"equal": 4
+			"allocs_per_run": {
+				"runs": 100,
+				"allocs": 4
+			}
 		}
 	]
 }

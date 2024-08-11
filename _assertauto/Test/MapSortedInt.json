@@ -6,7 +6,10 @@
 		},
 		{
 			"name": "allocs",
-			"equal": 7
+			"allocs_per_run": {
+				"runs": 100,
+				"allocs": 7
+			}
 		}
 	]
 }

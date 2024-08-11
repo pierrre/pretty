@@ -996,11 +996,10 @@ func Test(t *testing.T) {
 			}
 			t.Log(s)
 			if !tc.ignoreAllocs {
-				allocs := testing.AllocsPerRun(100, func() {
+				assertauto.AllocsPerRun(t, 100, func() {
 					t.Helper()
 					p.Write(io.Discard, tc.value)
-				})
-				assertauto.Equal(t, allocs, assertauto.Name("allocs"))
+				}, assertauto.Name("allocs"))
 			}
 		})
 	}
@@ -1042,21 +1041,19 @@ func TestWrite(t *testing.T) {
 	Write(buf, "test")
 	s := buf.String()
 	assertauto.Equal(t, s, assertauto.Name("result"))
-	allocs := testing.AllocsPerRun(100, func() {
+	assertauto.AllocsPerRun(t, 100, func() {
 		t.Helper()
 		Write(io.Discard, "test")
-	})
-	assertauto.Equal(t, allocs, assertauto.Name("allocs"))
+	}, assertauto.Name("allocs"))
 }
 
 func TestString(t *testing.T) {
 	s := String("test")
 	assertauto.Equal(t, s, assertauto.Name("result"))
-	allocs := testing.AllocsPerRun(100, func() {
+	assertauto.AllocsPerRun(t, 100, func() {
 		t.Helper()
 		String("test")
-	})
-	assertauto.Equal(t, allocs, assertauto.Name("allocs"))
+	}, assertauto.Name("allocs"))
 }
 
 func TestFormatter(t *testing.T) {
@@ -1066,12 +1063,11 @@ func TestFormatter(t *testing.T) {
 	assert.NoError(t, err)
 	s := buf.String()
 	assertauto.Equal(t, s, assertauto.Name("result"))
-	allocs := testing.AllocsPerRun(100, func() {
+	assertauto.AllocsPerRun(t, 100, func() {
 		t.Helper()
 		_, err := fmt.Fprintf(io.Discard, "%v", f)
 		assert.NoError(t, err)
-	})
-	assertauto.Equal(t, allocs, assertauto.Name("allocs"))
+	}, assertauto.Name("allocs"))
 }
 
 var testIdent = DefaultConfig.Indent
