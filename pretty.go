@@ -15,6 +15,7 @@ import (
 	"unsafe" //nolint:depguard // Required for string to []byte conversion.
 
 	"github.com/pierrre/go-libs/bufpool"
+	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/strconvio"
 )
 
@@ -1237,6 +1238,7 @@ type CommonValueWriter struct {
 	UnwrapInterface  *UnwrapInterfaceValueWriter
 	Recursion        *RecursionValueWriter
 	MaxDepth         *MaxDepthValueWriter
+	CanInterface     *CanInterfaceValueWriter
 	TypeAndValue     *TypeAndValueWriter
 	Type             *TypeValueWriter
 	Kind             *KindValueWriter
@@ -1255,6 +1257,7 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.UnwrapInterface = NewUnwrapInterfaceValueWriter(vw.postUnwrapInterface)
 	vw.Recursion = NewRecursionValueWriter(vw.postRecursion)
 	vw.MaxDepth = NewMaxDepthValueWriter(vw.postMaxDepth)
+	vw.CanInterface = NewCanInterfaceValueWriter(vw.postCanInterface)
 	vw.TypeAndValue = NewTypeAndValueWriter(vw.writeType, vw.postTypeAndValue)
 	vw.Type = NewTypeValueWriter()
 	vw.Kind = NewKindValueWriter(vw.loopback)
@@ -1369,6 +1372,17 @@ func (vw *CommonValueWriter) maxDepth(c *Config, w io.Writer, st State, v reflec
 }
 
 func (vw *CommonValueWriter) postMaxDepth(c *Config, w io.Writer, st State, v reflect.Value) bool {
+	return vw.canInterface(c, w, st, v)
+}
+
+func (vw *CommonValueWriter) canInterface(c *Config, w io.Writer, st State, v reflect.Value) bool {
+	if vw.CanInterface == nil {
+		return vw.postCanInterface(c, w, st, v)
+	}
+	return vw.CanInterface.WriteValue(c, w, st, v)
+}
+
+func (vw *CommonValueWriter) postCanInterface(c *Config, w io.Writer, st State, v reflect.Value) bool {
 	return vw.typeAndValue(c, w, st, v)
 }
 
@@ -1556,6 +1570,25 @@ func (vw *MaxDepthValueWriter) WriteValue(c *Config, w io.Writer, st State, v re
 		return true
 	}
 	st.Depth++
+	return vw.ValueWriter(c, w, st, v)
+}
+
+// CanInterfaceValueWriter is a [ValueWriter] that attempts to convert the [reflect.Value] so it can be used with [reflect.Value.Interface].
+//
+// It should be created with [NewCanInterfaceValueWriter].
+type CanInterfaceValueWriter struct {
+	ValueWriter
+}
+
+func NewCanInterfaceValueWriter(vw ValueWriter) *CanInterfaceValueWriter {
+	return &CanInterfaceValueWriter{
+		ValueWriter: vw,
+	}
+}
+
+// WriteValue implements [ValueWriter].
+func (vw *CanInterfaceValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
+	v, _ = reflectutil.ConvertValueCanInterface(v)
 	return vw.ValueWriter(c, w, st, v)
 }
 

@@ -795,6 +795,13 @@ var testCases = []testCase{
 	{
 		name:  "ErrorUnexported",
 		value: testUnexported{v: &testError{}},
+		configure: func(vw *CommonValueWriter) {
+			vw.CanInterface = nil
+		},
+	},
+	{
+		name:  "ErrorUnexportedCanInterface",
+		value: testUnexported{v: &testError{}},
 	},
 	{
 		name:  "ErrorDisabled",
@@ -871,6 +878,15 @@ var testCases = []testCase{
 		value: testUnexported{
 			v: &testBytesable{},
 		},
+		configure: func(vw *CommonValueWriter) {
+			vw.CanInterface = nil
+		},
+	},
+	{
+		name: "BytesableHexDumpUnexportedCanInterface",
+		value: testUnexported{
+			v: &testBytesable{},
+		},
 	},
 	{
 		name:  "BytesableHexDumpReflectValue",
@@ -921,6 +937,13 @@ var testCases = []testCase{
 	},
 	{
 		name:  "StringerUnexported",
+		value: testUnexported{v: &testStringer{}},
+		configure: func(vw *CommonValueWriter) {
+			vw.CanInterface = nil
+		},
+	},
+	{
+		name:  "StringerUnexportedCanInterface",
 		value: testUnexported{v: &testStringer{}},
 	},
 	{
