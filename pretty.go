@@ -1112,14 +1112,11 @@ func (vw *StructValueWriter) WriteValue(c *Config, w io.Writer, st State, v refl
 		return false
 	}
 	writeString(w, "{")
-	fields := getStructFields(v.Type())
+	fields := getStructFields(v.Type(), vw.Unexported)
 	if len(fields) > 0 {
 		writeString(w, "\n")
 		st.Indent++
 		for i, field := range fields {
-			if !vw.Unexported && !field.IsExported() {
-				continue
-			}
 			c.WriteIndent(w, st)
 			writeString(w, field.Name)
 			writeString(w, ": ")
@@ -1134,19 +1131,30 @@ func (vw *StructValueWriter) WriteValue(c *Config, w io.Writer, st State, v refl
 }
 
 var (
-	structFieldsCacheLock sync.Mutex
-	structFieldsCache     = map[reflect.Type][]reflect.StructField{}
+	structFieldsCacheLock     sync.Mutex
+	structFieldsCacheExported = map[reflect.Type][]reflect.StructField{}
+	structFieldsCacheAll      = map[reflect.Type][]reflect.StructField{}
 )
 
-func getStructFields(typ reflect.Type) []reflect.StructField {
+func getStructFields(typ reflect.Type, unexported bool) []reflect.StructField {
+	var m map[reflect.Type][]reflect.StructField
+	if unexported {
+		m = structFieldsCacheAll
+	} else {
+		m = structFieldsCacheExported
+	}
 	structFieldsCacheLock.Lock()
-	fields, ok := structFieldsCache[typ]
+	fields, ok := m[typ]
 	if !ok {
-		fields = make([]reflect.StructField, typ.NumField())
+		fields = make([]reflect.StructField, 0, typ.NumField())
 		for i := range typ.NumField() {
-			fields[i] = typ.Field(i)
+			field := typ.Field(i)
+			if !unexported && !field.IsExported() {
+				continue
+			}
+			fields = append(fields, field)
 		}
-		structFieldsCache[typ] = fields
+		m[typ] = fields
 	}
 	structFieldsCacheLock.Unlock()
 	return fields
