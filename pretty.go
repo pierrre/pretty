@@ -1771,7 +1771,7 @@ func writeBytesHexDumpCommon(c *Config, w io.Writer, st State, v reflect.Value, 
 		cap:      cap(b),
 		showAddr: showAddr,
 		addr:     uintptr(v.UnsafePointer()),
-	}.writeWithTrailingSpace(w)
+	}.write(w)
 	truncated := false
 	if maxLen > 0 && len(b) > maxLen {
 		b = b[:maxLen]
