@@ -125,7 +125,7 @@ func NewConfig() *Config {
 
 // WriteIndent writes the indentation to the [io.Writer].
 func (c *Config) WriteIndent(w io.Writer, st State) {
-	WriteIndent(w, c.Indent, st.Indent)
+	writeIndent(w, c.Indent, st.Indent)
 }
 
 // State represents the state of the [Printer].
@@ -1935,31 +1935,30 @@ var (
 	indentCache     = map[string][]byte{}
 )
 
-func getIndent(s string, n int) []byte {
+func getIndentBytes(indent string, level int) []byte {
+	l := len(indent) * level
 	indentCacheLock.Lock()
 	defer indentCacheLock.Unlock()
-	b := indentCache[s]
-	l := len(s) * n
+	b := indentCache[indent]
 	if len(b) < l {
-		b = bytes.Repeat([]byte(s), n)
-		indentCache[s] = b
+		b = bytes.Repeat([]byte(indent), level)
+		indentCache[indent] = b
 	}
 	return b[:l]
 }
 
-// WriteIndent writes the indent s (n times) to the [io.Writer].
-func WriteIndent(w io.Writer, s string, n int) {
-	mustWrite(writeIndentErr(w, s, n))
+func writeIndent(w io.Writer, indent string, level int) {
+	mustWrite(writeIndentErr(w, indent, level))
 }
 
-func writeIndentErr(w io.Writer, s string, n int) (int, error) {
-	if n <= 0 {
+func writeIndentErr(w io.Writer, indent string, level int) (int, error) {
+	if level <= 0 {
 		return 0, nil
 	}
-	if n == 1 {
-		return writeStringErr(w, s)
+	if level == 1 {
+		return writeStringErr(w, indent)
 	}
-	return w.Write(getIndent(s, n)) //nolint:wrapcheck // The error is not wrapped.
+	return w.Write(getIndentBytes(indent, level)) //nolint:wrapcheck // The error is not wrapped.
 }
 
 func checkNil(w io.Writer, v reflect.Value) bool {
