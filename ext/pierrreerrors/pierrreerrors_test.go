@@ -11,6 +11,7 @@ import (
 func init() {
 	ConfigureDefault()
 	pretty.DefaultCommonValueWriter.ConfigureTest()
+	pretty.DefaultCommonValueWriter.CanInterface = nil
 }
 
 func TestValueWriter(t *testing.T) {
