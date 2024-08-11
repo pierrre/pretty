@@ -1823,13 +1823,54 @@ func writeBytesHexDumpCommon(c *Config, w io.Writer, st State, v reflect.Value, 
 	st.Indent++
 	iw := GetIndentWriter(w, c.Indent, st.Indent, false)
 	defer ReleaseIndentWriter(iw)
-	d := hex.Dumper(iw)
+	e := getHexDumperPoolEntry(iw)
+	defer releaseHexDumperPoolEntry(e)
+	d := e.dumper
 	mustWrite(d.Write(b))
 	must(d.Close())
 	if truncated {
 		c.WriteIndent(w, st)
 		writeTruncated(w)
 	}
+}
+
+type hexDumperPoolEntry struct {
+	dumper        io.WriteCloser
+	original      io.WriteCloser
+	writerWrapper *writerWrapper
+}
+
+func newHexDumperPoolEntry() *hexDumperPoolEntry {
+	ww := &writerWrapper{}
+	return &hexDumperPoolEntry{
+		dumper:        hex.Dumper(ww),
+		original:      hex.Dumper(ww),
+		writerWrapper: ww,
+	}
+}
+
+var hexDumperPool = &sync.Pool{
+	New: func() any {
+		return newHexDumperPoolEntry()
+	},
+}
+
+func getHexDumperPoolEntry(w io.Writer) *hexDumperPoolEntry {
+	e := hexDumperPool.Get().(*hexDumperPoolEntry) //nolint:forcetypeassert // The pool only contains *hexDumperPoolEntry.
+	e.writerWrapper.Writer = w
+	return e
+}
+
+func releaseHexDumperPoolEntry(e *hexDumperPoolEntry) {
+	v1 := reflect.ValueOf(e.dumper).Elem()
+	v2 := reflect.ValueOf(e.original).Elem()
+	v1.Set(v2)
+	e.writerWrapper.Writer = nil
+	hexDumperPool.Put(e)
+}
+
+type writerWrapper struct {
+	io.Writer
 }
 
 var typeStringer = reflect.TypeFor[fmt.Stringer]()
