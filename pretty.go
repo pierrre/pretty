@@ -1144,6 +1144,7 @@ func getStructFields(typ reflect.Type, unexported bool) []reflect.StructField {
 		m = structFieldsCacheExported
 	}
 	structFieldsCacheLock.Lock()
+	defer structFieldsCacheLock.Unlock()
 	fields, ok := m[typ]
 	if !ok {
 		fields = make([]reflect.StructField, 0, typ.NumField())
@@ -1156,7 +1157,6 @@ func getStructFields(typ reflect.Type, unexported bool) []reflect.StructField {
 		}
 		m[typ] = fields
 	}
-	structFieldsCacheLock.Unlock()
 	return fields
 }
 
