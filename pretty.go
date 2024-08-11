@@ -12,6 +12,7 @@ import (
 	"slices"
 	"strconv"
 	"sync"
+	"unsafe" //nolint:depguard // Required for string to []byte conversion.
 
 	"github.com/pierrre/go-libs/bufpool"
 	"github.com/pierrre/go-libs/strconvio"
@@ -2034,6 +2035,10 @@ func (i infos) writeWithTrailingSpace(w io.Writer) {
 
 func writeString(w io.Writer, s string) {
 	mustWrite(writeStringErr(w, s))
+}
+
+func writeStringErr(w io.Writer, s string) (int, error) {
+	return w.Write(unsafe.Slice(unsafe.StringData(s), len(s))) //nolint:wrapcheck // The error is not wrapped.
 }
 
 func writeQuote(w io.Writer, s string) {
