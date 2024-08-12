@@ -47,13 +47,13 @@ func Example() {
 	// 	Float: [float64] 123.456,
 	// 	String: [string] (len=4) "test",
 	// 	Map: [map[string]int] (len=2) {
-	// 		[string] (len=3) "bar": [int] 2,
-	// 		[string] (len=3) "foo": [int] 1,
+	// 		(len=3) "bar": 2,
+	// 		(len=3) "foo": 1,
 	// 	},
 	// 	Slice: [[]int] (len=3 cap=3) {
-	// 		[int] 1,
-	// 		[int] 2,
-	// 		[int] 3,
+	// 		1,
+	// 		2,
+	// 		3,
 	// 	},
 	// }
 }
@@ -250,6 +250,21 @@ var testCases = []testCase{
 	{
 		name:  "Array",
 		value: [3]int{1, 2, 3},
+	},
+	{
+		name:  "ArrayEmpty",
+		value: [0]int{},
+	},
+	{
+		name:  "ArrayUnknownType",
+		value: [3]any{1, 2, 3},
+	},
+	{
+		name:  "ArrayShowKnownTypes",
+		value: [3]int{1, 2, 3},
+		configure: func(vw *CommonValueWriter) {
+			vw.TypeAndValue.ShowKnownTypes = true
+		},
 	},
 	{
 		name:  "ArrayNot",
@@ -449,6 +464,17 @@ var testCases = []testCase{
 		},
 	},
 	{
+		name:  "MapUnknownType",
+		value: map[any]any{"a": 1, "b": 2, "c": 3},
+	},
+	{
+		name:  "MapShowKnownTypes",
+		value: map[string]int{"a": 1, "b": 2, "c": 3},
+		configure: func(vw *CommonValueWriter) {
+			vw.TypeAndValue.ShowKnownTypes = true
+		},
+	},
+	{
 		name:  "MapNot",
 		value: "test",
 		configure: func(vw *CommonValueWriter) {
@@ -476,6 +502,23 @@ var testCases = []testCase{
 			vw.Kind.BasePointer.ShowAddr = true
 		},
 		ignoreResult: true,
+	},
+	{
+		name: "PointerUnknownType",
+		value: func() *any {
+			i := any(123)
+			return &i
+		}(),
+	},
+	{
+		name: "PointerShowKnownTypes",
+		value: func() *int {
+			i := 123
+			return &i
+		}(),
+		configure: func(vw *CommonValueWriter) {
+			vw.TypeAndValue.ShowKnownTypes = true
+		},
 	},
 	{
 		name:  "PointerNot",
@@ -509,6 +552,17 @@ var testCases = []testCase{
 		value: []int{1, 2, 3},
 		configure: func(vw *CommonValueWriter) {
 			vw.Kind.BaseSlice.MaxLen = 2
+		},
+	},
+	{
+		name:  "SliceUnknownType",
+		value: []any{1, 2, 3},
+	},
+	{
+		name:  "SliceShowKnownTypes",
+		value: []int{1, 2, 3},
+		configure: func(vw *CommonValueWriter) {
+			vw.TypeAndValue.ShowKnownTypes = true
 		},
 	},
 	{

@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[*pretty_test.testStringer] => [pretty_test.testStringer] {\n\ts: [string] (len=4) \"test\",\n}"
+			"equal": "[*pretty_test.testStringer] => {\n\ts: [string] (len=4) \"test\",\n}"
 		},
 		{
 			"name": "allocs",

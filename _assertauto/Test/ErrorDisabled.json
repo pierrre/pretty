@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[*pretty_test.testError] => [pretty_test.testError] {}"
+			"equal": "[*pretty_test.testError] => {}"
 		},
 		{
 			"name": "allocs",

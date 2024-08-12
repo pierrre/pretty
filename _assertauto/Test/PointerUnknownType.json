@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[***interface {}] => => <max depth>"
+			"equal": "[*interface {}] => [int] 123"
 		},
 		{
 			"name": "allocs",

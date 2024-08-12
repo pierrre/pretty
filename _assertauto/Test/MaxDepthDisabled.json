@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[***interface {}] => [**interface {}] => [*interface {}] => <nil>"
+			"equal": "[***interface {}] => => => <nil>"
 		},
 		{
 			"name": "allocs",

@@ -30,7 +30,7 @@ func TestValueWriterUnexported(t *testing.T) {
 	err := errors.New("error")
 	v := &testUnexported{v: err}
 	s := pretty.String(v)
-	assert.StringHasPrefix(t, s, "[*pierrreerrors.testUnexported] => [pierrreerrors.testUnexported] {\n\tv: [*errstack.stack] => [errstack.stack] {\n\t\terror: [*errors.errorString] => [errors.errorString]")
+	assert.StringHasPrefix(t, s, "[*pierrreerrors.testUnexported] => {\n\tv: [*errstack.stack] => {\n\t\terror: [*errors.errorString] => {")
 }
 
 type testError struct{}

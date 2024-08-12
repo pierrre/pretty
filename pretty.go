@@ -133,9 +133,10 @@ func (c *Config) WriteIndent(w io.Writer, st State) {
 //
 // Functions must restore the original state when they return.
 type State struct {
-	Depth   int
-	Indent  int
-	Visited *[]uintptr
+	Depth     int
+	Indent    int
+	Visited   *[]uintptr
+	KnownType bool
 }
 
 func getState() State {
@@ -760,6 +761,7 @@ func (vw *InterfaceValueWriter) WriteValue(c *Config, w io.Writer, st State, v r
 	if checkNil(w, v) {
 		return true
 	}
+	st.KnownType = false
 	mustHandle(vw.ValueWriter(c, w, st, v.Elem()))
 	return true
 }
@@ -1112,6 +1114,7 @@ func (vw *StructValueWriter) WriteValue(c *Config, w io.Writer, st State, v refl
 	if v.Kind() != reflect.Struct {
 		return false
 	}
+	st.KnownType = false
 	writeString(w, "{")
 	fields := getStructFields(v.Type(), vw.Unexported)
 	if len(fields) > 0 {
@@ -1508,6 +1511,7 @@ func (vw *UnwrapInterfaceValueWriter) WriteValue(c *Config, w io.Writer, st Stat
 			return true
 		}
 		v = v.Elem()
+		st.KnownType = false
 	}
 	return vw.ValueWriter(c, w, st, v)
 }
@@ -1596,23 +1600,32 @@ func (vw *CanInterfaceValueWriter) WriteValue(c *Config, w io.Writer, st State, 
 //
 // It should be created with [NewTypeAndValueWriter].
 type TypeAndValueWriter struct {
-	Type  ValueWriter
+	// Type is the type [ValueWriter].
+	Type ValueWriter
+	// Value is the value [ValueWriter].
 	Value ValueWriter
+	// ShowKnownTypes shows known types.
+	// Default: false.
+	ShowKnownTypes bool
 }
 
-// NewTypeAndValueWriter creates a new [TypeAndValueWriter].
+// NewTypeAndValueWriter creates a new [TypeAndValueWriter] with default values.
 func NewTypeAndValueWriter(t, v ValueWriter) *TypeAndValueWriter {
 	return &TypeAndValueWriter{
-		Type:  t,
-		Value: v,
+		Type:           t,
+		Value:          v,
+		ShowKnownTypes: false,
 	}
 }
 
 // WriteValue implements [ValueWriter].
 func (vw *TypeAndValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
-	writeString(w, "[")
-	mustHandle(vw.Type(c, w, st, v))
-	writeString(w, "] ")
+	if !st.KnownType || vw.ShowKnownTypes {
+		writeString(w, "[")
+		mustHandle(vw.Type(c, w, st, v))
+		writeString(w, "] ")
+	}
+	st.KnownType = true
 	mustHandle(vw.Value(c, w, st, v))
 	return true
 }
@@ -1669,6 +1682,7 @@ func (vw *ReflectValueWriter) WriteValue(c *Config, w io.Writer, st State, v ref
 	if checkInvalid(w, rv) {
 		return true
 	}
+	st.KnownType = false
 	mustHandle(vw.ValueWriter(c, w, st, rv))
 	return true
 }

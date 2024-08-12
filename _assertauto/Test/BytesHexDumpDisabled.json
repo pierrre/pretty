@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[[]uint8] (len=4 cap=4) {\n\t[uint8] 116,\n\t[uint8] 101,\n\t[uint8] 115,\n\t[uint8] 116,\n}"
+			"equal": "[[]uint8] (len=4 cap=4) {\n\t116,\n\t101,\n\t115,\n\t116,\n}"
 		},
 		{
 			"name": "allocs",

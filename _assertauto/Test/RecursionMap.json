@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[map[int]interface {}] (len=1) {\n\t[int] 0: <recursion>,\n}"
+			"equal": "[map[int]interface {}] (len=1) {\n\t0: <recursion>,\n}"
 		},
 		{
 			"name": "allocs",
