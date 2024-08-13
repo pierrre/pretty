@@ -544,6 +544,14 @@ var testCases = []testCase{
 		ignoreResult: true,
 	},
 	{
+		name:  "SliceShowLenCapDisabled",
+		value: []int{1, 2, 3},
+		configure: func(vw *CommonValueWriter) {
+			vw.SetShowLen(false)
+			vw.SetShowCap(false)
+		},
+	},
+	{
 		name:  "SliceEmpty",
 		value: []int{},
 	},

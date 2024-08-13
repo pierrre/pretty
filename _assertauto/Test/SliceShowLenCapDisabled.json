@@ -1,0 +1,15 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "[[]int] {\n\t1,\n\t2,\n\t3,\n}"
+		},
+		{
+			"name": "allocs",
+			"allocs_per_run": {
+				"runs": 100,
+				"allocs": 0
+			}
+		}
+	]
+}
