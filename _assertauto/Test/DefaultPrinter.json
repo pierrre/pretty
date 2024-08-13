@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[*pretty.Printer] => {\n\tConfig: [*pretty.Config] => {\n\t\tIndent: [string] (len=1) \"\\t\",\n\t},\n\tValueWriter: [pretty.ValueWriter] github.com/pierrre/pretty.(*CommonValueWriter).WriteValue-fm,\n}"
+			"equal": "[*pretty.Printer] => {\n\tConfig: [*pretty.Config] => {\n\t\tIndent: [string] (len=1) \"\\t\",\n\t},\n\tValueWriter: [pretty.ValueWriter](func(*pretty.Config, io.Writer, pretty.State, reflect.Value) bool) github.com/pierrre/pretty.(*CommonValueWriter).WriteValue-fm,\n}"
 		},
 		{
 			"name": "allocs",

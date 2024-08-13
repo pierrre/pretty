@@ -1,0 +1,15 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": "[pretty_test.myUint64](uint64) 0"
+		},
+		{
+			"name": "allocs",
+			"allocs_per_run": {
+				"runs": 100,
+				"allocs": 0
+			}
+		}
+	]
+}
