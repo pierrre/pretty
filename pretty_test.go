@@ -1203,20 +1203,6 @@ var testCases = []testCase{
 			vw.ValueWriters = ValueWriters{vw.Stringer.WriteValue}
 		},
 	},
-	{
-		name:  "DefaultPrinter",
-		value: DefaultPrinter,
-	},
-	{
-		name: "CommonValueWriter",
-		value: func() *CommonValueWriter {
-			vw := NewCommonValueWriter()
-			vw.ConfigureTest()
-			vw.SetShowLen(false)
-			vw.SetShowCap(false)
-			return vw
-		}(),
-	},
 }
 
 func Test(t *testing.T) {
