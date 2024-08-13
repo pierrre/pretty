@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(float64) 123.456"
+			"equal": "[float64] 123.456"
 		},
 		{
 			"name": "allocs",

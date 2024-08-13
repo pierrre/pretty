@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(uintptr) 0x7b"
+			"equal": "[uintptr] 0x7b"
 		},
 		{
 			"name": "allocs",

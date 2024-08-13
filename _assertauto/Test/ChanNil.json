@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(chan int) <nil>"
+			"equal": "[chan int] <nil>"
 		},
 		{
 			"name": "allocs",

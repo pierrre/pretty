@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(chan int) (len=1 cap=5)"
+			"equal": "[chan int] (len=1 cap=5)"
 		},
 		{
 			"name": "allocs",

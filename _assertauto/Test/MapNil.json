@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(map[int]int) <nil>"
+			"equal": "[map[int]int] <nil>"
 		},
 		{
 			"name": "allocs",

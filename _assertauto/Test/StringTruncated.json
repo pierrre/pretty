@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(string) (len=4) \"te\" <truncated>"
+			"equal": "[string] (len=4) \"te\" <truncated>"
 		},
 		{
 			"name": "allocs",

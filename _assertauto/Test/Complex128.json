@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(complex128) (123.456+789.123i)"
+			"equal": "[complex128] (123.456+789.123i)"
 		},
 		{
 			"name": "allocs",

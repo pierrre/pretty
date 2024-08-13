@@ -41,18 +41,19 @@ func Example() {
 	}
 	s := String(v)
 	fmt.Println(s)
-	// Output: (pretty_test.exampleStruct) {
-	// 	Int: (int) 123,
-	// 	Float: (float64) 123.456,
-	// 	String: (string) (len=4) "test",
-	// 	Map: (map[string]int) (len=2) {
-	// 		(string) (len=3) "bar": (int) 2,
-	// 		(string) (len=3) "foo": (int) 1,
+	// Output:
+	// [pretty_test.exampleStruct] {
+	// 	Int: [int] 123,
+	// 	Float: [float64] 123.456,
+	// 	String: [string] (len=4) "test",
+	// 	Map: [map[string]int] (len=2) {
+	// 		[string] (len=3) "bar": [int] 2,
+	// 		[string] (len=3) "foo": [int] 1,
 	// 	},
-	// 	Slice: ([]int) (len=3 cap=3) {
-	// 		(int) 1,
-	// 		(int) 2,
-	// 		(int) 3,
+	// 	Slice: [[]int] (len=3 cap=3) {
+	// 		[int] 1,
+	// 		[int] 2,
+	// 		[int] 3,
 	// 	},
 	// }
 }
@@ -60,7 +61,7 @@ func Example() {
 func ExampleString() {
 	s := String("test")
 	fmt.Println(s)
-	// Output: (string) (len=4) "test"
+	// Output: [string] (len=4) "test"
 }
 
 func ExampleWrite() {
@@ -68,14 +69,14 @@ func ExampleWrite() {
 	Write(buf, "test")
 	s := buf.String()
 	fmt.Println(s)
-	// Output: (string) (len=4) "test"
+	// Output: [string] (len=4) "test"
 }
 
 func ExampleFormatter() {
 	f := Formatter("test")
 	s := fmt.Sprintf("%v", f)
 	fmt.Println(s)
-	// Output: (string) (len=4) "test"
+	// Output: [string] (len=4) "test"
 }
 
 func ExampleValueWriter() {

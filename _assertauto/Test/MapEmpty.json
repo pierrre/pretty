@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(map[int]int) (len=0) {}"
+			"equal": "[map[int]int] (len=0) {}"
 		},
 		{
 			"name": "allocs",

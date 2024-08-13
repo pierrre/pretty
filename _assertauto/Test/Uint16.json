@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(uint16) 123"
+			"equal": "[uint16] 123"
 		},
 		{
 			"name": "allocs",

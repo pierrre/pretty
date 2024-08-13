@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(pretty_test.testUnexported) {\n\tv: (*pretty_test.testError) => .Error() => \"test\",\n}"
+			"equal": "[pretty_test.testUnexported] {\n\tv: [*pretty_test.testError] => .Error() => \"test\",\n}"
 		},
 		{
 			"name": "allocs",

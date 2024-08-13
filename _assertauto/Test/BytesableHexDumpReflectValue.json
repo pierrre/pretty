@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(reflect.Value) => (int) 123"
+			"equal": "[reflect.Value] => [int] 123"
 		},
 		{
 			"name": "allocs",

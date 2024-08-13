@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(pretty_test.testUnexported) {\n\tv: (reflect.Value) <unexported>,\n}"
+			"equal": "[pretty_test.testUnexported] {\n\tv: [reflect.Value] <unexported>,\n}"
 		},
 		{
 			"name": "allocs",

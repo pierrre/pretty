@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "([]int) (len=0 cap=0) {}"
+			"equal": "[[]int] (len=0 cap=0) {}"
 		},
 		{
 			"name": "allocs",

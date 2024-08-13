@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(string) <invalid>"
+			"equal": "[string] <invalid>"
 		},
 		{
 			"name": "allocs",

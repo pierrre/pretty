@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "([1]interface {}) {\n\t(int) 123,\n}"
+			"equal": "[[1]interface {}] {\n\t[int] 123,\n}"
 		},
 		{
 			"name": "allocs",

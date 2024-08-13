@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(pretty_test.testUnexported) {\n\tv: (*pretty_test.testBytesable) => (pretty_test.testBytesable) {\n\t\tb: ([]uint8) <nil>,\n\t},\n}"
+			"equal": "[pretty_test.testUnexported] {\n\tv: [*pretty_test.testBytesable] => [pretty_test.testBytesable] {\n\t\tb: [[]uint8] <nil>,\n\t},\n}"
 		},
 		{
 			"name": "allocs",

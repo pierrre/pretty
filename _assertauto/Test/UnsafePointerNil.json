@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(unsafe.Pointer) <nil>"
+			"equal": "[unsafe.Pointer] <nil>"
 		},
 		{
 			"name": "allocs",

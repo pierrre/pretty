@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(*pretty_test.testStringer) <nil>"
+			"equal": "[*pretty_test.testStringer] <nil>"
 		},
 		{
 			"name": "allocs",

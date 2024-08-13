@@ -1610,9 +1610,9 @@ func NewTypeAndValueWriter(t, v ValueWriter) *TypeAndValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *TypeAndValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflect.Value) bool {
-	writeString(w, "(")
+	writeString(w, "[")
 	mustHandle(vw.Type(c, w, st, v))
-	writeString(w, ") ")
+	writeString(w, "] ")
 	mustHandle(vw.Value(c, w, st, v))
 	return true
 }

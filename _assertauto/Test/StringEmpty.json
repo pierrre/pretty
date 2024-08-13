@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(string) (len=0) \"\""
+			"equal": "[string] (len=0) \"\""
 		},
 		{
 			"name": "allocs",

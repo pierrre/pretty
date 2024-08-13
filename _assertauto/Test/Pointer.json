@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(*int) => (int) 123"
+			"equal": "[*int] => [int] 123"
 		},
 		{
 			"name": "allocs",

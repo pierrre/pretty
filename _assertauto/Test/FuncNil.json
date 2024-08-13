@@ -2,7 +2,7 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(func()) <nil>"
+			"equal": "[func()] <nil>"
 		},
 		{
 			"name": "allocs",
