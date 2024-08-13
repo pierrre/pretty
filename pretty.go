@@ -1799,14 +1799,20 @@ func (vw *ReflectValueWriter) WriteValue(c *Config, w io.Writer, st State, v ref
 
 var typeError = reflect.TypeFor[error]()
 
-// ErrorValueWriter is a [ValueWriter] that handles errors and write them with error.Error.
+// ErrorValueWriter is a [ValueWriter] that handles errors.
 //
 // It should be created with [NewErrorValueWriter].
-type ErrorValueWriter struct{}
+type ErrorValueWriter struct {
+	// Write writes the error.
+	// Default: [ErrorValueWriter.WriteError].
+	Write func(c *Config, w io.Writer, st State, err error)
+}
 
-// NewErrorValueWriter creates a new [ErrorValueWriter].
+// NewErrorValueWriter creates a new [ErrorValueWriter] with default values.
 func NewErrorValueWriter() *ErrorValueWriter {
-	return &ErrorValueWriter{}
+	vw := &ErrorValueWriter{}
+	vw.Write = vw.WriteError
+	return vw
 }
 
 // WriteValue implements [ValueWriter].
@@ -1822,8 +1828,13 @@ func (vw *ErrorValueWriter) WriteValue(c *Config, w io.Writer, st State, v refle
 	}
 	err := v.Interface().(error) //nolint:forcetypeassert // Checked above.
 	writeArrowWrappedString(w, ".Error() ")
-	writeQuote(w, err.Error())
+	vw.Write(c, w, st, err)
 	return true
+}
+
+// WriteError writes the error with error.Error.
+func (vw *ErrorValueWriter) WriteError(c *Config, w io.Writer, st State, err error) {
+	writeQuote(w, err.Error())
 }
 
 var bytesType = reflect.TypeFor[[]byte]()
