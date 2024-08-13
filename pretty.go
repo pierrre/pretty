@@ -9,6 +9,7 @@ import (
 	"io"
 	"reflect"
 	"runtime"
+	"runtime/debug"
 	"slices"
 	"strconv"
 	"sync"
@@ -1458,12 +1459,16 @@ func (vw *CommonValueWriter) stringer(c *Config, w io.Writer, st State, v reflec
 // It should be created with [NewPanicRecoverValueWriter].
 type PanicRecoverValueWriter struct {
 	ValueWriter
+	// ShowStack shows the stack trace.
+	// Default: true.
+	ShowStack bool
 }
 
-// NewPanicRecoverValueWriter creates a new [PanicRecoverValueWriter].
+// NewPanicRecoverValueWriter creates a new [PanicRecoverValueWriter] with default values.
 func NewPanicRecoverValueWriter(vw ValueWriter) *PanicRecoverValueWriter {
 	return &PanicRecoverValueWriter{
 		ValueWriter: vw,
+		ShowStack:   true,
 	}
 }
 
@@ -1485,7 +1490,9 @@ func (vw *PanicRecoverValueWriter) WriteValue(c *Config, w io.Writer, st State, 
 			_, _ = fmt.Fprint(w, r)
 		}
 		_, _ = writeStringErr(w, "\n")
-		// TODO print stack trace
+		if vw.ShowStack {
+			_, _ = w.Write(debug.Stack())
+		}
 	}()
 	return vw.ValueWriter(c, w, st, v)
 }

@@ -138,6 +138,7 @@ var testCases = []testCase{
 		value:        "test",
 		panicRecover: true,
 		configure: func(vw *CommonValueWriter) {
+			vw.PanicRecover.ShowStack = false
 			vw.Kind = nil
 		},
 	},
@@ -683,6 +684,7 @@ var testCases = []testCase{
 		value:        "test",
 		panicRecover: true,
 		configure: func(vw *CommonValueWriter) {
+			vw.PanicRecover.ShowStack = false
 			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
 				panic("string")
 			}}
@@ -693,6 +695,7 @@ var testCases = []testCase{
 		value:        "test",
 		panicRecover: true,
 		configure: func(vw *CommonValueWriter) {
+			vw.PanicRecover.ShowStack = false
 			err := errors.New("error")
 			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
 				panic(err)
@@ -704,10 +707,23 @@ var testCases = []testCase{
 		value:        "test",
 		panicRecover: true,
 		configure: func(vw *CommonValueWriter) {
+			vw.PanicRecover.ShowStack = false
 			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
 				panic(123)
 			}}
 		},
+	},
+	{
+		name:         "PanicShowStack",
+		value:        "test",
+		panicRecover: true,
+		configure: func(vw *CommonValueWriter) {
+			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
+				panic("string")
+			}}
+		},
+		ignoreResult: true,
+		ignoreAllocs: true,
 	},
 	{
 		name:         "PanicNot",
