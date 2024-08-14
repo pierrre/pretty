@@ -673,7 +673,7 @@ type ChanValueWriter struct {
 	// Default: true.
 	ShowCap bool
 	// ShowAddr shows the address.
-	// Default: true.
+	// Default: false.
 	ShowAddr bool
 }
 
@@ -682,7 +682,7 @@ func NewChanValueWriter() *ChanValueWriter {
 	return &ChanValueWriter{
 		ShowLen:  true,
 		ShowCap:  true,
-		ShowAddr: true,
+		ShowAddr: false,
 	}
 }
 
@@ -705,19 +705,19 @@ func (vw *ChanValueWriter) WriteValue(c *Config, w io.Writer, st State, v reflec
 	return true
 }
 
-// StructValueWriter is a [ValueWriter] that handles struct values.
+// FuncValueWriter is a [ValueWriter] that handles function values.
 //
-// It should be created with [NewStructValueWriter].
+// It should be created with [NewFuncValueWriter].
 type FuncValueWriter struct {
 	// ShowAddr shows the address.
-	// Default: true.
+	// Default: false.
 	ShowAddr bool
 }
 
 // NewFuncValueWriter creates a new [FuncValueWriter] with default values.
 func NewFuncValueWriter() *FuncValueWriter {
 	return &FuncValueWriter{
-		ShowAddr: true,
+		ShowAddr: false,
 	}
 }
 
@@ -776,7 +776,7 @@ type MapValueWriter struct {
 	// Default: true.
 	ShowLen bool
 	// ShowAddr shows the address.
-	// Default: true.
+	// Default: false.
 	ShowAddr bool
 	// SortKeys sorts the keys.
 	// Default: false.
@@ -794,7 +794,7 @@ func NewMapValueWriter(vw ValueWriter) *MapValueWriter {
 	return &MapValueWriter{
 		ValueWriter:        vw,
 		ShowLen:            true,
-		ShowAddr:           true,
+		ShowAddr:           false,
 		SortKeys:           false,
 		SortKeysCmpDefault: mapSortKeysCmpDefault,
 		MaxLen:             0,
@@ -999,7 +999,7 @@ type SliceValueWriter struct {
 	// Default: true.
 	ShowCap bool
 	// ShowAddr shows the address.
-	// Default: true.
+	// Default: false.
 	ShowAddr bool
 	// MaxLen is the maximum length of the slice.
 	// Default: 0 (no limit).
@@ -1012,7 +1012,7 @@ func NewSliceValueWriter(vw ValueWriter) *SliceValueWriter {
 		ValueWriter: vw,
 		ShowLen:     true,
 		ShowCap:     true,
-		ShowAddr:    true,
+		ShowAddr:    false,
 		MaxLen:      0,
 	}
 }
@@ -1857,7 +1857,7 @@ type BytesHexDumpValueWriter struct {
 	// Default: true.
 	ShowCap bool
 	// ShowAddr shows the address.
-	// Default: true.
+	// Default: false.
 	ShowAddr bool
 	// MaxLen is the maximum length of the bytes.
 	// Default: 0 (no limit).
@@ -1869,7 +1869,7 @@ func NewBytesHexDumpValueWriter() *BytesHexDumpValueWriter {
 	return &BytesHexDumpValueWriter{
 		ShowLen:  true,
 		ShowCap:  true,
-		ShowAddr: true,
+		ShowAddr: false,
 		MaxLen:   0,
 	}
 }
@@ -1905,7 +1905,7 @@ type BytesableHexDumpValueWriter struct {
 	// Default: true.
 	ShowCap bool
 	// ShowAddr shows the address.
-	// Default: true.
+	// Default: false.
 	ShowAddr bool
 	// MaxLen is the maximum length of the bytes.
 	// Default: 0 (no limit).
@@ -1917,7 +1917,7 @@ func NewBytesableHexDumpValueWriter() *BytesableHexDumpValueWriter {
 	return &BytesableHexDumpValueWriter{
 		ShowLen:  true,
 		ShowCap:  true,
-		ShowAddr: true,
+		ShowAddr: false,
 		MaxLen:   0,
 	}
 }
