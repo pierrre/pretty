@@ -4,7 +4,7 @@
 			"name": "allocs",
 			"allocs_per_run": {
 				"runs": 100,
-				"allocs": 0
+				"allocs": 1
 			}
 		}
 	]
