@@ -590,6 +590,14 @@ var testCases = []testCase{
 		value: "",
 	},
 	{
+		name:  "StringShowAddr",
+		value: "test",
+		configure: func(vw *CommonValueWriter) {
+			vw.Kind.BaseString.ShowAddr = true
+		},
+		ignoreResult: true,
+	},
+	{
 		name:  "StringUnquoted",
 		value: "aaa\nbbb",
 		configure: func(vw *CommonValueWriter) {

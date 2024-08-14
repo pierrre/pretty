@@ -1044,6 +1044,9 @@ type StringValueWriter struct {
 	// ShowLen shows the len.
 	// Default: true.
 	ShowLen bool
+	// ShowAddr shows the address.
+	// Default: false.
+	ShowAddr bool
 	// Quote quotes the string.
 	// Default: true.
 	Quote bool
@@ -1055,9 +1058,10 @@ type StringValueWriter struct {
 // NewStringValueWriter creates a new [StringValueWriter] with default values.
 func NewStringValueWriter() *StringValueWriter {
 	return &StringValueWriter{
-		ShowLen: true,
-		Quote:   true,
-		MaxLen:  0,
+		ShowLen:  true,
+		ShowAddr: false,
+		Quote:    true,
+		MaxLen:   0,
 	}
 }
 
@@ -1067,14 +1071,16 @@ func (vw *StringValueWriter) WriteValue(c *Config, w io.Writer, st State, v refl
 		return false
 	}
 	s := v.String()
-	writeStringValue(w, s, vw.ShowLen, vw.Quote, vw.MaxLen)
+	writeStringValue(w, s, vw.ShowLen, vw.ShowAddr, uintptr(v.UnsafePointer()), vw.Quote, vw.MaxLen)
 	return true
 }
 
-func writeStringValue(w io.Writer, s string, showLen bool, quote bool, maxLen int) {
+func writeStringValue(w io.Writer, s string, showLen bool, showAddr bool, addr uintptr, quote bool, maxLen int) {
 	infos{
-		showLen: showLen,
-		len:     len(s),
+		showLen:  showLen,
+		len:      len(s),
+		showAddr: showAddr,
+		addr:     addr,
 	}.writeWithTrailingSpace(w)
 	truncated := false
 	if maxLen > 0 && len(s) > maxLen {
@@ -1306,6 +1312,7 @@ func (vw *CommonValueWriter) SetShowAddr(show bool) {
 	vw.Kind.BaseMap.ShowAddr = show
 	vw.Kind.BasePointer.ShowAddr = show
 	vw.Kind.BaseSlice.ShowAddr = show
+	vw.Kind.BaseString.ShowAddr = show
 	vw.BytesHexDump.ShowAddr = show
 	vw.BytesableHexDump.ShowAddr = show
 }
@@ -2058,7 +2065,7 @@ func (vw *StringerValueWriter) WriteValue(c *Config, w io.Writer, st State, v re
 	sr := v.Interface().(fmt.Stringer) //nolint:forcetypeassert // Checked above.
 	s := sr.String()
 	writeArrowWrappedString(w, ".String() ")
-	writeStringValue(w, s, vw.ShowLen, vw.Quote, vw.MaxLen)
+	writeStringValue(w, s, vw.ShowLen, false, 0, vw.Quote, vw.MaxLen)
 	return true
 }
 
