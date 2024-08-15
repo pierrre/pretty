@@ -1415,6 +1415,14 @@ func BenchmarkWriteIndent(b *testing.B) {
 	}
 }
 
+func BenchmarkWriteIndentParallel(b *testing.B) {
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			WriteIndent(io.Discard, testIdent, 10)
+		}
+	})
+}
+
 type testStruct struct {
 	Foo        int
 	Bar        float64
