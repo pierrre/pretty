@@ -18,6 +18,7 @@ import (
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/strconvio"
 	"github.com/pierrre/go-libs/syncutil"
+	"github.com/pierrre/go-libs/unsafeio"
 )
 
 // Write writes the value to the [io.Writer] with [DefaultPrinter].
@@ -2250,7 +2251,7 @@ func writeString(w io.Writer, s string) {
 }
 
 func writeStringErr(w io.Writer, s string) (int, error) {
-	return w.Write(unsafe.Slice(unsafe.StringData(s), len(s))) //nolint:wrapcheck // The error is not wrapped.
+	return unsafeio.WriteString(w, s) //nolint:wrapcheck // The error is not wrapped.
 }
 
 func writeQuote(w io.Writer, s string) {
