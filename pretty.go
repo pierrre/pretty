@@ -12,7 +12,6 @@ import (
 	"runtime/debug"
 	"slices"
 	"strconv"
-	"sync"
 	"unsafe" //nolint:depguard // Required for string to []byte conversion.
 
 	"github.com/pierrre/go-libs/bufpool"
@@ -1136,32 +1135,29 @@ func (vw *StructValueWriter) WriteValue(c *Config, w io.Writer, st State, v refl
 }
 
 var (
-	structFieldsCacheLock     sync.Mutex
-	structFieldsCacheExported = map[reflect.Type][]reflect.StructField{}
-	structFieldsCacheAll      = map[reflect.Type][]reflect.StructField{}
+	structFieldsCacheExported syncutil.MapFor[reflect.Type, []reflect.StructField]
+	structFieldsCacheAll      syncutil.MapFor[reflect.Type, []reflect.StructField]
 )
 
 func getStructFields(typ reflect.Type, unexported bool) []reflect.StructField {
-	var m map[reflect.Type][]reflect.StructField
+	var m *syncutil.MapFor[reflect.Type, []reflect.StructField]
 	if unexported {
-		m = structFieldsCacheAll
+		m = &structFieldsCacheAll
 	} else {
-		m = structFieldsCacheExported
+		m = &structFieldsCacheExported
 	}
-	structFieldsCacheLock.Lock()
-	defer structFieldsCacheLock.Unlock()
-	fields, ok := m[typ]
-	if !ok {
-		fields = make([]reflect.StructField, 0, typ.NumField())
-		for i := range typ.NumField() {
-			field := typ.Field(i)
-			if !unexported && !field.IsExported() {
-				continue
-			}
-			fields = append(fields, field)
+	fields, ok := m.Load(typ)
+	if ok {
+		return fields
+	}
+	for i := range typ.NumField() {
+		field := typ.Field(i)
+		if !unexported && !field.IsExported() {
+			continue
 		}
-		m[typ] = fields
+		fields = append(fields, field)
 	}
+	m.Store(typ, fields)
 	return fields
 }
 
@@ -1661,19 +1657,15 @@ func (vw *TypeAndValueWriter) writeBaseType(w io.Writer, v reflect.Value) {
 	writeString(w, ")")
 }
 
-var (
-	baseTypeCacheLock sync.Mutex
-	baseTypeCache     = map[reflect.Type]reflect.Type{}
-)
+var baseTypeCache syncutil.MapFor[reflect.Type, reflect.Type]
 
 func (vw *TypeAndValueWriter) getCachedBaseType(typ reflect.Type) reflect.Type {
-	baseTypeCacheLock.Lock()
-	defer baseTypeCacheLock.Unlock()
-	baseType, ok := baseTypeCache[typ]
-	if !ok {
-		baseType = vw.getBaseType(typ)
-		baseTypeCache[typ] = baseType
+	baseType, ok := baseTypeCache.Load(typ)
+	if ok {
+		return baseType
 	}
+	baseType = vw.getBaseType(typ)
+	baseTypeCache.Store(typ, baseType)
 	return baseType
 }
 
