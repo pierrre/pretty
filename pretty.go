@@ -2153,21 +2153,19 @@ func ReleaseIndentWriter(iw *IndentWriter) {
 	indentWriterPool.Put(iw)
 }
 
-var (
-	indentCacheLock sync.Mutex
-	indentCache     = map[string][]byte{}
-)
+var indentCache syncutil.MapFor[string, []byte]
 
 func getIndentBytes(indent string, level int) []byte {
 	l := len(indent) * level
-	indentCacheLock.Lock()
-	defer indentCacheLock.Unlock()
-	b := indentCache[indent]
-	if len(b) < l {
-		b = bytes.Repeat([]byte(indent), level)
-		indentCache[indent] = b
+	b, ok := indentCache.Load(indent)
+	if ok {
+		if len(b) >= l {
+			return b[:l]
+		}
 	}
-	return b[:l]
+	b = bytes.Repeat([]byte(indent), level)
+	indentCache.Store(indent, b)
+	return b
 }
 
 func writeIndent(w io.Writer, indent string, level int) {
