@@ -18,6 +18,7 @@ import (
 	"github.com/pierrre/go-libs/bufpool"
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/strconvio"
+	"github.com/pierrre/go-libs/syncutil"
 )
 
 // Write writes the value to the [io.Writer] with [DefaultPrinter].
@@ -141,7 +142,7 @@ type State struct {
 }
 
 func getState() State {
-	vs := getStateVisited()
+	vs := stateVisitedPool.Get()
 	*vs = (*vs)[:0]
 	return State{
 		Visited: vs,
@@ -163,21 +164,13 @@ func (st State) popVisited() {
 }
 
 func (st State) release() {
-	releaseStateVisited(st.Visited)
+	stateVisitedPool.Put(st.Visited)
 }
 
-var stateVisitedPool = &sync.Pool{
-	New: func() any {
+var stateVisitedPool = syncutil.PoolFor[[]uintptr]{
+	New: func() *[]uintptr {
 		return new([]uintptr)
 	},
-}
-
-func getStateVisited() *[]uintptr {
-	return stateVisitedPool.Get().(*[]uintptr) //nolint:forcetypeassert // The pool only contains *[]uintptr.
-}
-
-func releaseStateVisited(vs *[]uintptr) {
-	stateVisitedPool.Put(vs)
 }
 
 // ValueWriter is a function that writes a [reflect.Value] to a [io.Writer].
@@ -898,23 +891,24 @@ func (vw *MapValueWriter) writeUnsorted(c *Config, w io.Writer, st State, v refl
 
 var typeInterface = reflect.TypeFor[any]()
 
-var reflectValuePool = &sync.Pool{
-	New: func() any {
-		return reflect.New(typeInterface).Elem()
+var reflectValuePool = syncutil.PoolFor[reflect.Value]{
+	New: func() *reflect.Value {
+		v := reflect.New(typeInterface).Elem()
+		return &v
 	},
 }
 
 func (vw *MapValueWriter) writeUnsortedExported(c *Config, w io.Writer, st State, v reflect.Value) {
 	iter := v.MapRange()
-	keyItf := reflectValuePool.Get()
-	valueItf := reflectValuePool.Get()
-	key := keyItf.(reflect.Value)     //nolint:forcetypeassert // The pool only contains reflect.Value.
-	value := valueItf.(reflect.Value) //nolint:forcetypeassert // The pool only contains reflect.Value.
+	keyP := reflectValuePool.Get()
+	valueP := reflectValuePool.Get()
+	key := *keyP
+	value := *valueP
 	defer func() {
 		key.SetZero()
 		value.SetZero()
-		reflectValuePool.Put(keyItf)
-		reflectValuePool.Put(valueItf)
+		reflectValuePool.Put(keyP)
+		reflectValuePool.Put(valueP)
 	}()
 	for i := 0; iter.Next(); i++ {
 		key.SetIterKey(iter)
@@ -1998,14 +1992,12 @@ func newHexDumperPoolEntry() *hexDumperPoolEntry {
 	}
 }
 
-var hexDumperPool = &sync.Pool{
-	New: func() any {
-		return newHexDumperPoolEntry()
-	},
+var hexDumperPool = syncutil.PoolFor[hexDumperPoolEntry]{
+	New: newHexDumperPoolEntry,
 }
 
 func getHexDumperPoolEntry(w io.Writer) *hexDumperPoolEntry {
-	e := hexDumperPool.Get().(*hexDumperPoolEntry) //nolint:forcetypeassert // The pool only contains *hexDumperPoolEntry.
+	e := hexDumperPool.Get()
 	e.writerWrapper.Writer = w
 	return e
 }
@@ -2140,8 +2132,8 @@ func (iw *IndentWriter) Write(p []byte) (n int, err error) {
 	return n, nil
 }
 
-var indentWriterPool = &sync.Pool{
-	New: func() any {
+var indentWriterPool = syncutil.PoolFor[IndentWriter]{
+	New: func() *IndentWriter {
 		return &IndentWriter{}
 	},
 }
@@ -2150,7 +2142,7 @@ var indentWriterPool = &sync.Pool{
 //
 // The caller must call [IndentWriter.Release] after using it.
 func GetIndentWriter(w io.Writer, indent string, level int, indented bool) *IndentWriter {
-	iw := indentWriterPool.Get().(*IndentWriter) //nolint:forcetypeassert // The pool only contains *indentWriter.
+	iw := indentWriterPool.Get()
 	iw.init(w, indent, level, indented)
 	return iw
 }
