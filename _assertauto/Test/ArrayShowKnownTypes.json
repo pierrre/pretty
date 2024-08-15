@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[[3]int] {\n\t[int] 1,\n\t[int] 2,\n\t[int] 3,\n}"
+			"equal": {
+				"type": "string",
+				"value": "[[3]int] {\n\t[int] 1,\n\t[int] 2,\n\t[int] 3,\n}"
+			}
 		},
 		{
 			"name": "allocs",

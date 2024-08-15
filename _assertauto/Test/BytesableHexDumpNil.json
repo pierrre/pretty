@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[*pretty_test.testBytesable] <nil>"
+			"equal": {
+				"type": "string",
+				"value": "[*pretty_test.testBytesable] <nil>"
+			}
 		},
 		{
 			"name": "allocs",

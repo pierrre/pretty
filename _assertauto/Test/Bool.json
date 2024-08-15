@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[bool] true"
+			"equal": {
+				"type": "string",
+				"value": "[bool] true"
+			}
 		},
 		{
 			"name": "allocs",

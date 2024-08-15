@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[[]int] <nil>"
+			"equal": {
+				"type": "string",
+				"value": "[[]int] <nil>"
+			}
 		},
 		{
 			"name": "allocs",

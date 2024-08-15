@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "(len=4) \"test\""
+			"equal": {
+				"type": "string",
+				"value": "(len=4) \"test\""
+			}
 		},
 		{
 			"name": "allocs",

@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[pretty_test.myFloat64](float64) 0"
+			"equal": {
+				"type": "string",
+				"value": "[pretty_test.myFloat64](float64) 0"
+			}
 		},
 		{
 			"name": "allocs",

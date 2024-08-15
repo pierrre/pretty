@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[pretty_test.myBool] false"
+			"equal": {
+				"type": "string",
+				"value": "[pretty_test.myBool] false"
+			}
 		},
 		{
 			"name": "allocs",

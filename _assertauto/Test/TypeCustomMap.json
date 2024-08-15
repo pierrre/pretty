@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[pretty_test.myMap](map[int]int) <nil>"
+			"equal": {
+				"type": "string",
+				"value": "[pretty_test.myMap](map[int]int) <nil>"
+			}
 		},
 		{
 			"name": "allocs",

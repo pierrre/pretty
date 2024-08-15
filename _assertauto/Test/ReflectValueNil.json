@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[reflect.Value] => <invalid>"
+			"equal": {
+				"type": "string",
+				"value": "[reflect.Value] => <invalid>"
+			}
 		},
 		{
 			"name": "allocs",

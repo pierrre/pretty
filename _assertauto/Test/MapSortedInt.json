@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[map[int]int] (len=3) {\n\t1: 2,\n\t3: 4,\n\t5: 6,\n}"
+			"equal": {
+				"type": "string",
+				"value": "[map[int]int] (len=3) {\n\t1: 2,\n\t3: 4,\n\t5: 6,\n}"
+			}
 		},
 		{
 			"name": "allocs",

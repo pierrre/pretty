@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[string] <panic>: string\n"
+			"equal": {
+				"type": "string",
+				"value": "[string] <panic>: string\n"
+			}
 		},
 		{
 			"name": "allocs",

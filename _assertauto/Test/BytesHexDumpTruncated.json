@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[[]uint8] (len=4 cap=4)\n\t00000000  74 65                                             |te|\n\t<truncated>"
+			"equal": {
+				"type": "string",
+				"value": "[[]uint8] (len=4 cap=4)\n\t00000000  74 65                                             |te|\n\t<truncated>"
+			}
 		},
 		{
 			"name": "allocs",

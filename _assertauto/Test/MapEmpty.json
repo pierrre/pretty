@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[map[int]int] (len=0) {}"
+			"equal": {
+				"type": "string",
+				"value": "[map[int]int] (len=0) {}"
+			}
 		},
 		{
 			"name": "allocs",

@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[func() *pretty.Config] github.com/pierrre/pretty.NewConfig"
+			"equal": {
+				"type": "string",
+				"value": "[func() *pretty.Config] github.com/pierrre/pretty.NewConfig"
+			}
 		},
 		{
 			"name": "allocs",

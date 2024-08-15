@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[pretty_test.myUint8](uint8) 0"
+			"equal": {
+				"type": "string",
+				"value": "[pretty_test.myUint8](uint8) 0"
+			}
 		},
 		{
 			"name": "allocs",

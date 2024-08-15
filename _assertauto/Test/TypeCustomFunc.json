@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[pretty_test.myFunc](func(int, string) (int, error)) <nil>"
+			"equal": {
+				"type": "string",
+				"value": "[pretty_test.myFunc](func(int, string) (int, error)) <nil>"
+			}
 		},
 		{
 			"name": "allocs",

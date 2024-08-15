@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[*interface {}] => [int] 123"
+			"equal": {
+				"type": "string",
+				"value": "[*interface {}] => [int] 123"
+			}
 		},
 		{
 			"name": "allocs",

@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[*pretty_test.testStringer] => .String() => (len=4) \"test\""
+			"equal": {
+				"type": "string",
+				"value": "[*pretty_test.testStringer] => .String() => (len=4) \"test\""
+			}
 		},
 		{
 			"name": "allocs",

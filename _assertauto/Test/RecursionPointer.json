@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[*interface {}] => <recursion>"
+			"equal": {
+				"type": "string",
+				"value": "[*interface {}] => <recursion>"
+			}
 		},
 		{
 			"name": "allocs",

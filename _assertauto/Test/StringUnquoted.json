@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[string] (len=7) aaa\nbbb"
+			"equal": {
+				"type": "string",
+				"value": "[string] (len=7) aaa\nbbb"
+			}
 		},
 		{
 			"name": "allocs",

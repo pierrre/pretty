@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[int] 123"
+			"equal": {
+				"type": "string",
+				"value": "[int] 123"
+			}
 		},
 		{
 			"name": "allocs",

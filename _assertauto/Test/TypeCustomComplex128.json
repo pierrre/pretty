@@ -2,7 +2,10 @@
 	"entries": [
 		{
 			"name": "result",
-			"equal": "[pretty_test.myComplex128](complex128) (0+0i)"
+			"equal": {
+				"type": "string",
+				"value": "[pretty_test.myComplex128](complex128) (0+0i)"
+			}
 		},
 		{
 			"name": "allocs",
