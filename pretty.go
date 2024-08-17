@@ -122,7 +122,7 @@ type Config struct {
 // NewConfig creates a new [Config] initialized with default values.
 func NewConfig() *Config {
 	return &Config{
-		Indent: defaultIndent,
+		Indent: indentDefault,
 	}
 }
 
@@ -2063,8 +2063,6 @@ func (ft *formatter) Format(f fmt.State, verb rune) {
 	ft.printer.Write(f, ft.value)
 }
 
-const defaultIndent = "\t"
-
 // IndentWriter is a [io.Writer] that indents.
 //
 // It is exposed for internal use.
@@ -2146,15 +2144,24 @@ func ReleaseIndentWriter(iw *IndentWriter) {
 	indentWriterPool.Put(iw)
 }
 
-var indentCache syncutil.MapFor[string, []byte]
+const (
+	indentDefault           = "\t"
+	indentDefaultBytesLevel = 1000
+)
+
+var (
+	indentDefaultBytes = bytes.Repeat([]byte(indentDefault), indentDefaultBytesLevel)
+	indentCache        syncutil.MapFor[string, []byte]
+)
 
 func getIndentBytes(indent string, level int) []byte {
 	l := len(indent) * level
-	b, ok := indentCache.Load(indent)
-	if ok {
-		if len(b) >= l {
-			return b[:l]
-		}
+	if indent == indentDefault && level <= indentDefaultBytesLevel {
+		return indentDefaultBytes[:l]
+	}
+	b, _ := indentCache.Load(indent)
+	if len(b) >= l {
+		return b[:l]
 	}
 	b = bytes.Repeat([]byte(indent), level)
 	indentCache.Store(indent, b)

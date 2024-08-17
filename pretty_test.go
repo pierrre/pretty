@@ -1390,37 +1390,64 @@ func BenchmarkIndentWriter(b *testing.B) {
 	}
 }
 
-var testWriteIndentLevels = []int{0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000}
+var (
+	writeIndentTestCases = []struct {
+		name   string
+		indent string
+	}{
+		{
+			name:   "Tab",
+			indent: "\t",
+		},
+		{
+			name:   "4Spaces",
+			indent: "    ",
+		},
+	}
+	testWriteIndentLevels = []int{0, 1, 2, 10, 100, 1000, 1001}
+)
 
 func TestWriteIndent(t *testing.T) {
-	for _, level := range testWriteIndentLevels {
-		t.Run(strconv.Itoa(level), func(t *testing.T) {
-			buf := new(bytes.Buffer)
-			WriteIndent(buf, testIdent, level)
-			assert.Equal(t, buf.String(), strings.Repeat(testIdent, level))
-			assert.AllocsPerRun(t, 100, func() {
-				WriteIndent(io.Discard, testIdent, level)
-			}, 0)
+	for _, tc := range writeIndentTestCases {
+		t.Run(tc.name, func(t *testing.T) {
+			for _, level := range testWriteIndentLevels {
+				t.Run(strconv.Itoa(level), func(t *testing.T) {
+					buf := new(bytes.Buffer)
+					WriteIndent(buf, tc.indent, level)
+					assert.Equal(t, buf.String(), strings.Repeat(tc.indent, level))
+					assert.AllocsPerRun(t, 100, func() {
+						WriteIndent(io.Discard, tc.indent, level)
+					}, 0)
+				})
+			}
 		})
 	}
 }
 
 func BenchmarkWriteIndent(b *testing.B) {
-	for _, level := range testWriteIndentLevels {
-		b.Run(strconv.Itoa(level), func(b *testing.B) {
-			for range b.N {
-				WriteIndent(io.Discard, testIdent, level)
+	for _, tc := range writeIndentTestCases {
+		b.Run(tc.name, func(b *testing.B) {
+			for _, level := range testWriteIndentLevels {
+				b.Run(strconv.Itoa(level), func(b *testing.B) {
+					for range b.N {
+						WriteIndent(io.Discard, tc.indent, level)
+					}
+				})
 			}
 		})
 	}
 }
 
 func BenchmarkWriteIndentParallel(b *testing.B) {
-	b.RunParallel(func(pb *testing.PB) {
-		for pb.Next() {
-			WriteIndent(io.Discard, testIdent, 10)
-		}
-	})
+	for _, tc := range writeIndentTestCases {
+		b.Run(tc.name, func(b *testing.B) {
+			b.RunParallel(func(pb *testing.PB) {
+				for pb.Next() {
+					WriteIndent(io.Discard, tc.indent, 10)
+				}
+			})
+		})
+	}
 }
 
 type testStruct struct {
