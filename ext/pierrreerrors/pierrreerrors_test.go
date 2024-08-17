@@ -17,7 +17,7 @@ func init() {
 func TestValueWriter(t *testing.T) {
 	err := errors.New("error")
 	s := pretty.String(err)
-	assert.StringHasPrefix(t, s, "[*errstack.stack] => .Error() => error\n\tstack\n")
+	assert.StringHasPrefix(t, s, "[*errstack.stack] => .Error() => error\n\tstack:\n")
 }
 
 func TestValueWriterNil(t *testing.T) {
