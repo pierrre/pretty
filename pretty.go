@@ -167,7 +167,7 @@ func (st State) release() {
 	stateVisitedPool.Put(st.Visited)
 }
 
-var stateVisitedPool = syncutil.PoolForNotPointer[*[]uintptr]{
+var stateVisitedPool = syncutil.PoolFor[*[]uintptr]{
 	New: func() *[]uintptr {
 		return new([]uintptr)
 	},
@@ -891,7 +891,7 @@ func (vw *MapValueWriter) writeUnsorted(c *Config, w io.Writer, st State, v refl
 
 var typeInterface = reflect.TypeFor[any]()
 
-var reflectValuePool = syncutil.PoolForNotPointer[*reflect.Value]{
+var reflectValuePool = syncutil.PoolFor[*reflect.Value]{
 	New: func() *reflect.Value {
 		v := reflect.New(typeInterface).Elem()
 		return &v
@@ -1985,7 +1985,7 @@ func newHexDumperPoolEntry() *hexDumperPoolEntry {
 	}
 }
 
-var hexDumperPool = syncutil.PoolForNotPointer[*hexDumperPoolEntry]{
+var hexDumperPool = syncutil.PoolFor[*hexDumperPoolEntry]{
 	New: newHexDumperPoolEntry,
 }
 
@@ -2123,7 +2123,7 @@ func (iw *IndentWriter) Write(p []byte) (n int, err error) {
 	return n, nil
 }
 
-var indentWriterPool = syncutil.PoolForNotPointer[*IndentWriter]{
+var indentWriterPool = syncutil.PoolFor[*IndentWriter]{
 	New: func() *IndentWriter {
 		return &IndentWriter{}
 	},

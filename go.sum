@@ -4,5 +4,5 @@ github.com/pierrre/compare v1.4.8 h1:neQdI/w4hdPspimvz7pC1WTLzwPrSYTX4d8ZaWibu8o
 github.com/pierrre/compare v1.4.8/go.mod h1:BcMf3WDqCagPhrewwuP1ciPH0E3j/XYxi+zEafJmjuY=
 github.com/pierrre/errors v0.8.3 h1:jJpeSHxVJRmp6V4nHvd1MsebhaQymbLKnBVwk0AQ/zg=
 github.com/pierrre/errors v0.8.3/go.mod h1:ZGU9rObkXQW/B6sJo+wgEmMMrHDNPvV7Fqjkd3c0qKU=
-github.com/pierrre/go-libs v0.7.1 h1:Tx7RB1SkKfQwkkhFrcX6LJ/dUkJMzKUEbTqTy8OkkSg=
-github.com/pierrre/go-libs v0.7.1/go.mod h1:haccTb6F3IFwPdPZIQtZaiA3k82zj8XzWa59M0cvecE=
+github.com/pierrre/go-libs v0.7.2 h1:Ds0JGg/YDGvNND0OYKOPh1jd6+jYwjMWs66uKqblcVE=
+github.com/pierrre/go-libs v0.7.2/go.mod h1:FZ0ZbMDILdXbiSNOQ7t6auMULRO3nTFAz7nfh8pUUB0=
