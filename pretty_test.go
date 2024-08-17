@@ -631,14 +631,14 @@ var testCases = []testCase{
 		value: struct{}{},
 	},
 	{
-		name: "StructUnexportedDisabled",
+		name: "StructFieldFilterExported",
 		value: testStruct{
 			Foo:        123,
 			Bar:        123.456,
 			unexported: 123,
 		},
 		configure: func(vw *CommonValueWriter) {
-			vw.Kind.BaseStruct.Unexported = false
+			vw.Kind.BaseStruct.FieldFilter = ExportedStructFieldFilter
 		},
 	},
 	{

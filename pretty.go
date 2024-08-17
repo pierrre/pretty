@@ -1097,16 +1097,16 @@ func writeStringValue(w io.Writer, s string, showLen bool, showAddr bool, addr u
 // It should be created with [NewStructValueWriter].
 type StructValueWriter struct {
 	ValueWriter
-	// Unexported shows unexported fields.
-	// Default: true.
-	Unexported bool
+	// FieldFilter filters the fields.
+	// Default: nil.
+	FieldFilter func(v reflect.Value, field reflect.StructField) bool
 }
 
 // NewStructValueWriter creates a new [StructValueWriter] with default values.
 func NewStructValueWriter(vw ValueWriter) *StructValueWriter {
 	return &StructValueWriter{
 		ValueWriter: vw,
-		Unexported:  true,
+		FieldFilter: nil,
 	}
 }
 
@@ -1117,49 +1117,49 @@ func (vw *StructValueWriter) WriteValue(c *Config, w io.Writer, st State, v refl
 	}
 	st.KnownType = false
 	writeString(w, "{")
-	fields := getStructFields(v.Type(), vw.Unexported)
-	if len(fields) > 0 {
-		writeString(w, "\n")
-		st.Indent++
-		for i, field := range fields {
-			c.WriteIndent(w, st)
-			writeString(w, field.Name)
-			writeString(w, ": ")
-			mustHandle(vw.ValueWriter(c, w, st, v.Field(i)))
-			writeString(w, ",\n")
+	fields := getStructFields(v.Type())
+	hasFields := false
+	st.Indent++
+	for i, field := range fields {
+		if vw.FieldFilter != nil && !vw.FieldFilter(v, field) {
+			continue
 		}
-		st.Indent--
+		if !hasFields {
+			writeString(w, "\n")
+			hasFields = true
+		}
+		c.WriteIndent(w, st)
+		writeString(w, field.Name)
+		writeString(w, ": ")
+		mustHandle(vw.ValueWriter(c, w, st, v.Field(i)))
+		writeString(w, ",\n")
+	}
+	st.Indent--
+	if hasFields {
 		c.WriteIndent(w, st)
 	}
 	writeString(w, "}")
 	return true
 }
 
-var (
-	structFieldsCacheExported syncutil.MapFor[reflect.Type, []reflect.StructField]
-	structFieldsCacheAll      syncutil.MapFor[reflect.Type, []reflect.StructField]
-)
+var structFieldsCache syncutil.MapFor[reflect.Type, []reflect.StructField]
 
-func getStructFields(typ reflect.Type, unexported bool) []reflect.StructField {
-	var m *syncutil.MapFor[reflect.Type, []reflect.StructField]
-	if unexported {
-		m = &structFieldsCacheAll
-	} else {
-		m = &structFieldsCacheExported
-	}
-	fields, ok := m.Load(typ)
+func getStructFields(typ reflect.Type) []reflect.StructField {
+	fields, ok := structFieldsCache.Load(typ)
 	if ok {
 		return fields
 	}
 	for i := range typ.NumField() {
 		field := typ.Field(i)
-		if !unexported && !field.IsExported() {
-			continue
-		}
 		fields = append(fields, field)
 	}
-	m.Store(typ, fields)
+	structFieldsCache.Store(typ, fields)
 	return fields
+}
+
+// UnsafePointerValueWriter is a struct field filter that returns true for exported fields.
+func ExportedStructFieldFilter(v reflect.Value, field reflect.StructField) bool { //nolint:gocritic // The StructField type is large, but we need to use it.
+	return field.IsExported()
 }
 
 // UnsafePointerValueWriter is a [ValueWriter] that handles unsafe pointer values.
