@@ -81,7 +81,7 @@ func ExampleFormatter() {
 
 func ExampleValueWriter() {
 	c := NewConfig()
-	vw := func(c *Config, w io.Writer, st State, v reflect.Value) bool {
+	vw := func(w io.Writer, st State, v reflect.Value) bool {
 		_, _ = io.WriteString(w, "example")
 		return true
 	}
@@ -129,8 +129,8 @@ var testCases = []*testCase{
 		name:  "Invalid",
 		value: "test",
 		configure: func(vw *CommonValueWriter) {
-			vw.ValueWriters = ValueWriters{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
-				return vw.Kind.WriteValue(c, w, st, reflect.ValueOf(nil))
+			vw.ValueWriters = ValueWriters{func(w io.Writer, st State, v reflect.Value) bool {
+				return vw.Kind.WriteValue(w, st, reflect.ValueOf(nil))
 			}}
 		},
 	},
@@ -702,7 +702,7 @@ var testCases = []*testCase{
 		panicRecover: true,
 		configure: func(vw *CommonValueWriter) {
 			vw.PanicRecover.ShowStack = false
-			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
+			vw.ValueWriters = []ValueWriter{func(w io.Writer, st State, v reflect.Value) bool {
 				panic("string")
 			}}
 		},
@@ -714,7 +714,7 @@ var testCases = []*testCase{
 		configure: func(vw *CommonValueWriter) {
 			vw.PanicRecover.ShowStack = false
 			err := errors.New("error")
-			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
+			vw.ValueWriters = []ValueWriter{func(w io.Writer, st State, v reflect.Value) bool {
 				panic(err)
 			}}
 		},
@@ -725,7 +725,7 @@ var testCases = []*testCase{
 		panicRecover: true,
 		configure: func(vw *CommonValueWriter) {
 			vw.PanicRecover.ShowStack = false
-			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
+			vw.ValueWriters = []ValueWriter{func(w io.Writer, st State, v reflect.Value) bool {
 				panic(123)
 			}}
 		},
@@ -735,7 +735,7 @@ var testCases = []*testCase{
 		value:        "test",
 		panicRecover: true,
 		configure: func(vw *CommonValueWriter) {
-			vw.ValueWriters = []ValueWriter{func(c *Config, w io.Writer, st State, v reflect.Value) bool {
+			vw.ValueWriters = []ValueWriter{func(w io.Writer, st State, v reflect.Value) bool {
 				panic("string")
 			}}
 		},
@@ -1287,7 +1287,7 @@ func Benchmark(b *testing.B) {
 
 func TestPrinterPanicNotHandled(t *testing.T) {
 	c := NewConfig()
-	vw := func(c *Config, w io.Writer, st State, v reflect.Value) bool {
+	vw := func(w io.Writer, st State, v reflect.Value) bool {
 		return false
 	}
 	p := NewPrinter(c, vw)
