@@ -1,0 +1,18 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": {
+				"type": "string",
+				"value": "[pretty_test.testUnexported] {\n\tv: [*time.Time] => .String() => (len=29) \"2009-11-10 23:00:00 +0000 UTC\",\n}"
+			}
+		},
+		{
+			"name": "allocs",
+			"allocs_per_run": {
+				"runs": 100,
+				"allocs": 1
+			}
+		}
+	]
+}

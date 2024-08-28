@@ -25,6 +25,7 @@ type CommonValueWriter struct {
 	Type             *TypeValueWriter
 	Kind             *KindValueWriter
 	ReflectValue     *ReflectValueWriter
+	Time             *TimeValueWriter
 	Error            *ErrorValueWriter
 	BytesHexDump     *BytesHexDumpValueWriter
 	BytesableHexDump *BytesableHexDumpValueWriter
@@ -44,12 +45,14 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.Type = NewTypeValueWriter()
 	vw.Kind = NewKindValueWriter(vw.loopback)
 	vw.ReflectValue = NewReflectValueWriter(vw.loopback)
+	vw.Time = NewTimeValueWriter()
 	vw.Error = NewErrorValueWriter()
 	vw.BytesHexDump = NewBytesHexDumpValueWriter()
 	vw.BytesableHexDump = NewBytesableHexDumpValueWriter()
 	vw.Stringer = NewStringerValueWriter()
 	vw.ValueWriters = ValueWriters{
 		vw.reflectValue,
+		vw.time,
 		vw.error,
 		vw.bytesHexDump,
 		vw.bytesableHexDump,
@@ -203,6 +206,13 @@ func (vw *CommonValueWriter) reflectValue(w io.Writer, st State, v reflect.Value
 		return false
 	}
 	return vw.ReflectValue.WriteValue(w, st, v)
+}
+
+func (vw *CommonValueWriter) time(w io.Writer, st State, v reflect.Value) bool {
+	if vw.Time == nil {
+		return false
+	}
+	return vw.Time.WriteValue(w, st, v)
 }
 
 func (vw *CommonValueWriter) error(w io.Writer, st State, v reflect.Value) bool {

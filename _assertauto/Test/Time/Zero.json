@@ -1,0 +1,18 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": {
+				"type": "string",
+				"value": "[time.Time] 0001-01-01T00:00:00Z"
+			}
+		},
+		{
+			"name": "allocs",
+			"allocs_per_run": {
+				"runs": 100,
+				"allocs": 0
+			}
+		}
+	]
+}
