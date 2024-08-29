@@ -139,26 +139,37 @@ func (vw *MapValueWriter) writeUnsorted(w io.Writer, st State, v reflect.Value) 
 	}
 }
 
-var interfaceType = reflect.TypeFor[any]()
+var reflectValuePools = syncutil.MapFor[reflect.Type, *syncutil.PoolFor[*reflect.Value]]{}
 
-var reflectValuePool = syncutil.PoolFor[*reflect.Value]{
-	New: func() *reflect.Value {
-		v := reflect.New(interfaceType).Elem()
-		return &v
-	},
+func getReflectValuePool(typ reflect.Type) *syncutil.PoolFor[*reflect.Value] {
+	pool, ok := reflectValuePools.Load(typ)
+	if ok {
+		return pool
+	}
+	pool = &syncutil.PoolFor[*reflect.Value]{
+		New: func() *reflect.Value {
+			v := reflect.New(typ).Elem()
+			return &v
+		},
+	}
+	reflectValuePools.Store(typ, pool)
+	return pool
 }
 
 func (vw *MapValueWriter) writeUnsortedExported(w io.Writer, st State, v reflect.Value) {
 	iter := v.MapRange()
-	keyP := reflectValuePool.Get()
-	valueP := reflectValuePool.Get()
+	typ := v.Type()
+	keyPool := getReflectValuePool(typ.Key())
+	valuePool := getReflectValuePool(typ.Elem())
+	keyP := keyPool.Get()
+	valueP := valuePool.Get()
 	key := *keyP
 	value := *valueP
 	defer func() {
 		key.SetZero()
 		value.SetZero()
-		reflectValuePool.Put(keyP)
-		reflectValuePool.Put(valueP)
+		keyPool.Put(keyP)
+		valuePool.Put(valueP)
 	}()
 	for i := 0; iter.Next(); i++ {
 		key.SetIterKey(iter)

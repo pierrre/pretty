@@ -33,6 +33,15 @@ func init() {
 			},
 		},
 		{
+			name:  "UnsortedExportedShowType",
+			value: map[int]int{1: 2},
+			configure: func(vw *CommonValueWriter) {
+				vw.Kind.BaseMap.SortKeys = false
+				vw.UnwrapInterface = nil
+				vw.TypeAndValue.ShowKnownTypes = true
+			},
+		},
+		{
 			name:  "UnsortedExportedTruncated",
 			value: map[int]int{1: 2, 3: 4},
 			configure: func(vw *CommonValueWriter) {
