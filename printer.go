@@ -68,7 +68,9 @@ func (p *Printer) Write(w io.Writer, vi any, opts ...Option) {
 	mustHandle(p.ValueWriter(w, st, v))
 }
 
-var bufPool = &bufpool.Pool{}
+var bufPool = &bufpool.Pool{
+	MaxCap: -1,
+}
 
 // String returns the value as a string.
 func (p *Printer) String(vi any, opts ...Option) string {
