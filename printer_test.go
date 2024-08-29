@@ -75,10 +75,11 @@ func Test(t *testing.T) {
 			}
 			t.Log(s)
 			if !tc.ignoreAllocs {
-				assertauto.AllocsPerRun(t, 100, func() {
+				allocs, _ := assertauto.AllocsPerRun(t, 100, func() {
 					t.Helper()
 					p.Write(io.Discard, tc.value)
 				}, assertauto.Name("allocs"))
+				t.Logf("allocs: %g", allocs)
 			}
 		})
 	}
