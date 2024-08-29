@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/pierrre/go-libs/syncutil"
+	"github.com/pierrre/pretty/internal/indent"
 )
 
 // State represents the state of the [Printer].
@@ -18,7 +19,7 @@ type State struct {
 }
 
 func (st State) writeIndent(w io.Writer) {
-	writeIndent(w, st.IndentString, st.IndentLevel)
+	indent.MustWrite(w, st.IndentString, st.IndentLevel)
 }
 
 func getState() State {

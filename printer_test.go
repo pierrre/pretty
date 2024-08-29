@@ -2,6 +2,7 @@ package pretty_test
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"reflect"
@@ -149,4 +150,10 @@ func TestFormatter(t *testing.T) {
 		_, err := fmt.Fprintf(io.Discard, "%v", f)
 		assert.NoError(t, err)
 	}, assertauto.Name("allocs"))
+}
+
+type testErrorWriter struct{}
+
+func (w *testErrorWriter) Write(p []byte) (int, error) {
+	return 0, errors.New("test")
 }

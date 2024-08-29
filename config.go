@@ -1,5 +1,9 @@
 package pretty
 
+import (
+	"github.com/pierrre/pretty/internal/indent"
+)
+
 // DefaultConfig is the default [Config].
 var DefaultConfig = NewConfig()
 
@@ -15,6 +19,6 @@ type Config struct {
 // NewConfig creates a new [Config] initialized with default values.
 func NewConfig() *Config {
 	return &Config{
-		Indent: indentDefault,
+		Indent: indent.Default,
 	}
 }

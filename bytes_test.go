@@ -130,3 +130,11 @@ func init() {
 		},
 	})
 }
+
+type testBytesable struct {
+	b []byte
+}
+
+func (b *testBytesable) Bytes() []byte {
+	return b.b
+}

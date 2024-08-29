@@ -146,3 +146,7 @@ func init() {
 		},
 	})
 }
+
+type testComparableStruct struct {
+	V int
+}

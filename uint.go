@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/strconvio"
+	"github.com/pierrre/pretty/internal"
 )
 
 // UintValueWriter is a [ValueWriter] that handles uint values.
@@ -27,7 +28,7 @@ func NewUintValueWriter() *UintValueWriter {
 func (vw *UintValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles uint.
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		mustWrite(strconvio.WriteUint(w, v.Uint(), vw.Base))
+		internal.MustWrite(strconvio.WriteUint(w, v.Uint(), vw.Base))
 		return true
 	}
 	return false

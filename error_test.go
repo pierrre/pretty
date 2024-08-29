@@ -46,3 +46,9 @@ func init() {
 		},
 	})
 }
+
+type testError struct{}
+
+func (e *testError) Error() string {
+	return "test"
+}

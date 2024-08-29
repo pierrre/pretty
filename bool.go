@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/strconvio"
+	"github.com/pierrre/pretty/internal"
 )
 
 // BoolValueWriter is a [ValueWriter] that handles bool values.
@@ -22,6 +23,6 @@ func (vw *BoolValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bo
 	if v.Kind() != reflect.Bool {
 		return false
 	}
-	mustWrite(strconvio.WriteBool(w, v.Bool()))
+	internal.MustWrite(strconvio.WriteBool(w, v.Bool()))
 	return true
 }

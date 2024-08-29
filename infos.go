@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/pierrre/go-libs/strconvio"
+	"github.com/pierrre/pretty/internal"
 )
 
 type infos struct {
@@ -23,7 +24,7 @@ func (i infos) write(w io.Writer) bool {
 	wrote := false
 	if i.showLen {
 		writeString(w, "len=")
-		mustWrite(strconvio.WriteInt(w, int64(i.len), 10))
+		internal.MustWrite(strconvio.WriteInt(w, int64(i.len), 10))
 		wrote = true
 	}
 	if i.showCap {
@@ -31,7 +32,7 @@ func (i infos) write(w io.Writer) bool {
 			writeString(w, " ")
 		}
 		writeString(w, "cap=")
-		mustWrite(strconvio.WriteInt(w, int64(i.cap), 10))
+		internal.MustWrite(strconvio.WriteInt(w, int64(i.cap), 10))
 		wrote = true
 	}
 	if i.showAddr {

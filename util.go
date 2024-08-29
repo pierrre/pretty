@@ -6,6 +6,7 @@ import (
 	"github.com/pierrre/go-libs/strconvio"
 	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/go-libs/unsafeio"
+	"github.com/pierrre/pretty/internal"
 )
 
 func writeArrow(w io.Writer) {
@@ -23,7 +24,7 @@ func writeTruncated(w io.Writer) {
 }
 
 func writeString(w io.Writer, s string) {
-	mustWrite(writeStringErr(w, s))
+	internal.MustWrite(writeStringErr(w, s))
 }
 
 func writeStringErr(w io.Writer, s string) (int, error) {
@@ -31,17 +32,7 @@ func writeStringErr(w io.Writer, s string) (int, error) {
 }
 
 func writeQuote(w io.Writer, s string) {
-	mustWrite(strconvio.WriteQuote(w, s))
-}
-
-func must(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-func mustWrite(_ int, err error) {
-	must(err)
+	internal.MustWrite(strconvio.WriteQuote(w, s))
 }
 
 var bytesPool = syncutil.PoolFor[*[]byte]{

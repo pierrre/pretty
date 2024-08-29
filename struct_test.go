@@ -40,3 +40,9 @@ func init() {
 		},
 	})
 }
+
+type testStruct struct {
+	Foo        int
+	Bar        float64
+	unexported int
+}

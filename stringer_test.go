@@ -67,3 +67,11 @@ func init() {
 		},
 	})
 }
+
+type testStringer struct {
+	s string
+}
+
+func (sr *testStringer) String() string {
+	return sr.s
+}
