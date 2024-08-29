@@ -11,8 +11,9 @@ func init() {
 			value: NewConfig,
 		},
 		{
-			name:  "Nil",
-			value: (func())(nil),
+			name:            "Nil",
+			value:           (func())(nil),
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "ShowAddr",
@@ -20,7 +21,8 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.Kind.BaseFunc.ShowAddr = true
 			},
-			ignoreResult: true,
+			ignoreResult:    true,
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Not",
@@ -28,6 +30,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.BaseFunc.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

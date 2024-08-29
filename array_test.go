@@ -11,12 +11,14 @@ func init() {
 			value: [3]int{1, 2, 3},
 		},
 		{
-			name:  "Empty",
-			value: [0]int{},
+			name:            "Empty",
+			value:           [0]int{},
+			ignoreBenchmark: true,
 		},
 		{
-			name:  "UnknownType",
-			value: [3]any{1, 2, 3},
+			name:            "UnknownType",
+			value:           [3]any{1, 2, 3},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "ShowKnownTypes",
@@ -24,6 +26,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.TypeAndValue.ShowKnownTypes = true
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Not",
@@ -31,6 +34,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.BaseArray.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

@@ -36,6 +36,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.Recursion = nil
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

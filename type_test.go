@@ -26,6 +26,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.Type = nil
 			},
+			ignoreBenchmark: true,
 		},
 	})
 	addTestCasesPrefix("TypeAndValue", []*testCase{
@@ -206,6 +207,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.TypeAndValue.ShowBaseType = false
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Disabled",
@@ -213,6 +215,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.TypeAndValue = nil
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

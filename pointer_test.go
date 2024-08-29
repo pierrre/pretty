@@ -14,8 +14,9 @@ func init() {
 			}(),
 		},
 		{
-			name:  "Nil",
-			value: (*int)(nil),
+			name:            "Nil",
+			value:           (*int)(nil),
+			ignoreBenchmark: true,
 		},
 		{
 			name: "ShowAddr",
@@ -26,7 +27,8 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.Kind.BasePointer.ShowAddr = true
 			},
-			ignoreResult: true,
+			ignoreResult:    true,
+			ignoreBenchmark: true,
 		},
 		{
 			name: "UnknownType",
@@ -34,6 +36,7 @@ func init() {
 				i := any(123)
 				return &i
 			}(),
+			ignoreBenchmark: true,
 		},
 		{
 			name: "ShowKnownTypes",
@@ -44,6 +47,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.TypeAndValue.ShowKnownTypes = true
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Not",
@@ -51,6 +55,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.BasePointer.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

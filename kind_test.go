@@ -14,6 +14,7 @@ func init() {
 				vw.PanicRecover.ShowStack = false
 				vw.Kind = nil
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

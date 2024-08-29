@@ -21,13 +21,14 @@ func newTestPrinter() (*Printer, *CommonValueWriter) {
 }
 
 type testCase struct {
-	name         string
-	value        any
-	panicRecover bool
-	configure    func(vw *CommonValueWriter)
-	options      []Option
-	ignoreResult bool
-	ignoreAllocs bool
+	name            string
+	value           any
+	panicRecover    bool
+	configure       func(vw *CommonValueWriter)
+	options         []Option
+	ignoreResult    bool
+	ignoreAllocs    bool
+	ignoreBenchmark bool
 }
 
 func (tc *testCase) newPrinter() *Printer {
@@ -104,6 +105,9 @@ func TestPrinterPanicNotHandled(t *testing.T) {
 
 func Benchmark(b *testing.B) {
 	for _, tc := range testCases {
+		if tc.ignoreBenchmark {
+			continue
+		}
 		b.Run(tc.name, func(b *testing.B) {
 			p := tc.newPrinter()
 			for range b.N {

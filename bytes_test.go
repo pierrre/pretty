@@ -14,8 +14,9 @@ func init() {
 			value: bytes.Repeat([]byte("test"), 100),
 		},
 		{
-			name:  "Nil",
-			value: []byte(nil),
+			name:            "Nil",
+			value:           []byte(nil),
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Truncated",
@@ -23,6 +24,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.BytesHexDump.MaxLen = 2
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "ShowAddr",
@@ -30,7 +32,8 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.BytesHexDump.ShowAddr = true
 			},
-			ignoreResult: true,
+			ignoreResult:    true,
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Disabled",
@@ -38,6 +41,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.BytesHexDump = nil
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Not",
@@ -45,6 +49,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.BytesHexDump.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 	addTestCasesPrefix("BytesableHexDump", []*testCase{
@@ -53,12 +58,14 @@ func init() {
 			value: &testBytesable{b: bytes.Repeat([]byte("test"), 100)},
 		},
 		{
-			name:  "Nil",
-			value: (*testBytesable)(nil),
+			name:            "Nil",
+			value:           (*testBytesable)(nil),
+			ignoreBenchmark: true,
 		},
 		{
-			name:  "NilBytes",
-			value: &testBytesable{},
+			name:            "NilBytes",
+			value:           &testBytesable{},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Truncated",
@@ -66,6 +73,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.BytesableHexDump.MaxLen = 2
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name: "Unexported",
@@ -75,12 +83,14 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.CanInterface = nil
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name: "UnexportedCanInterface",
 			value: testUnexported{
 				v: &testBytesable{},
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "ReflectValue",
@@ -91,6 +101,7 @@ func init() {
 					vw.ReflectValue.WriteValue,
 				}
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "ShowAddr",
@@ -98,7 +109,8 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.BytesableHexDump.ShowAddr = true
 			},
-			ignoreResult: true,
+			ignoreResult:    true,
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Disabled",
@@ -106,6 +118,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.BytesableHexDump = nil
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Not",
@@ -113,6 +126,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.BytesableHexDump.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

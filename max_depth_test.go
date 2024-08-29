@@ -31,6 +31,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.MaxDepth = nil
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

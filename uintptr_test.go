@@ -16,6 +16,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.BaseUintptr.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

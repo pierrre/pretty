@@ -13,8 +13,9 @@ func init() {
 			value: &testStringer{s: "test"},
 		},
 		{
-			name:  "Nil",
-			value: (*testStringer)(nil),
+			name:            "Nil",
+			value:           (*testStringer)(nil),
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Truncated",
@@ -22,6 +23,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.Stringer.MaxLen = 2
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Unexported",
@@ -29,10 +31,12 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.CanInterface = nil
 			},
+			ignoreBenchmark: true,
 		},
 		{
-			name:  "UnexportedCanInterface",
-			value: testUnexported{v: &testStringer{}},
+			name:            "UnexportedCanInterface",
+			value:           testUnexported{v: &testStringer{}},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "ReflectValue",
@@ -43,6 +47,7 @@ func init() {
 					vw.ReflectValue.WriteValue,
 				}
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Disabled",
@@ -50,6 +55,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.Stringer = nil
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Not",
@@ -57,6 +63,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Stringer.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

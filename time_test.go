@@ -15,8 +15,9 @@ func init() {
 			value: testTime,
 		},
 		{
-			name:  "Zero",
-			value: time.Time{},
+			name:            "Zero",
+			value:           time.Time{},
+			ignoreBenchmark: true,
 		},
 		{
 			name: "Unexported",
@@ -26,12 +27,14 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.CanInterface = nil
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name: "UnexportedCanInterface",
 			value: testUnexported{
 				v: &testTime,
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Disabled",
@@ -39,6 +42,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.Time = nil
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Not",
@@ -46,6 +50,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Time.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

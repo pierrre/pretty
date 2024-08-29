@@ -15,8 +15,9 @@ func init() {
 			}(),
 		},
 		{
-			name:  "Nil",
-			value: chan int(nil),
+			name:            "Nil",
+			value:           chan int(nil),
+			ignoreBenchmark: true,
 		},
 		{
 			name: "ShowAddr",
@@ -28,7 +29,8 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.Kind.BaseChan.ShowAddr = true
 			},
-			ignoreResult: true,
+			ignoreResult:    true,
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Not",
@@ -36,6 +38,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.BaseChan.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

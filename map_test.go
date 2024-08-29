@@ -11,8 +11,9 @@ func init() {
 			value: map[int]int(nil),
 		},
 		{
-			name:  "Empty",
-			value: map[int]int{},
+			name:            "Empty",
+			value:           map[int]int{},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "ShowAddr",
@@ -21,7 +22,8 @@ func init() {
 				vw.Kind.BaseMap.SortKeys = false
 				vw.Kind.BaseMap.ShowAddr = true
 			},
-			ignoreResult: true,
+			ignoreResult:    true,
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "UnsortedExported",
@@ -60,7 +62,8 @@ func init() {
 				vw.Kind.BaseMap.SortKeys = false
 				vw.Kind.BaseMap.MaxLen = 1
 			},
-			ignoreResult: true,
+			ignoreResult:    true,
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "SortedBool",
@@ -120,6 +123,7 @@ func init() {
 				vw.Kind.BaseMap.SortKeys = true
 				vw.Kind.BaseMap.MaxLen = 2
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "UnknownType",
@@ -138,6 +142,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.BaseMap.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

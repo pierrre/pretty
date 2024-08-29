@@ -13,14 +13,16 @@ func init() {
 			value: reflect.ValueOf(123),
 		},
 		{
-			name:  "Nil",
-			value: reflect.ValueOf(nil),
+			name:            "Nil",
+			value:           reflect.ValueOf(nil),
+			ignoreBenchmark: true,
 		},
 		{
 			name: "Unexported",
 			value: testUnexported{
 				v: reflect.ValueOf(123),
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Disabled",
@@ -28,7 +30,8 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ReflectValue = nil
 			},
-			ignoreResult: true,
+			ignoreResult:    true,
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Not",
@@ -36,6 +39,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.ReflectValue.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

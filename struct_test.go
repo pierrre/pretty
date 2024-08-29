@@ -15,8 +15,9 @@ func init() {
 			},
 		},
 		{
-			name:  "Empty",
-			value: struct{}{},
+			name:            "Empty",
+			value:           struct{}{},
+			ignoreBenchmark: true,
 		},
 		{
 			name: "FieldFilterExported",
@@ -35,6 +36,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.BaseStruct.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

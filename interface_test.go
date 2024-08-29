@@ -19,6 +19,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.UnwrapInterface = nil
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Not",
@@ -26,6 +27,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.BaseInterface.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

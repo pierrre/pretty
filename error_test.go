@@ -11,8 +11,9 @@ func init() {
 			value: &testError{},
 		},
 		{
-			name:  "Nil",
-			value: (*testError)(nil),
+			name:            "Nil",
+			value:           (*testError)(nil),
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Unexported",
@@ -20,10 +21,12 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.CanInterface = nil
 			},
+			ignoreBenchmark: true,
 		},
 		{
-			name:  "UnexportedCanInterface",
-			value: testUnexported{v: &testError{}},
+			name:            "UnexportedCanInterface",
+			value:           testUnexported{v: &testError{}},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Disabled",
@@ -31,6 +34,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.Error = nil
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Not",
@@ -38,6 +42,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Error.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

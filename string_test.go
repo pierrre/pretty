@@ -11,8 +11,9 @@ func init() {
 			value: "test",
 		},
 		{
-			name:  "Empty",
-			value: "",
+			name:            "Empty",
+			value:           "",
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "ShowAddr",
@@ -20,7 +21,8 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.Kind.BaseString.ShowAddr = true
 			},
-			ignoreResult: true,
+			ignoreResult:    true,
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Unquoted",
@@ -35,6 +37,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.Kind.BaseString.MaxLen = 2
 			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "Not",
@@ -42,6 +45,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.BaseString.WriteValue}
 			},
+			ignoreBenchmark: true,
 		},
 	})
 }

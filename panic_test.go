@@ -57,9 +57,10 @@ func init() {
 			ignoreAllocs: true,
 		},
 		{
-			name:         "Not",
-			value:        "test",
-			panicRecover: true,
+			name:            "Not",
+			value:           "test",
+			panicRecover:    true,
+			ignoreBenchmark: true,
 		},
 	})
 }
