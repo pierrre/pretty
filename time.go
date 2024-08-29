@@ -4,8 +4,6 @@ import (
 	"io"
 	"reflect"
 	"time"
-
-	"github.com/pierrre/go-libs/syncutil"
 )
 
 type TimeValueWriter struct {
@@ -33,10 +31,4 @@ func (wv *TimeValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bo
 	*bp = tm.AppendFormat((*bp)[:0], wv.Format)
 	mustWrite(w.Write(*bp))
 	return true
-}
-
-var bytesPool = syncutil.PoolFor[*[]byte]{
-	New: func() *[]byte {
-		return new([]byte)
-	},
 }

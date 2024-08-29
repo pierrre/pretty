@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 	"reflect"
-	"runtime/debug"
+	"runtime"
 )
 
 // PanicRecoverValueWriter is a [ValueWriter] that recovers from panics.
@@ -44,8 +44,21 @@ func (vw *PanicRecoverValueWriter) WriteValue(w io.Writer, st State, v reflect.V
 		}
 		_, _ = writeStringErr(w, "\n")
 		if vw.ShowStack {
-			_, _ = w.Write(debug.Stack())
+			writeStack(w)
 		}
 	}()
 	return vw.ValueWriter(w, st, v)
+}
+
+func writeStack(w io.Writer) {
+	bp := bytesPool.Get()
+	defer bytesPool.Put(bp)
+	for {
+		n := runtime.Stack(*bp, false)
+		if n < len(*bp) {
+			_, _ = w.Write((*bp)[:n])
+			return
+		}
+		*bp = make([]byte, 2*len(*bp))
+	}
 }

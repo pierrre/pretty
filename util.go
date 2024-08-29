@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/pierrre/go-libs/strconvio"
+	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/go-libs/unsafeio"
 )
 
@@ -41,4 +42,11 @@ func must(err error) {
 
 func mustWrite(_ int, err error) {
 	must(err)
+}
+
+var bytesPool = syncutil.PoolFor[*[]byte]{
+	New: func() *[]byte {
+		b := make([]byte, 1024)
+		return &b
+	},
 }

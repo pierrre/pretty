@@ -54,7 +54,6 @@ func init() {
 				}}
 			},
 			ignoreResult: true,
-			ignoreAllocs: true,
 		},
 		{
 			name:            "Not",
