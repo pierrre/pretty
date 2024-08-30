@@ -23,14 +23,14 @@ type CommonValueWriter struct {
 	CanInterface     *CanInterfaceValueWriter
 	TypeAndValue     *TypeAndValueWriter
 	Type             *TypeValueWriter
-	Kind             *KindValueWriter
+	ValueWriters     ValueWriters
 	ReflectValue     *ReflectValueWriter
 	Time             *TimeValueWriter
 	Error            *ErrorValueWriter
 	BytesHexDump     *BytesHexDumpValueWriter
 	BytesableHexDump *BytesableHexDumpValueWriter
 	Stringer         *StringerValueWriter
-	ValueWriters     ValueWriters
+	Kind             *KindValueWriter
 }
 
 // NewCommonValueWriter creates a new [CommonValueWriter] initialized with default values.
@@ -43,21 +43,13 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.CanInterface = NewCanInterfaceValueWriter(vw.postCanInterface)
 	vw.TypeAndValue = NewTypeAndValueWriter(vw.writeType, vw.postTypeAndValue)
 	vw.Type = NewTypeValueWriter()
-	vw.Kind = NewKindValueWriter(vw.loopback)
 	vw.ReflectValue = NewReflectValueWriter(vw.loopback)
 	vw.Time = NewTimeValueWriter()
 	vw.Error = NewErrorValueWriter()
 	vw.BytesHexDump = NewBytesHexDumpValueWriter()
 	vw.BytesableHexDump = NewBytesableHexDumpValueWriter()
 	vw.Stringer = NewStringerValueWriter()
-	vw.ValueWriters = ValueWriters{
-		vw.reflectValue,
-		vw.time,
-		vw.error,
-		vw.bytesHexDump,
-		vw.bytesableHexDump,
-		vw.stringer,
-	}
+	vw.Kind = NewKindValueWriter(vw.loopback)
 	return vw
 }
 
@@ -187,58 +179,31 @@ func (vw *CommonValueWriter) postTypeAndValue(w io.Writer, st State, v reflect.V
 	return vw.internal(w, st, v)
 }
 
+//nolint:gocyclo // We need to call all [ValueWriter].
 func (vw *CommonValueWriter) internal(w io.Writer, st State, v reflect.Value) bool {
 	if vw.ValueWriters.WriteValue(w, st, v) {
 		return true
 	}
-	return vw.kind(w, st, v)
-}
-
-func (vw *CommonValueWriter) kind(w io.Writer, st State, v reflect.Value) bool {
-	if vw.Kind == nil {
-		return false
+	if vw.ReflectValue != nil && vw.ReflectValue.WriteValue(w, st, v) {
+		return true
 	}
-	return vw.Kind.WriteValue(w, st, v)
-}
-
-func (vw *CommonValueWriter) reflectValue(w io.Writer, st State, v reflect.Value) bool {
-	if vw.ReflectValue == nil {
-		return false
+	if vw.Time != nil && vw.Time.WriteValue(w, st, v) {
+		return true
 	}
-	return vw.ReflectValue.WriteValue(w, st, v)
-}
-
-func (vw *CommonValueWriter) time(w io.Writer, st State, v reflect.Value) bool {
-	if vw.Time == nil {
-		return false
+	if vw.Error != nil && vw.Error.WriteValue(w, st, v) {
+		return true
 	}
-	return vw.Time.WriteValue(w, st, v)
-}
-
-func (vw *CommonValueWriter) error(w io.Writer, st State, v reflect.Value) bool {
-	if vw.Error == nil {
-		return false
+	if vw.BytesHexDump != nil && vw.BytesHexDump.WriteValue(w, st, v) {
+		return true
 	}
-	return vw.Error.WriteValue(w, st, v)
-}
-
-func (vw *CommonValueWriter) bytesHexDump(w io.Writer, st State, v reflect.Value) bool {
-	if vw.BytesHexDump == nil {
-		return false
+	if vw.BytesableHexDump != nil && vw.BytesableHexDump.WriteValue(w, st, v) {
+		return true
 	}
-	return vw.BytesHexDump.WriteValue(w, st, v)
-}
-
-func (vw *CommonValueWriter) bytesableHexDump(w io.Writer, st State, v reflect.Value) bool {
-	if vw.BytesableHexDump == nil {
-		return false
+	if vw.Stringer != nil && vw.Stringer.WriteValue(w, st, v) {
+		return true
 	}
-	return vw.BytesableHexDump.WriteValue(w, st, v)
-}
-
-func (vw *CommonValueWriter) stringer(w io.Writer, st State, v reflect.Value) bool {
-	if vw.Stringer == nil {
-		return false
+	if vw.Kind != nil && vw.Kind.WriteValue(w, st, v) {
+		return true
 	}
-	return vw.Stringer.WriteValue(w, st, v)
+	return false
 }

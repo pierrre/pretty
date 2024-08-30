@@ -4,7 +4,7 @@
 			"name": "result",
 			"equal": {
 				"type": "string",
-				"value": "[*pretty_test.testStringer] => {\n\ts: [string] (len=4) \"test\",\n}"
+				"value": "[int] 123"
 			}
 		},
 		{
