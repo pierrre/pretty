@@ -11,7 +11,7 @@
 			"name": "allocs",
 			"allocs_per_run": {
 				"runs": 100,
-				"allocs": 3
+				"allocs": 0
 			}
 		}
 	]
