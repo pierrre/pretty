@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 	"runtime"
 )
@@ -23,19 +22,19 @@ func NewFuncValueWriter() *FuncValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *FuncValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *FuncValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Func {
 		return false
 	}
-	if checkNil(w, v) {
+	if checkNil(st.Writer, v) {
 		return true
 	}
 	p := uintptr(v.UnsafePointer())
 	infos{
 		showAddr: vw.ShowAddr,
 		addr:     p,
-	}.writeWithTrailingSpace(w)
+	}.writeWithTrailingSpace(st.Writer)
 	name := runtime.FuncForPC(p).Name()
-	writeString(w, name)
+	writeString(st.Writer, name)
 	return true
 }

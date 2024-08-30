@@ -41,15 +41,15 @@ func NewBytesHexDumpValueWriter() *BytesHexDumpValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *BytesHexDumpValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *BytesHexDumpValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Type() != bytesType {
 		return false
 	}
-	if checkNil(w, v) {
+	if checkNil(st.Writer, v) {
 		return true
 	}
 	b := v.Bytes()
-	writeBytesHexDumpCommon(w, st, v, b, vw.ShowLen, vw.ShowCap, vw.ShowAddr, vw.MaxLen)
+	writeBytesHexDumpCommon(st, v, b, vw.ShowLen, vw.ShowCap, vw.ShowAddr, vw.MaxLen)
 	return true
 }
 
@@ -89,7 +89,7 @@ func NewBytesableHexDumpValueWriter() *BytesableHexDumpValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *BytesableHexDumpValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *BytesableHexDumpValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !v.Type().Implements(bytesableType) {
 		return false
 	}
@@ -104,16 +104,16 @@ func (vw *BytesableHexDumpValueWriter) WriteValue(w io.Writer, st State, v refle
 	}
 	br := v.Interface().(Bytesable) //nolint:forcetypeassert // Checked above.
 	b := br.Bytes()
-	writeArrowWrappedString(w, ".Bytes() ")
+	writeArrowWrappedString(st.Writer, ".Bytes() ")
 	if b == nil {
-		writeNil(w)
+		writeNil(st.Writer)
 		return true
 	}
-	writeBytesHexDumpCommon(w, st, reflect.ValueOf(b), b, vw.ShowLen, vw.ShowCap, vw.ShowAddr, vw.MaxLen)
+	writeBytesHexDumpCommon(st, reflect.ValueOf(b), b, vw.ShowLen, vw.ShowCap, vw.ShowAddr, vw.MaxLen)
 	return true
 }
 
-func writeBytesHexDumpCommon(w io.Writer, st State, v reflect.Value, b []byte, showLen bool, showCap bool, showAddr bool, maxLen int) {
+func writeBytesHexDumpCommon(st *State, v reflect.Value, b []byte, showLen bool, showCap bool, showAddr bool, maxLen int) {
 	infos{
 		showLen:  showLen,
 		len:      len(b),
@@ -121,15 +121,18 @@ func writeBytesHexDumpCommon(w io.Writer, st State, v reflect.Value, b []byte, s
 		cap:      cap(b),
 		showAddr: showAddr,
 		addr:     uintptr(v.UnsafePointer()),
-	}.write(w)
+	}.write(st.Writer)
 	truncated := false
 	if maxLen > 0 && len(b) > maxLen {
 		b = b[:maxLen]
 		truncated = true
 	}
-	writeString(w, "\n")
+	writeString(st.Writer, "\n")
 	st.IndentLevel++
-	iw := indent.NewWriter(w, st.IndentString, st.IndentLevel, false)
+	defer func() {
+		st.IndentLevel--
+	}()
+	iw := indent.NewWriter(st.Writer, st.IndentString, st.IndentLevel, false)
 	defer iw.Release()
 	e := getHexDumperPoolEntry(iw)
 	defer releaseHexDumperPoolEntry(e)
@@ -137,8 +140,8 @@ func writeBytesHexDumpCommon(w io.Writer, st State, v reflect.Value, b []byte, s
 	internal.MustWrite(d.Write(b))
 	internal.Must(d.Close())
 	if truncated {
-		st.writeIndent(w)
-		writeTruncated(w)
+		st.writeIndent()
+		writeTruncated(st.Writer)
 	}
 }
 

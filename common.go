@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -101,108 +100,108 @@ func (vw *CommonValueWriter) ConfigureTest() {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *CommonValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
-	return vw.panicRecover(w, st, v)
+func (vw *CommonValueWriter) WriteValue(st *State, v reflect.Value) bool {
+	return vw.panicRecover(st, v)
 }
 
-func (vw *CommonValueWriter) panicRecover(w io.Writer, st State, v reflect.Value) bool {
+func (vw *CommonValueWriter) panicRecover(st *State, v reflect.Value) bool {
 	if vw.PanicRecover == nil {
-		return vw.postPanicRecover(w, st, v)
+		return vw.postPanicRecover(st, v)
 	}
-	return vw.PanicRecover.WriteValue(w, st, v)
+	return vw.PanicRecover.WriteValue(st, v)
 }
 
-func (vw *CommonValueWriter) postPanicRecover(w io.Writer, st State, v reflect.Value) bool {
-	return vw.unwrapInterface(w, st, v)
+func (vw *CommonValueWriter) postPanicRecover(st *State, v reflect.Value) bool {
+	return vw.unwrapInterface(st, v)
 }
 
-func (vw *CommonValueWriter) loopback(w io.Writer, st State, v reflect.Value) bool {
-	return vw.unwrapInterface(w, st, v)
+func (vw *CommonValueWriter) loopback(st *State, v reflect.Value) bool {
+	return vw.unwrapInterface(st, v)
 }
 
-func (vw *CommonValueWriter) unwrapInterface(w io.Writer, st State, v reflect.Value) bool {
+func (vw *CommonValueWriter) unwrapInterface(st *State, v reflect.Value) bool {
 	if vw.UnwrapInterface == nil {
-		return vw.postUnwrapInterface(w, st, v)
+		return vw.postUnwrapInterface(st, v)
 	}
-	return vw.UnwrapInterface.WriteValue(w, st, v)
+	return vw.UnwrapInterface.WriteValue(st, v)
 }
 
-func (vw *CommonValueWriter) postUnwrapInterface(w io.Writer, st State, v reflect.Value) bool {
-	return vw.recursion(w, st, v)
+func (vw *CommonValueWriter) postUnwrapInterface(st *State, v reflect.Value) bool {
+	return vw.recursion(st, v)
 }
 
-func (vw *CommonValueWriter) recursion(w io.Writer, st State, v reflect.Value) bool {
+func (vw *CommonValueWriter) recursion(st *State, v reflect.Value) bool {
 	if vw.Recursion == nil {
-		return vw.postRecursion(w, st, v)
+		return vw.postRecursion(st, v)
 	}
-	return vw.Recursion.WriteValue(w, st, v)
+	return vw.Recursion.WriteValue(st, v)
 }
 
-func (vw *CommonValueWriter) postRecursion(w io.Writer, st State, v reflect.Value) bool {
-	return vw.maxDepth(w, st, v)
+func (vw *CommonValueWriter) postRecursion(st *State, v reflect.Value) bool {
+	return vw.maxDepth(st, v)
 }
 
-func (vw *CommonValueWriter) maxDepth(w io.Writer, st State, v reflect.Value) bool {
+func (vw *CommonValueWriter) maxDepth(st *State, v reflect.Value) bool {
 	if vw.MaxDepth == nil {
-		return vw.postMaxDepth(w, st, v)
+		return vw.postMaxDepth(st, v)
 	}
-	return vw.MaxDepth.WriteValue(w, st, v)
+	return vw.MaxDepth.WriteValue(st, v)
 }
 
-func (vw *CommonValueWriter) postMaxDepth(w io.Writer, st State, v reflect.Value) bool {
-	return vw.canInterface(w, st, v)
+func (vw *CommonValueWriter) postMaxDepth(st *State, v reflect.Value) bool {
+	return vw.canInterface(st, v)
 }
 
-func (vw *CommonValueWriter) canInterface(w io.Writer, st State, v reflect.Value) bool {
+func (vw *CommonValueWriter) canInterface(st *State, v reflect.Value) bool {
 	if vw.CanInterface == nil {
-		return vw.postCanInterface(w, st, v)
+		return vw.postCanInterface(st, v)
 	}
-	return vw.CanInterface.WriteValue(w, st, v)
+	return vw.CanInterface.WriteValue(st, v)
 }
 
-func (vw *CommonValueWriter) postCanInterface(w io.Writer, st State, v reflect.Value) bool {
-	return vw.typeAndValue(w, st, v)
+func (vw *CommonValueWriter) postCanInterface(st *State, v reflect.Value) bool {
+	return vw.typeAndValue(st, v)
 }
 
-func (vw *CommonValueWriter) writeType(w io.Writer, st State, v reflect.Value) bool {
-	return vw.Type.WriteValue(w, st, v)
+func (vw *CommonValueWriter) writeType(st *State, v reflect.Value) bool {
+	return vw.Type.WriteValue(st, v)
 }
 
-func (vw *CommonValueWriter) typeAndValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *CommonValueWriter) typeAndValue(st *State, v reflect.Value) bool {
 	if vw.TypeAndValue == nil || vw.Type == nil {
-		return vw.postTypeAndValue(w, st, v)
+		return vw.postTypeAndValue(st, v)
 	}
-	return vw.TypeAndValue.WriteValue(w, st, v)
+	return vw.TypeAndValue.WriteValue(st, v)
 }
 
-func (vw *CommonValueWriter) postTypeAndValue(w io.Writer, st State, v reflect.Value) bool {
-	return vw.internal(w, st, v)
+func (vw *CommonValueWriter) postTypeAndValue(st *State, v reflect.Value) bool {
+	return vw.internal(st, v)
 }
 
 //nolint:gocyclo // We need to call all [ValueWriter].
-func (vw *CommonValueWriter) internal(w io.Writer, st State, v reflect.Value) bool {
-	if vw.ValueWriters.WriteValue(w, st, v) {
+func (vw *CommonValueWriter) internal(st *State, v reflect.Value) bool {
+	if vw.ValueWriters.WriteValue(st, v) {
 		return true
 	}
-	if vw.ReflectValue != nil && vw.ReflectValue.WriteValue(w, st, v) {
+	if vw.ReflectValue != nil && vw.ReflectValue.WriteValue(st, v) {
 		return true
 	}
-	if vw.Time != nil && vw.Time.WriteValue(w, st, v) {
+	if vw.Time != nil && vw.Time.WriteValue(st, v) {
 		return true
 	}
-	if vw.Error != nil && vw.Error.WriteValue(w, st, v) {
+	if vw.Error != nil && vw.Error.WriteValue(st, v) {
 		return true
 	}
-	if vw.BytesHexDump != nil && vw.BytesHexDump.WriteValue(w, st, v) {
+	if vw.BytesHexDump != nil && vw.BytesHexDump.WriteValue(st, v) {
 		return true
 	}
-	if vw.BytesableHexDump != nil && vw.BytesableHexDump.WriteValue(w, st, v) {
+	if vw.BytesableHexDump != nil && vw.BytesableHexDump.WriteValue(st, v) {
 		return true
 	}
-	if vw.Stringer != nil && vw.Stringer.WriteValue(w, st, v) {
+	if vw.Stringer != nil && vw.Stringer.WriteValue(st, v) {
 		return true
 	}
-	if vw.Kind != nil && vw.Kind.WriteValue(w, st, v) {
+	if vw.Kind != nil && vw.Kind.WriteValue(st, v) {
 		return true
 	}
 	return false

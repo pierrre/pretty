@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -91,74 +90,74 @@ func NewKindValueWriter(vw ValueWriter) *KindValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *KindValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
-	return vw.ValueWriters[v.Kind()](w, st, v)
+func (vw *KindValueWriter) WriteValue(st *State, v reflect.Value) bool {
+	return vw.ValueWriters[v.Kind()](st, v)
 }
 
-func (vw *KindValueWriter) writeInvalid(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseInvalid.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeInvalid(st *State, v reflect.Value) bool {
+	return vw.BaseInvalid.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeBool(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseBool.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeBool(st *State, v reflect.Value) bool {
+	return vw.BaseBool.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeInt(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseInt.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeInt(st *State, v reflect.Value) bool {
+	return vw.BaseInt.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeUint(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseUint.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeUint(st *State, v reflect.Value) bool {
+	return vw.BaseUint.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeUintptr(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseUintptr.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeUintptr(st *State, v reflect.Value) bool {
+	return vw.BaseUintptr.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeFloat(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseFloat.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeFloat(st *State, v reflect.Value) bool {
+	return vw.BaseFloat.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeComplex(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseComplex.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeComplex(st *State, v reflect.Value) bool {
+	return vw.BaseComplex.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeArray(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseArray.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeArray(st *State, v reflect.Value) bool {
+	return vw.BaseArray.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeChan(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseChan.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeChan(st *State, v reflect.Value) bool {
+	return vw.BaseChan.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeFunc(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseFunc.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeFunc(st *State, v reflect.Value) bool {
+	return vw.BaseFunc.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeInterface(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseInterface.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeInterface(st *State, v reflect.Value) bool {
+	return vw.BaseInterface.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeMap(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseMap.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeMap(st *State, v reflect.Value) bool {
+	return vw.BaseMap.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writePointer(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BasePointer.WriteValue(w, st, v)
+func (vw *KindValueWriter) writePointer(st *State, v reflect.Value) bool {
+	return vw.BasePointer.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeSlice(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseSlice.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeSlice(st *State, v reflect.Value) bool {
+	return vw.BaseSlice.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeString(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseString.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeString(st *State, v reflect.Value) bool {
+	return vw.BaseString.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeStruct(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseStruct.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeStruct(st *State, v reflect.Value) bool {
+	return vw.BaseStruct.WriteValue(st, v)
 }
 
-func (vw *KindValueWriter) writeUnsafePointer(w io.Writer, st State, v reflect.Value) bool {
-	return vw.BaseUnsafePointer.WriteValue(w, st, v)
+func (vw *KindValueWriter) writeUnsafePointer(st *State, v reflect.Value) bool {
+	return vw.BaseUnsafePointer.WriteValue(st, v)
 }

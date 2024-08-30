@@ -2,8 +2,6 @@
 package pierrreerrors
 
 import (
-	"io"
-
 	"github.com/pierrre/errors/errverbose"
 	"github.com/pierrre/pretty"
 	"github.com/pierrre/pretty/internal/indent"
@@ -29,9 +27,12 @@ func ConfigureErrorValueWriter(vw *pretty.ErrorValueWriter) {
 }
 
 // Write writes the error with [errverbose.Write].
-func Write(w io.Writer, st pretty.State, err error) {
+func Write(st *pretty.State, err error) {
 	st.IndentLevel++
-	iw := indent.NewWriter(w, st.IndentString, st.IndentLevel, true)
+	defer func() {
+		st.IndentLevel--
+	}()
+	iw := indent.NewWriter(st.Writer, st.IndentString, st.IndentLevel, true)
 	defer iw.Release()
 	errverbose.Write(iw, err)
 }

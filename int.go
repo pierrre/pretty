@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 
 	"github.com/pierrre/go-libs/strconvio"
@@ -25,10 +24,10 @@ func NewIntValueWriter() *IntValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *IntValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *IntValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles int.
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		internal.MustWrite(strconvio.WriteInt(w, v.Int(), vw.Base))
+		internal.MustWrite(strconvio.WriteInt(st.Writer, v.Int(), vw.Base))
 		return true
 	}
 	return false

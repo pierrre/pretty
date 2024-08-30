@@ -1,7 +1,6 @@
 package pretty_test
 
 import (
-	"io"
 	"reflect"
 
 	. "github.com/pierrre/pretty"
@@ -15,8 +14,8 @@ func init() {
 			value: "test",
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = []ValueWriter{NewFilterValueWriter(
-					func(w io.Writer, st State, v reflect.Value) bool {
-						internal.MustWriteString(w, "aaaa")
+					func(st *State, v reflect.Value) bool {
+						internal.MustWriteString(st.Writer, "aaaa")
 						return true
 					},
 					func(v reflect.Value) bool {
@@ -29,7 +28,7 @@ func init() {
 			value: 123,
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = []ValueWriter{NewFilterValueWriter(
-					func(w io.Writer, st State, v reflect.Value) bool {
+					func(st *State, v reflect.Value) bool {
 						panic("should not be called")
 					},
 					func(v reflect.Value) bool {

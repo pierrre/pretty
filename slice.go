@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -36,11 +35,11 @@ func NewSliceValueWriter(vw ValueWriter) *SliceValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *SliceValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *SliceValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Slice {
 		return false
 	}
-	if checkNil(w, v) {
+	if checkNil(st.Writer, v) {
 		return true
 	}
 	infos{
@@ -50,7 +49,7 @@ func (vw *SliceValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) b
 		cap:      v.Cap(),
 		showAddr: vw.ShowAddr,
 		addr:     uintptr(v.UnsafePointer()),
-	}.writeWithTrailingSpace(w)
-	writeArray(w, st, v, vw.MaxLen, vw.ValueWriter)
+	}.writeWithTrailingSpace(st.Writer)
+	writeArray(st, v, vw.MaxLen, vw.ValueWriter)
 	return true
 }

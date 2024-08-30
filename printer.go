@@ -59,13 +59,12 @@ func (p *Printer) Write(w io.Writer, vi any, opts ...Option) {
 		writeNil(w)
 		return
 	}
-	st := getState()
+	st := newState(w, p.Config.Indent)
 	defer st.release()
-	st.IndentString = p.Config.Indent
 	for _, opt := range opts {
-		st = opt(st)
+		opt(st)
 	}
-	mustHandle(p.ValueWriter(w, st, v))
+	mustHandle(p.ValueWriter(st, v))
 }
 
 var bufPool = &bufpool.Pool{
@@ -102,7 +101,7 @@ func (p *Printer) Formatter(vi any, opts ...Option) fmt.Formatter {
 }
 
 // Option represents an option for the [Printer].
-type Option func(State) State
+type Option func(*State)
 
 type formatter struct {
 	printer *Printer

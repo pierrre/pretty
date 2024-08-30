@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 
 	"github.com/pierrre/go-libs/strconvio"
@@ -29,10 +28,10 @@ func NewComplexValueWriter() *ComplexValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ComplexValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *ComplexValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles complex.
 	case reflect.Complex64, reflect.Complex128:
-		internal.MustWrite(strconvio.WriteComplex(w, v.Complex(), vw.Format, vw.Precision, v.Type().Bits()))
+		internal.MustWrite(strconvio.WriteComplex(st.Writer, v.Complex(), vw.Format, vw.Precision, v.Type().Bits()))
 		return true
 	}
 	return false

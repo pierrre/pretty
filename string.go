@@ -34,12 +34,12 @@ func NewStringValueWriter() *StringValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *StringValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *StringValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.String {
 		return false
 	}
 	s := v.String()
-	writeStringValue(w, s, vw.ShowLen, vw.ShowAddr, uintptr(v.UnsafePointer()), vw.Quote, vw.MaxLen)
+	writeStringValue(st.Writer, s, vw.ShowLen, vw.ShowAddr, uintptr(v.UnsafePointer()), vw.Quote, vw.MaxLen)
 	return true
 }
 

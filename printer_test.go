@@ -47,9 +47,8 @@ var testCases = []*testCase{
 	{
 		name:  "Options",
 		value: 123,
-		options: []Option{func(st State) State {
+		options: []Option{func(st *State) {
 			st.KnownType = true
-			return st
 		}},
 	},
 }
@@ -96,7 +95,7 @@ func TestPrinterPanicWriterError(t *testing.T) {
 
 func TestPrinterPanicNotHandled(t *testing.T) {
 	c := NewConfig()
-	vw := func(w io.Writer, st State, v reflect.Value) bool {
+	vw := func(st *State, v reflect.Value) bool {
 		return false
 	}
 	p := NewPrinter(c, vw)

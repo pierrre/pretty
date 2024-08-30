@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -20,15 +19,15 @@ func NewInterfaceValueWriter(vw ValueWriter) *InterfaceValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *InterfaceValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *InterfaceValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Interface {
 		return false
 	}
-	writeArrow(w)
-	if checkNil(w, v) {
+	writeArrow(st.Writer)
+	if checkNil(st.Writer, v) {
 		return true
 	}
-	st.KnownType = false
-	mustHandle(vw.ValueWriter(w, st, v.Elem()))
+	defer st.setRestoreKnownType(false)()
+	mustHandle(vw.ValueWriter(st, v.Elem()))
 	return true
 }

@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -16,13 +15,13 @@ func NewUnsafePointerValueWriter() *UnsafePointerValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *UnsafePointerValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *UnsafePointerValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.UnsafePointer {
 		return false
 	}
-	if checkNil(w, v) {
+	if checkNil(st.Writer, v) {
 		return true
 	}
-	writeUintptr(w, uintptr(v.UnsafePointer()))
+	writeUintptr(st.Writer, uintptr(v.UnsafePointer()))
 	return true
 }

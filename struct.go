@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 
 	"github.com/pierrre/go-libs/syncutil"
@@ -26,12 +25,12 @@ func NewStructValueWriter(vw ValueWriter) *StructValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *StructValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Struct {
 		return false
 	}
-	st.KnownType = false
-	writeString(w, "{")
+	defer st.setRestoreKnownType(false)()
+	writeString(st.Writer, "{")
 	fields := getStructFields(v.Type())
 	hasFields := false
 	st.IndentLevel++
@@ -40,20 +39,20 @@ func (vw *StructValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) 
 			continue
 		}
 		if !hasFields {
-			writeString(w, "\n")
+			writeString(st.Writer, "\n")
 			hasFields = true
 		}
-		st.writeIndent(w)
-		writeString(w, field.Name)
-		writeString(w, ": ")
-		mustHandle(vw.ValueWriter(w, st, v.Field(i)))
-		writeString(w, ",\n")
+		st.writeIndent()
+		writeString(st.Writer, field.Name)
+		writeString(st.Writer, ": ")
+		mustHandle(vw.ValueWriter(st, v.Field(i)))
+		writeString(st.Writer, ",\n")
 	}
 	st.IndentLevel--
 	if hasFields {
-		st.writeIndent(w)
+		st.writeIndent()
 	}
-	writeString(w, "}")
+	writeString(st.Writer, "}")
 	return true
 }
 

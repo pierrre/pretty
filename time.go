@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 	"time"
 
@@ -20,7 +19,7 @@ func NewTimeValueWriter() *TimeValueWriter {
 
 var timeType = reflect.TypeFor[time.Time]()
 
-func (wv *TimeValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (wv *TimeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Type() != timeType {
 		return false
 	}
@@ -31,6 +30,6 @@ func (wv *TimeValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bo
 	bp := bytesPool.Get()
 	defer bytesPool.Put(bp)
 	*bp = tm.AppendFormat((*bp)[:0], wv.Format)
-	internal.MustWrite(w.Write(*bp))
+	internal.MustWrite(st.Writer.Write(*bp))
 	return true
 }

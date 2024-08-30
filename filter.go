@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -22,9 +21,9 @@ func NewFilterValueWriter(vw ValueWriter, f func(v reflect.Value) bool) *FilterV
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *FilterValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *FilterValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !vw.Filter(v) {
 		return false
 	}
-	return vw.ValueWriter(w, st, v)
+	return vw.ValueWriter(st, v)
 }

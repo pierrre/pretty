@@ -26,28 +26,28 @@ func NewPanicRecoverValueWriter(vw ValueWriter) *PanicRecoverValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *PanicRecoverValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) (handled bool) {
+func (vw *PanicRecoverValueWriter) WriteValue(st *State, v reflect.Value) (handled bool) {
 	defer func() {
 		r := recover()
 		if r == nil {
 			return
 		}
 		handled = true
-		_, _ = writeStringErr(w, "<panic>: ")
+		_, _ = writeStringErr(st.Writer, "<panic>: ")
 		switch r := r.(type) {
 		case string:
-			_, _ = writeStringErr(w, r)
+			_, _ = writeStringErr(st.Writer, r)
 		case error:
-			_, _ = writeStringErr(w, r.Error())
+			_, _ = writeStringErr(st.Writer, r.Error())
 		default:
-			_, _ = fmt.Fprint(w, r)
+			_, _ = fmt.Fprint(st.Writer, r)
 		}
-		_, _ = writeStringErr(w, "\n")
+		_, _ = writeStringErr(st.Writer, "\n")
 		if vw.ShowStack {
-			writeStack(w)
+			writeStack(st.Writer)
 		}
 	}()
-	return vw.ValueWriter(w, st, v)
+	return vw.ValueWriter(st, v)
 }
 
 func writeStack(w io.Writer) {

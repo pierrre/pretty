@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 
 	"github.com/pierrre/go-libs/strconvio"
@@ -29,10 +28,10 @@ func NewFloatValueWriter() *FloatValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *FloatValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *FloatValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles float.
 	case reflect.Float32, reflect.Float64:
-		internal.MustWrite(strconvio.WriteFloat(w, v.Float(), vw.Format, vw.Precision, v.Type().Bits()))
+		internal.MustWrite(strconvio.WriteFloat(st.Writer, v.Float(), vw.Format, vw.Precision, v.Type().Bits()))
 		return true
 	}
 	return false

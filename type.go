@@ -25,8 +25,8 @@ func NewTypeValueWriter() *TypeValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *TypeValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
-	writeString(w, vw.Stringer(v.Type()))
+func (vw *TypeValueWriter) WriteValue(st *State, v reflect.Value) bool {
+	writeString(st.Writer, vw.Stringer(v.Type()))
 	return true
 }
 
@@ -57,16 +57,16 @@ func NewTypeAndValueWriter(t, v ValueWriter) *TypeAndValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *TypeAndValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *TypeAndValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !st.KnownType || vw.ShowKnownTypes {
-		writeString(w, "[")
-		mustHandle(vw.Type(w, st, v))
-		writeString(w, "]")
-		vw.writeBaseType(w, v)
-		writeString(w, " ")
+		writeString(st.Writer, "[")
+		mustHandle(vw.Type(st, v))
+		writeString(st.Writer, "]")
+		vw.writeBaseType(st.Writer, v)
+		writeString(st.Writer, " ")
 	}
-	st.KnownType = true
-	mustHandle(vw.Value(w, st, v))
+	defer st.setRestoreKnownType(true)()
+	mustHandle(vw.Value(st, v))
 	return true
 }
 

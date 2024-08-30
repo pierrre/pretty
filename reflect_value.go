@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -22,20 +21,20 @@ func NewReflectValueWriter(vw ValueWriter) *ReflectValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ReflectValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *ReflectValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Type() != reflectValueType {
 		return false
 	}
 	if !v.CanInterface() {
-		writeString(w, "<unexported>")
+		writeString(st.Writer, "<unexported>")
 		return true
 	}
 	rv := v.Interface().(reflect.Value) //nolint:forcetypeassert // Checked above.
-	writeArrow(w)
-	if checkInvalid(w, rv) {
+	writeArrow(st.Writer)
+	if checkInvalid(st.Writer, rv) {
 		return true
 	}
-	st.KnownType = false
-	mustHandle(vw.ValueWriter(w, st, rv))
+	defer st.setRestoreKnownType(false)()
+	mustHandle(vw.ValueWriter(st, rv))
 	return true
 }

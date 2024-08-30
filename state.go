@@ -11,45 +11,43 @@ import (
 //
 // Functions must restore the original state when they return.
 type State struct {
+	Writer       io.Writer
 	Depth        int
 	IndentString string
 	IndentLevel  int
-	Visited      *[]uintptr
+	Visited      []uintptr
 	KnownType    bool
 }
 
-func (st State) writeIndent(w io.Writer) {
-	indent.MustWrite(w, st.IndentString, st.IndentLevel)
+var statePool = syncutil.PoolFor[*State]{
+	New: func() *State {
+		return new(State)
+	},
 }
 
-func getState() State {
-	vs := stateVisitedPool.Get()
-	*vs = (*vs)[:0]
-	return State{
-		Visited: vs,
+func newState(w io.Writer, indentString string) *State {
+	st := statePool.Get()
+	st.Writer = w
+	st.Depth = 0
+	st.IndentString = indentString
+	st.IndentLevel = 0
+	st.Visited = st.Visited[:0]
+	st.KnownType = false
+	return st
+}
+
+func (st *State) writeIndent() {
+	indent.MustWrite(st.Writer, st.IndentString, st.IndentLevel)
+}
+
+func (st *State) setRestoreKnownType(knownType bool) func() {
+	st.KnownType, knownType = knownType, st.KnownType
+	return func() {
+		st.KnownType = knownType
 	}
 }
 
-func (st State) pushPopVisited(p uintptr) func() {
-	st.pushVisited(p)
-	return st.popVisited
-}
-
-func (st State) pushVisited(p uintptr) {
-	*st.Visited = append(*st.Visited, p)
-}
-
-func (st State) popVisited() {
-	s := *st.Visited
-	*st.Visited = s[:len(s)-1]
-}
-
-func (st State) release() {
-	stateVisitedPool.Put(st.Visited)
-}
-
-var stateVisitedPool = syncutil.PoolFor[*[]uintptr]{
-	New: func() *[]uintptr {
-		return new([]uintptr)
-	},
+func (st *State) release() {
+	st.Writer = nil
+	statePool.Put(st)
 }

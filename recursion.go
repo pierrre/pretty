@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 	"slices"
 )
@@ -21,17 +20,20 @@ func NewRecursionValueWriter(vw ValueWriter) *RecursionValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *RecursionValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *RecursionValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles pointer kinds.
 	case reflect.Chan, reflect.Func, reflect.Map, reflect.Pointer, reflect.Slice, reflect.UnsafePointer:
 	default:
-		return vw.ValueWriter(w, st, v)
+		return vw.ValueWriter(st, v)
 	}
 	vp := v.Pointer()
-	if slices.Contains(*st.Visited, vp) {
-		writeString(w, "<recursion>")
+	if slices.Contains(st.Visited, vp) {
+		writeString(st.Writer, "<recursion>")
 		return true
 	}
-	defer st.pushPopVisited(vp)()
-	return vw.ValueWriter(w, st, v)
+	st.Visited = append(st.Visited, vp)
+	defer func() {
+		st.Visited = st.Visited[:len(st.Visited)-1]
+	}()
+	return vw.ValueWriter(st, v)
 }

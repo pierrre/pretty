@@ -2,7 +2,6 @@ package pretty
 
 import (
 	"fmt"
-	"io"
 	"reflect"
 )
 
@@ -33,7 +32,7 @@ func NewStringerValueWriter() *StringerValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *StringerValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *StringerValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !v.Type().Implements(stringerType) {
 		return false
 	}
@@ -48,7 +47,7 @@ func (vw *StringerValueWriter) WriteValue(w io.Writer, st State, v reflect.Value
 	}
 	sr := v.Interface().(fmt.Stringer) //nolint:forcetypeassert // Checked above.
 	s := sr.String()
-	writeArrowWrappedString(w, ".String() ")
-	writeStringValue(w, s, vw.ShowLen, false, 0, vw.Quote, vw.MaxLen)
+	writeArrowWrappedString(st.Writer, ".String() ")
+	writeStringValue(st.Writer, s, vw.ShowLen, false, 0, vw.Quote, vw.MaxLen)
 	return true
 }

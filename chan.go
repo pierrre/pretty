@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -30,11 +29,11 @@ func NewChanValueWriter() *ChanValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ChanValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *ChanValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Chan {
 		return false
 	}
-	if checkNil(w, v) {
+	if checkNil(st.Writer, v) {
 		return true
 	}
 	infos{
@@ -44,6 +43,6 @@ func (vw *ChanValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bo
 		cap:      v.Cap(),
 		showAddr: vw.ShowAddr,
 		addr:     uintptr(v.UnsafePointer()),
-	}.write(w)
+	}.write(st.Writer)
 	return true
 }

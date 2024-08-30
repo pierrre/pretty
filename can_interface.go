@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 
 	"github.com/pierrre/go-libs/reflectutil"
@@ -21,7 +20,7 @@ func NewCanInterfaceValueWriter(vw ValueWriter) *CanInterfaceValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *CanInterfaceValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *CanInterfaceValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	v, _ = reflectutil.ConvertValueCanInterface(v)
-	return vw.ValueWriter(w, st, v)
+	return vw.ValueWriter(st, v)
 }

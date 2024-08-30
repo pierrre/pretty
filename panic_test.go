@@ -2,7 +2,6 @@ package pretty_test
 
 import (
 	"errors"
-	"io"
 	"reflect"
 
 	. "github.com/pierrre/pretty"
@@ -16,7 +15,7 @@ func init() {
 			panicRecover: true,
 			configure: func(vw *CommonValueWriter) {
 				vw.PanicRecover.ShowStack = false
-				vw.ValueWriters = []ValueWriter{func(w io.Writer, st State, v reflect.Value) bool {
+				vw.ValueWriters = []ValueWriter{func(st *State, v reflect.Value) bool {
 					panic("string")
 				}}
 			},
@@ -28,7 +27,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.PanicRecover.ShowStack = false
 				err := errors.New("error")
-				vw.ValueWriters = []ValueWriter{func(w io.Writer, st State, v reflect.Value) bool {
+				vw.ValueWriters = []ValueWriter{func(st *State, v reflect.Value) bool {
 					panic(err)
 				}}
 			},
@@ -39,7 +38,7 @@ func init() {
 			panicRecover: true,
 			configure: func(vw *CommonValueWriter) {
 				vw.PanicRecover.ShowStack = false
-				vw.ValueWriters = []ValueWriter{func(w io.Writer, st State, v reflect.Value) bool {
+				vw.ValueWriters = []ValueWriter{func(st *State, v reflect.Value) bool {
 					panic(123)
 				}}
 			},
@@ -49,7 +48,7 @@ func init() {
 			value:        "test",
 			panicRecover: true,
 			configure: func(vw *CommonValueWriter) {
-				vw.ValueWriters = []ValueWriter{func(w io.Writer, st State, v reflect.Value) bool {
+				vw.ValueWriters = []ValueWriter{func(st *State, v reflect.Value) bool {
 					panic("string")
 				}}
 			},

@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -13,7 +12,7 @@ import (
 // Implementations must check [reflect.Value.CanInterface] before using [reflect.Value.Interface].
 //
 // Implentations can assume that the value is valid.
-type ValueWriter func(w io.Writer, st State, v reflect.Value) bool
+type ValueWriter func(st *State, v reflect.Value) bool
 
 // ValueWriters is a list of [ValueWriter].
 //
@@ -21,9 +20,9 @@ type ValueWriter func(w io.Writer, st State, v reflect.Value) bool
 type ValueWriters []ValueWriter
 
 // WriteValue implements [ValueWriter].
-func (vws ValueWriters) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vws ValueWriters) WriteValue(st *State, v reflect.Value) bool {
 	for _, vw := range vws {
-		ok := vw(w, st, v)
+		ok := vw(st, v)
 		if ok {
 			return true
 		}

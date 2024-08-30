@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -24,14 +23,17 @@ func NewMaxDepthValueWriter(vw ValueWriter) *MaxDepthValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *MaxDepthValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *MaxDepthValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if vw.Max <= 0 {
-		return vw.ValueWriter(w, st, v)
+		return vw.ValueWriter(st, v)
 	}
 	if st.Depth >= vw.Max {
-		writeString(w, "<max depth>")
+		writeString(st.Writer, "<max depth>")
 		return true
 	}
 	st.Depth++
-	return vw.ValueWriter(w, st, v)
+	defer func() {
+		st.Depth--
+	}()
+	return vw.ValueWriter(st, v)
 }

@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -24,37 +23,37 @@ func NewArrayValueWriter(vw ValueWriter) *ArrayValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ArrayValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *ArrayValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Array {
 		return false
 	}
-	writeArray(w, st, v, vw.MaxLen, vw.ValueWriter)
+	writeArray(st, v, vw.MaxLen, vw.ValueWriter)
 	return true
 }
 
-func writeArray(w io.Writer, st State, v reflect.Value, maxLen int, vw ValueWriter) {
+func writeArray(st *State, v reflect.Value, maxLen int, vw ValueWriter) {
 	l := v.Len()
 	truncated := false
 	if maxLen > 0 && l > maxLen {
 		l = maxLen
 		truncated = true
 	}
-	writeString(w, "{")
+	writeString(st.Writer, "{")
 	if v.Len() > 0 {
-		writeString(w, "\n")
+		writeString(st.Writer, "\n")
 		st.IndentLevel++
 		for i := range l {
-			st.writeIndent(w)
-			mustHandle(vw(w, st, v.Index(i)))
-			writeString(w, ",\n")
+			st.writeIndent()
+			mustHandle(vw(st, v.Index(i)))
+			writeString(st.Writer, ",\n")
 		}
 		if truncated {
-			st.writeIndent(w)
-			writeTruncated(w)
-			writeString(w, "\n")
+			st.writeIndent()
+			writeTruncated(st.Writer)
+			writeString(st.Writer, "\n")
 		}
 		st.IndentLevel--
-		st.writeIndent(w)
+		st.writeIndent()
 	}
-	writeString(w, "}")
+	writeString(st.Writer, "}")
 }

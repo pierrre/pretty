@@ -19,11 +19,11 @@ func NewUintptrValueWriter() *UintptrValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *UintptrValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *UintptrValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Uintptr {
 		return false
 	}
-	writeUintptr(w, uintptr(v.Uint()))
+	writeUintptr(st.Writer, uintptr(v.Uint()))
 	return true
 }
 

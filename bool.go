@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 
 	"github.com/pierrre/go-libs/strconvio"
@@ -19,10 +18,10 @@ func NewBoolValueWriter() *BoolValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *BoolValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *BoolValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Bool {
 		return false
 	}
-	internal.MustWrite(strconvio.WriteBool(w, v.Bool()))
+	internal.MustWrite(strconvio.WriteBool(st.Writer, v.Bool()))
 	return true
 }

@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -24,18 +23,18 @@ func NewPointerValueWriter(vw ValueWriter) *PointerValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *PointerValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *PointerValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Pointer {
 		return false
 	}
-	if checkNil(w, v) {
+	if checkNil(st.Writer, v) {
 		return true
 	}
 	infos{
 		showAddr: vw.ShowAddr,
 		addr:     uintptr(v.UnsafePointer()),
-	}.writeWithTrailingSpace(w)
-	writeArrow(w)
-	mustHandle(vw.ValueWriter(w, st, v.Elem()))
+	}.writeWithTrailingSpace(st.Writer)
+	writeArrow(st.Writer)
+	mustHandle(vw.ValueWriter(st, v.Elem()))
 	return true
 }

@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -13,7 +12,7 @@ var errorType = reflect.TypeFor[error]()
 type ErrorValueWriter struct {
 	// Write writes the error.
 	// Default: [ErrorValueWriter.WriteError].
-	Write func(w io.Writer, st State, err error)
+	Write func(st *State, err error)
 }
 
 // NewErrorValueWriter creates a new [ErrorValueWriter] with default values.
@@ -24,7 +23,7 @@ func NewErrorValueWriter() *ErrorValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ErrorValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) bool {
+func (vw *ErrorValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !v.Type().Implements(errorType) {
 		return false
 	}
@@ -35,12 +34,12 @@ func (vw *ErrorValueWriter) WriteValue(w io.Writer, st State, v reflect.Value) b
 		return false
 	}
 	err := v.Interface().(error) //nolint:forcetypeassert // Checked above.
-	writeArrowWrappedString(w, ".Error() ")
-	vw.Write(w, st, err)
+	writeArrowWrappedString(st.Writer, ".Error() ")
+	vw.Write(st, err)
 	return true
 }
 
 // WriteError writes the error with error.Error.
-func (vw *ErrorValueWriter) WriteError(w io.Writer, st State, err error) {
-	writeQuote(w, err.Error())
+func (vw *ErrorValueWriter) WriteError(st *State, err error) {
+	writeQuote(st.Writer, err.Error())
 }
