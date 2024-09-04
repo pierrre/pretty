@@ -75,64 +75,27 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
-			name:  "SortedBool",
-			value: map[bool]int{false: 1, true: 2},
-			configure: func(vw *CommonValueWriter) {
-				vw.Kind.BaseMap.SortKeys = true
-			},
-		},
-		{
-			name:  "SortedInt",
+			name:  "SortedExported",
 			value: map[int]int{1: 2, 3: 4, 5: 6},
 			configure: func(vw *CommonValueWriter) {
 				vw.Kind.BaseMap.SortKeys = true
 			},
 		},
 		{
-			name:  "SortedUint",
-			value: map[uint]int{1: 2, 3: 4, 5: 6},
-			configure: func(vw *CommonValueWriter) {
-				vw.Kind.BaseMap.SortKeys = true
-			},
-		},
-		{
-			name:  "SortedFloat",
-			value: map[float64]int{1: 2, 3: 4, 5: 6},
-			configure: func(vw *CommonValueWriter) {
-				vw.Kind.BaseMap.SortKeys = true
-			},
-		},
-		{
-			name:  "SortedString",
-			value: map[string]int{"a": 1, "b": 2, "c": 3},
-			configure: func(vw *CommonValueWriter) {
-				vw.Kind.BaseMap.SortKeys = true
-			},
-		},
-		{
-			name:  "SortedDefault",
-			value: map[testComparableStruct]int{{V: 1}: 2, {V: 3}: 4, {V: 5}: 6},
-			configure: func(vw *CommonValueWriter) {
-				vw.Kind.BaseMap.SortKeys = true
-			},
-		},
-		{
-			name:  "SortedDefaultSimple",
-			value: map[testComparableStruct]int{{V: 1}: 2, {V: 3}: 4, {V: 5}: 6},
-			configure: func(vw *CommonValueWriter) {
-				vw.Kind.BaseMap.SortKeys = true
-				vw.Kind.BaseMap.SortKeysCmpDefault = nil
-			},
-			ignoreAllocs: true,
-		},
-		{
-			name:  "SortedTruncated",
+			name:  "SortedExportedTruncated",
 			value: map[int]int{1: 2, 3: 4, 5: 6},
 			configure: func(vw *CommonValueWriter) {
 				vw.Kind.BaseMap.SortKeys = true
 				vw.Kind.BaseMap.MaxLen = 2
 			},
 			ignoreBenchmark: true,
+		},
+		{
+			name:  "SortedUnexported",
+			value: testUnexported{v: map[int]int{1: 2, 3: 4, 5: 6}},
+			configure: func(vw *CommonValueWriter) {
+				vw.Kind.BaseMap.SortKeys = true
+			},
 		},
 		{
 			name:  "UnknownType",
@@ -154,8 +117,4 @@ func init() {
 			ignoreBenchmark: true,
 		},
 	})
-}
-
-type testComparableStruct struct {
-	V int
 }

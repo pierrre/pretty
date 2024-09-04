@@ -83,13 +83,6 @@ func (vw *CommonValueWriter) SetShowAddr(show bool) {
 	vw.BytesableHexDump.ShowAddr = show
 }
 
-// ConfigureWithPrinter configures the [CommonValueWriter] with a [Printer].
-//
-// It sets the [MapValueWriter.SortKeysCmpDefault] to use [Printer.compare].
-func (vw *CommonValueWriter) ConfigureWithPrinter(p *Printer) {
-	vw.Kind.BaseMap.SortKeysCmpDefault = p.compare
-}
-
 // ConfigureTest configures the [CommonValueWriter] for testing.
 //
 // It makes the result deterministic.

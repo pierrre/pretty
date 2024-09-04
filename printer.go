@@ -25,7 +25,7 @@ func Formatter(vi any, opts ...Option) fmt.Formatter {
 }
 
 // DefaultPrinter is the default [Printer].
-var DefaultPrinter = NewPrinterCommon(DefaultConfig, DefaultCommonValueWriter)
+var DefaultPrinter = NewPrinter(DefaultConfig, DefaultCommonValueWriter.WriteValue)
 
 // Printer pretty-prints values.
 //
@@ -41,15 +41,6 @@ func NewPrinter(c *Config, vw ValueWriter) *Printer {
 		Config:      c,
 		ValueWriter: vw,
 	}
-}
-
-// NewPrinterCommon creates a new [Printer] with a [CommonValueWriter].
-//
-// It calls [CommonValueWriter.ConfigureWithPrinter] with the created [Printer].
-func NewPrinterCommon(c *Config, vw *CommonValueWriter) *Printer {
-	p := NewPrinter(c, vw.WriteValue)
-	vw.ConfigureWithPrinter(p)
-	return p
 }
 
 // Write writes the value to the [io.Writer].
@@ -82,14 +73,6 @@ func (p *Printer) getBuf(vi any, opts ...Option) *bytes.Buffer {
 	buf := bufPool.Get()
 	p.Write(buf, vi, opts...)
 	return buf
-}
-
-func (p *Printer) compare(a, b reflect.Value) int {
-	aBuf := p.getBuf(a)
-	defer bufPool.Put(aBuf)
-	bBuf := p.getBuf(b)
-	defer bufPool.Put(bBuf)
-	return bytes.Compare(aBuf.Bytes(), bBuf.Bytes())
 }
 
 // Formatter returns a [fmt.Formatter] for the value.
