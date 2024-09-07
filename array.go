@@ -2,6 +2,9 @@ package pretty
 
 import (
 	"reflect"
+
+	"github.com/pierrre/go-libs/strconvio"
+	"github.com/pierrre/pretty/internal"
 )
 
 // ArrayValueWriter is a [ValueWriter] that handles array values.
@@ -9,6 +12,9 @@ import (
 // It should be created with [NewArrayValueWriter].
 type ArrayValueWriter struct {
 	ValueWriter
+	// ShowIndexes shows the indexes.
+	// Default: false.
+	ShowIndexes bool
 	// MaxLen is the maximum length of the array.
 	// Default: 0 (no limit).
 	MaxLen int
@@ -18,6 +24,7 @@ type ArrayValueWriter struct {
 func NewArrayValueWriter(vw ValueWriter) *ArrayValueWriter {
 	return &ArrayValueWriter{
 		ValueWriter: vw,
+		ShowIndexes: false,
 		MaxLen:      0,
 	}
 }
@@ -27,11 +34,11 @@ func (vw *ArrayValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Array {
 		return false
 	}
-	writeArray(st, v, vw.MaxLen, vw.ValueWriter)
+	writeArray(st, v, vw.ShowIndexes, vw.MaxLen, vw.ValueWriter)
 	return true
 }
 
-func writeArray(st *State, v reflect.Value, maxLen int, vw ValueWriter) {
+func writeArray(st *State, v reflect.Value, showIndexes bool, maxLen int, vw ValueWriter) {
 	l := v.Len()
 	truncated := false
 	if maxLen > 0 && l > maxLen {
@@ -44,6 +51,10 @@ func writeArray(st *State, v reflect.Value, maxLen int, vw ValueWriter) {
 		st.IndentLevel++
 		for i := range l {
 			st.writeIndent()
+			if showIndexes {
+				internal.MustWrite(strconvio.WriteInt(st.Writer, int64(i), 10))
+				writeString(st.Writer, ": ")
+			}
 			mustHandle(vw(st, v.Index(i)))
 			writeString(st.Writer, ",\n")
 		}

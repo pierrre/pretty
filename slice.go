@@ -18,6 +18,9 @@ type SliceValueWriter struct {
 	// ShowAddr shows the address.
 	// Default: false.
 	ShowAddr bool
+	// ShowIndexes shows the indexes.
+	// Default: false.
+	ShowIndexes bool
 	// MaxLen is the maximum length of the slice.
 	// Default: 0 (no limit).
 	MaxLen int
@@ -30,6 +33,7 @@ func NewSliceValueWriter(vw ValueWriter) *SliceValueWriter {
 		ShowLen:     true,
 		ShowCap:     true,
 		ShowAddr:    false,
+		ShowIndexes: false,
 		MaxLen:      0,
 	}
 }
@@ -50,6 +54,6 @@ func (vw *SliceValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		showAddr: vw.ShowAddr,
 		addr:     uintptr(v.UnsafePointer()),
 	}.writeWithTrailingSpace(st)
-	writeArray(st, v, vw.MaxLen, vw.ValueWriter)
+	writeArray(st, v, vw.ShowIndexes, vw.MaxLen, vw.ValueWriter)
 	return true
 }

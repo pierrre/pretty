@@ -34,6 +34,13 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name:  "ShowIndexes",
+			value: []int{1, 2, 3},
+			configure: func(vw *CommonValueWriter) {
+				vw.Kind.BaseSlice.ShowIndexes = true
+			},
+		},
+		{
 			name:            "Empty",
 			value:           []int{},
 			ignoreBenchmark: true,

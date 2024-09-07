@@ -8,7 +8,14 @@ func init() {
 	addTestCasesPrefix("Array", []*testCase{
 		{
 			name:  "Default",
-			value: [3]int{1, 2, 3},
+			value: [...]int{1, 2, 3},
+		},
+		{
+			name:  "ShowIndexes",
+			value: [...]int{1, 2, 3},
+			configure: func(vw *CommonValueWriter) {
+				vw.Kind.BaseArray.ShowIndexes = true
+			},
 		},
 		{
 			name:            "Empty",
@@ -16,13 +23,21 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name:  "Truncated",
+			value: [...]int{1, 2, 3},
+			configure: func(vw *CommonValueWriter) {
+				vw.Kind.BaseArray.MaxLen = 2
+			},
+			ignoreBenchmark: true,
+		},
+		{
 			name:            "UnknownType",
-			value:           [3]any{1, 2, 3},
+			value:           [...]any{1, 2, 3},
 			ignoreBenchmark: true,
 		},
 		{
 			name:  "ShowKnownTypes",
-			value: [3]int{1, 2, 3},
+			value: [...]int{1, 2, 3},
 			configure: func(vw *CommonValueWriter) {
 				vw.TypeAndValue.ShowKnownTypes = true
 			},
