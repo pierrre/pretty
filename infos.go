@@ -15,6 +15,9 @@ type infos struct {
 }
 
 func (i infos) write(st *State) bool {
+	if !st.ShowInfos {
+		return false
+	}
 	if !i.showLen && !i.showCap && !i.showAddr {
 		return false
 	}

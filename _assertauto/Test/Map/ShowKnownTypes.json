@@ -4,7 +4,7 @@
 			"name": "result",
 			"equal": {
 				"type": "string",
-				"value": "[map[string]int] (len=3) {\n\t[string] (len=1) \"a\": [int] 1,\n\t[string] (len=1) \"b\": [int] 2,\n\t[string] (len=1) \"c\": [int] 3,\n}"
+				"value": "[map[string]int] (len=3) {\n\t[string] \"a\": [int] 1,\n\t[string] \"b\": [int] 2,\n\t[string] \"c\": [int] 3,\n}"
 			}
 		},
 		{

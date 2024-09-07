@@ -109,6 +109,17 @@ func init() {
 			},
 		},
 		{
+			name:  "KeysString",
+			value: map[string]int{"a": 1, "b": 2, "c": 3},
+		},
+		{
+			name:  "KeysStringShowInfos",
+			value: map[string]int{"a": 1, "b": 2, "c": 3},
+			configure: func(vw *CommonValueWriter) {
+				vw.Kind.BaseMap.ShowKeysInfos = true
+			},
+		},
+		{
 			name:  "Not",
 			value: "test",
 			configure: func(vw *CommonValueWriter) {

@@ -37,8 +37,8 @@ func Example() {
 	// 	Float: [float64] 123.456,
 	// 	String: [string] (len=4) "test",
 	// 	Map: [map[string]int] (len=2) {
-	// 		(len=3) "bar": 2,
-	// 		(len=3) "foo": 1,
+	// 		"bar": 2,
+	// 		"foo": 1,
 	// 	},
 	// 	Slice: [[]int] (len=3 cap=3) {
 	// 		1,

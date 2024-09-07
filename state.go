@@ -17,6 +17,7 @@ type State struct {
 	IndentLevel  int
 	Visited      []uintptr
 	KnownType    bool
+	ShowInfos    bool
 }
 
 var statePool = syncutil.PoolFor[*State]{
@@ -33,6 +34,7 @@ func newState(w io.Writer, indentString string) *State {
 	st.IndentLevel = 0
 	st.Visited = st.Visited[:0]
 	st.KnownType = false
+	st.ShowInfos = true
 	return st
 }
 

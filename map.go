@@ -21,6 +21,9 @@ type MapValueWriter struct {
 	// SortKeys sorts the keys.
 	// Default: false.
 	SortKeys bool
+	// ShowKeysInfos shows keys infos.
+	// Default: false.
+	ShowKeysInfos bool
 	// MaxLen is the maximum length of the map.
 	// Default: 0 (no limit).
 	MaxLen int
@@ -29,11 +32,12 @@ type MapValueWriter struct {
 // NewMapValueWriter creates a new [MapValueWriter] with default values.
 func NewMapValueWriter(vw ValueWriter) *MapValueWriter {
 	return &MapValueWriter{
-		ValueWriter: vw,
-		ShowLen:     true,
-		ShowAddr:    false,
-		SortKeys:    false,
-		MaxLen:      0,
+		ValueWriter:   vw,
+		ShowLen:       true,
+		ShowAddr:      false,
+		SortKeys:      false,
+		ShowKeysInfos: false,
+		MaxLen:        0,
 	}
 }
 
@@ -147,7 +151,10 @@ func (vw *MapValueWriter) writeEntry(st *State, key reflect.Value, value reflect
 		writeString(st.Writer, "\n")
 		return false
 	}
+	showInfos := st.ShowInfos
+	st.ShowInfos = vw.ShowKeysInfos
 	mustHandle(vw.ValueWriter(st, key))
+	st.ShowInfos = showInfos
 	writeString(st.Writer, ": ")
 	mustHandle(vw.ValueWriter(st, value))
 	writeString(st.Writer, ",\n")
