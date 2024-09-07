@@ -48,6 +48,6 @@ func (vw *StringerValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	sr := v.Interface().(fmt.Stringer) //nolint:forcetypeassert // Checked above.
 	s := sr.String()
 	writeArrowWrappedString(st.Writer, ".String() ")
-	writeStringValue(st.Writer, s, vw.ShowLen, false, 0, vw.Quote, vw.MaxLen)
+	writeStringValue(st, s, vw.ShowLen, false, 0, vw.Quote, vw.MaxLen)
 	return true
 }

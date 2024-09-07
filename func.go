@@ -33,7 +33,7 @@ func (vw *FuncValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	infos{
 		showAddr: vw.ShowAddr,
 		addr:     p,
-	}.writeWithTrailingSpace(st.Writer)
+	}.writeWithTrailingSpace(st)
 	name := runtime.FuncForPC(p).Name()
 	writeString(st.Writer, name)
 	return true

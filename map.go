@@ -50,7 +50,7 @@ func (vw *MapValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		len:      v.Len(),
 		showAddr: vw.ShowAddr,
 		addr:     uintptr(v.UnsafePointer()),
-	}.writeWithTrailingSpace(st.Writer)
+	}.writeWithTrailingSpace(st)
 	writeString(st.Writer, "{")
 	if v.Len() > 0 {
 		writeString(st.Writer, "\n")

@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 )
 
@@ -39,29 +38,29 @@ func (vw *StringValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	s := v.String()
-	writeStringValue(st.Writer, s, vw.ShowLen, vw.ShowAddr, uintptr(v.UnsafePointer()), vw.Quote, vw.MaxLen)
+	writeStringValue(st, s, vw.ShowLen, vw.ShowAddr, uintptr(v.UnsafePointer()), vw.Quote, vw.MaxLen)
 	return true
 }
 
-func writeStringValue(w io.Writer, s string, showLen bool, showAddr bool, addr uintptr, quote bool, maxLen int) {
+func writeStringValue(st *State, s string, showLen bool, showAddr bool, addr uintptr, quote bool, maxLen int) {
 	infos{
 		showLen:  showLen,
 		len:      len(s),
 		showAddr: showAddr,
 		addr:     addr,
-	}.writeWithTrailingSpace(w)
+	}.writeWithTrailingSpace(st)
 	truncated := false
 	if maxLen > 0 && len(s) > maxLen {
 		s = s[:maxLen]
 		truncated = true
 	}
 	if quote {
-		writeQuote(w, s)
+		writeQuote(st.Writer, s)
 	} else {
-		writeString(w, s)
+		writeString(st.Writer, s)
 	}
 	if truncated {
-		writeString(w, " ")
-		writeTruncated(w)
+		writeString(st.Writer, " ")
+		writeTruncated(st.Writer)
 	}
 }

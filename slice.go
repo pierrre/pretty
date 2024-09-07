@@ -49,7 +49,7 @@ func (vw *SliceValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		cap:      v.Cap(),
 		showAddr: vw.ShowAddr,
 		addr:     uintptr(v.UnsafePointer()),
-	}.writeWithTrailingSpace(st.Writer)
+	}.writeWithTrailingSpace(st)
 	writeArray(st, v, vw.MaxLen, vw.ValueWriter)
 	return true
 }

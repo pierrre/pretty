@@ -43,6 +43,6 @@ func (vw *ChanValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		cap:      v.Cap(),
 		showAddr: vw.ShowAddr,
 		addr:     uintptr(v.UnsafePointer()),
-	}.write(st.Writer)
+	}.write(st)
 	return true
 }

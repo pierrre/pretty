@@ -1,8 +1,6 @@
 package pretty
 
 import (
-	"io"
-
 	"github.com/pierrre/go-libs/strconvio"
 	"github.com/pierrre/pretty/internal"
 )
@@ -16,10 +14,11 @@ type infos struct {
 	addr     uintptr
 }
 
-func (i infos) write(w io.Writer) bool {
+func (i infos) write(st *State) bool {
 	if !i.showLen && !i.showCap && !i.showAddr {
 		return false
 	}
+	w := st.Writer
 	writeString(w, "(")
 	wrote := false
 	if i.showLen {
@@ -46,8 +45,8 @@ func (i infos) write(w io.Writer) bool {
 	return true
 }
 
-func (i infos) writeWithTrailingSpace(w io.Writer) {
-	if i.write(w) {
-		writeString(w, " ")
+func (i infos) writeWithTrailingSpace(st *State) {
+	if i.write(st) {
+		writeString(st.Writer, " ")
 	}
 }
