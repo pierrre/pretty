@@ -47,7 +47,7 @@ func NewKindValueWriter(vw ValueWriter) *KindValueWriter {
 		BaseFloat:         NewFloatValueWriter(),
 		BaseComplex:       NewComplexValueWriter(),
 		BaseArray:         NewArrayValueWriter(vw),
-		BaseChan:          NewChanValueWriter(),
+		BaseChan:          NewChanValueWriter(vw),
 		BaseFunc:          NewFuncValueWriter(),
 		BaseInterface:     NewInterfaceValueWriter(vw),
 		BaseMap:           NewMapValueWriter(vw),

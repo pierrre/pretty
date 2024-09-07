@@ -33,6 +33,88 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name: "ShowElems",
+			value: func() chan string {
+				c := make(chan string, 5)
+				c <- "a"
+				c <- "b"
+				c <- "c"
+				return c
+			}(),
+			configure: func(vw *CommonValueWriter) {
+				vw.Kind.BaseChan.ShowElems = true
+			},
+		},
+		{
+			name: "ShowElemsIndexes",
+			value: func() chan string {
+				c := make(chan string, 5)
+				c <- "a"
+				c <- "b"
+				c <- "c"
+				return c
+			}(),
+			configure: func(vw *CommonValueWriter) {
+				vw.Kind.BaseChan.ShowElems = true
+				vw.Kind.BaseChan.ShowIndexes = true
+			},
+		},
+		{
+			name: "ShowElemsTruncated",
+			value: func() chan string {
+				c := make(chan string, 5)
+				c <- "a"
+				c <- "b"
+				c <- "c"
+				return c
+			}(),
+			configure: func(vw *CommonValueWriter) {
+				vw.Kind.BaseChan.ShowElems = true
+				vw.Kind.BaseChan.MaxLen = 2
+			},
+		},
+		{
+			name: "ShowElemsClosed",
+			value: func() chan string {
+				c := make(chan string, 5)
+				c <- "a"
+				c <- "b"
+				c <- "c"
+				return c
+			}(),
+			configure: func(vw *CommonValueWriter) {
+				vw.Kind.BaseChan.ShowElems = true
+			},
+		},
+		{
+			name: "ShowElemsReadOnly",
+			value: func() <-chan string {
+				c := make(chan string, 5)
+				c <- "a"
+				c <- "b"
+				c <- "c"
+				return c
+			}(),
+			configure: func(vw *CommonValueWriter) {
+				vw.Kind.BaseChan.ShowElems = true
+				vw.Kind.BaseChan.ShowIndexes = true
+			},
+		},
+		{
+			name: "ShowElemsWriteOnly",
+			value: func() chan<- string {
+				c := make(chan string, 5)
+				c <- "a"
+				c <- "b"
+				c <- "c"
+				return c
+			}(),
+			configure: func(vw *CommonValueWriter) {
+				vw.Kind.BaseChan.ShowElems = true
+				vw.Kind.BaseChan.ShowIndexes = true
+			},
+		},
+		{
 			name:  "Not",
 			value: "test",
 			configure: func(vw *CommonValueWriter) {
