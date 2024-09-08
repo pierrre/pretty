@@ -35,7 +35,7 @@ func writeQuote(w io.Writer, s string) {
 	internal.MustWrite(strconvio.WriteQuote(w, s))
 }
 
-var bytesPool = syncutil.PoolFor[*[]byte]{
+var bytesPool = syncutil.Pool[*[]byte]{
 	New: func() *[]byte {
 		b := make([]byte, 1024)
 		return &b

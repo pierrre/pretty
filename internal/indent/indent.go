@@ -16,7 +16,7 @@ const (
 
 var (
 	defaultBytes = bytes.Repeat([]byte(Default), defaultBytesLevel)
-	bytesCache   syncutil.MapFor[string, []byte]
+	bytesCache   syncutil.Map[string, []byte]
 )
 
 func getBytes(str string, level int) []byte {
@@ -57,7 +57,7 @@ type Writer struct {
 	indented bool
 }
 
-var writerPool = syncutil.PoolFor[*Writer]{
+var writerPool = syncutil.Pool[*Writer]{
 	New: func() *Writer {
 		return &Writer{}
 	},

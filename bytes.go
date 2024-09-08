@@ -160,7 +160,7 @@ func newHexDumperPoolEntry() *hexDumperPoolEntry {
 	}
 }
 
-var hexDumperPool = syncutil.PoolFor[*hexDumperPoolEntry]{
+var hexDumperPool = syncutil.Pool[*hexDumperPoolEntry]{
 	New: newHexDumperPoolEntry,
 }
 

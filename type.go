@@ -87,7 +87,7 @@ func (vw *TypeAndValueWriter) writeBaseType(w io.Writer, v reflect.Value) {
 	writeString(w, ")")
 }
 
-var baseTypeCache syncutil.MapFor[reflect.Type, reflect.Type]
+var baseTypeCache syncutil.Map[reflect.Type, reflect.Type]
 
 func (vw *TypeAndValueWriter) getCachedBaseType(typ reflect.Type) reflect.Type {
 	baseType, ok := baseTypeCache.Load(typ)

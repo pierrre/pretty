@@ -90,14 +90,14 @@ func (vw *MapValueWriter) writeUnsorted(st *State, v reflect.Value) {
 	}
 }
 
-var reflectValuePools = syncutil.MapFor[reflect.Type, *syncutil.PoolFor[*reflect.Value]]{}
+var reflectValuePools = syncutil.Map[reflect.Type, *syncutil.Pool[*reflect.Value]]{}
 
-func getReflectValuePool(typ reflect.Type) *syncutil.PoolFor[*reflect.Value] {
+func getReflectValuePool(typ reflect.Type) *syncutil.Pool[*reflect.Value] {
 	pool, ok := reflectValuePools.Load(typ)
 	if ok {
 		return pool
 	}
-	pool = &syncutil.PoolFor[*reflect.Value]{
+	pool = &syncutil.Pool[*reflect.Value]{
 		New: func() *reflect.Value {
 			v := reflect.New(typ).Elem()
 			return &v

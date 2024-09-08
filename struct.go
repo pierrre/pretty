@@ -56,7 +56,7 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	return true
 }
 
-var structFieldsCache syncutil.MapFor[reflect.Type, []reflect.StructField]
+var structFieldsCache syncutil.Map[reflect.Type, []reflect.StructField]
 
 func getStructFields(typ reflect.Type) []reflect.StructField {
 	fields, ok := structFieldsCache.Load(typ)

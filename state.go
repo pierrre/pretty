@@ -20,7 +20,7 @@ type State struct {
 	ShowInfos    bool
 }
 
-var statePool = syncutil.PoolFor[*State]{
+var statePool = syncutil.Pool[*State]{
 	New: func() *State {
 		return new(State)
 	},
