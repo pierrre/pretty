@@ -1,0 +1,18 @@
+{
+	"entries": [
+		{
+			"name": "result",
+			"equal": {
+				"type": "string",
+				"value": "[iter.Seq2[int,string]](func(func(int, string) bool)) {\n\t0: (len=1) \"a\",\n\t1: (len=1) \"b\",\n\t2: (len=1) \"c\",\n}"
+			}
+		},
+		{
+			"name": "allocs",
+			"allocs_per_run": {
+				"runs": 100,
+				"allocs": 19
+			}
+		}
+	]
+}

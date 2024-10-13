@@ -29,6 +29,7 @@ type CommonValueWriter struct {
 	BytesHexDump     *BytesHexDumpValueWriter
 	BytesableHexDump *BytesableHexDumpValueWriter
 	Stringer         *StringerValueWriter
+	Iter             *IterValueWriter
 	Kind             *KindValueWriter
 }
 
@@ -48,6 +49,7 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.BytesHexDump = NewBytesHexDumpValueWriter()
 	vw.BytesableHexDump = NewBytesableHexDumpValueWriter()
 	vw.Stringer = NewStringerValueWriter()
+	vw.Iter = NewIterValueWriter(vw.loopback)
 	vw.Kind = NewKindValueWriter(vw.loopback)
 	return vw
 }
@@ -192,6 +194,9 @@ func (vw *CommonValueWriter) internal(st *State, v reflect.Value) bool {
 		return true
 	}
 	if vw.Stringer != nil && vw.Stringer.WriteValue(st, v) {
+		return true
+	}
+	if vw.Iter != nil && vw.Iter.WriteValue(st, v) {
 		return true
 	}
 	if vw.Kind != nil && vw.Kind.WriteValue(st, v) {
