@@ -46,6 +46,13 @@ func init() {
 				}
 			}(),
 		},
+		{
+			name:  "Disabled",
+			value: slices.Values([]string{"a", "b", "c"}),
+			configure: func(vw *CommonValueWriter) {
+				vw.Iter = nil
+			},
+		},
 	})
 	addTestCasesPrefix("IterSeq2", []*testCase{
 		{
@@ -83,6 +90,13 @@ func init() {
 					}
 				}
 			}(),
+		},
+		{
+			name:  "Disabled",
+			value: slices.All([]string{"a", "b", "c"}),
+			configure: func(vw *CommonValueWriter) {
+				vw.Iter = nil
+			},
 		},
 	})
 }
