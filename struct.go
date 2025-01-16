@@ -5,6 +5,7 @@ import (
 
 	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/must"
 )
 
 // StructValueWriter is a [ValueWriter] that handles struct values.
@@ -46,7 +47,7 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		st.writeIndent()
 		internal.MustWriteString(st.Writer, field.Name)
 		internal.MustWriteString(st.Writer, ": ")
-		internal.MustHandle(vw.ValueWriter(st, v.Field(i)))
+		must.Handle(vw.ValueWriter(st, v.Field(i)))
 		internal.MustWriteString(st.Writer, ",\n")
 	}
 	st.IndentLevel--

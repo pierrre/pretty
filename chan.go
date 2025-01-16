@@ -5,6 +5,7 @@ import (
 
 	"github.com/pierrre/go-libs/strconvio"
 	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/must"
 )
 
 // ChanValueWriter is a [ValueWriter] that handles chan values.
@@ -102,7 +103,7 @@ func (vw *ChanValueWriter) writeElem(st *State, v reflect.Value, i int) {
 		internal.MustWriteString(st.Writer, ": ")
 	}
 	e, _ := v.Recv()
-	internal.MustHandle(vw.ValueWriter(st, e))
+	must.Handle(vw.ValueWriter(st, e))
 	func() {
 		defer func() {
 			_ = recover()

@@ -5,6 +5,7 @@ import (
 
 	"github.com/pierrre/go-libs/strconvio"
 	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/must"
 )
 
 // ArrayValueWriter is a [ValueWriter] that handles array values.
@@ -55,7 +56,7 @@ func writeArray(st *State, v reflect.Value, showIndexes bool, maxLen int, vw Val
 				internal.MustWrite(strconvio.WriteInt(st.Writer, int64(i), 10))
 				internal.MustWriteString(st.Writer, ": ")
 			}
-			internal.MustHandle(vw(st, v.Index(i)))
+			must.Handle(vw(st, v.Index(i)))
 			internal.MustWriteString(st.Writer, ",\n")
 		}
 		if truncated {

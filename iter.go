@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/must"
 )
 
 // IterValueWriter is a [ValueWriter] that handles iterators ([iter.Seq] or [iter.Seq2]).
@@ -63,7 +64,7 @@ func (vw *IterValueWriter) writeSeq(st *State, it iter.Seq[reflect.Value]) {
 			internal.MustWriteString(st.Writer, "\n")
 			break
 		}
-		internal.MustHandle(vw.ValueWriter(st, v))
+		must.Handle(vw.ValueWriter(st, v))
 		internal.MustWriteString(st.Writer, ",\n")
 		i++
 	}
@@ -83,10 +84,10 @@ func (vw *IterValueWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, refl
 		showInfos := st.ShowInfos
 		st.ShowInfos = vw.ShowKeysInfos
 		st.writeIndent()
-		internal.MustHandle(vw.ValueWriter(st, k))
+		must.Handle(vw.ValueWriter(st, k))
 		st.ShowInfos = showInfos
 		internal.MustWriteString(st.Writer, ": ")
-		internal.MustHandle(vw.ValueWriter(st, v))
+		must.Handle(vw.ValueWriter(st, v))
 		internal.MustWriteString(st.Writer, ",\n")
 	}
 	st.IndentLevel--

@@ -4,6 +4,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/must"
 )
 
 var reflectValueType = reflect.TypeFor[reflect.Value]()
@@ -37,6 +38,6 @@ func (vw *ReflectValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		return true
 	}
 	defer st.SetRestoreKnownType(false)() // We want to show the type of the value.
-	internal.MustHandle(vw.ValueWriter(st, rv))
+	must.Handle(vw.ValueWriter(st, rv))
 	return true
 }

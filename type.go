@@ -7,6 +7,7 @@ import (
 
 	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/must"
 )
 
 // TypeValueWriter is a [ValueWriter] that writes the type.
@@ -61,13 +62,13 @@ func NewTypeAndValueWriter(t, v ValueWriter) *TypeAndValueWriter {
 func (vw *TypeAndValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !st.KnownType || vw.ShowKnownTypes {
 		internal.MustWriteString(st.Writer, "[")
-		internal.MustHandle(vw.Type(st, v))
+		must.Handle(vw.Type(st, v))
 		internal.MustWriteString(st.Writer, "]")
 		vw.writeBaseType(st.Writer, v)
 		internal.MustWriteString(st.Writer, " ")
 	}
 	defer st.SetRestoreKnownType(true)() // The type is known, because we showed it.
-	internal.MustHandle(vw.Value(st, v))
+	must.Handle(vw.Value(st, v))
 	return true
 }
 

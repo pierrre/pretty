@@ -3,7 +3,7 @@ package pretty
 import (
 	"reflect"
 
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/must"
 )
 
 // InterfaceValueWriter is a [ValueWriter] that handles interface values.
@@ -30,6 +30,6 @@ func (vw *InterfaceValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		return true
 	}
 	defer st.SetRestoreKnownType(false)() // We want to show the type of the value.
-	internal.MustHandle(vw.ValueWriter(st, v.Elem()))
+	must.Handle(vw.ValueWriter(st, v.Elem()))
 	return true
 }
