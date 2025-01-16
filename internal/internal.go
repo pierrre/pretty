@@ -27,3 +27,10 @@ func WriteString(w io.Writer, s string) (int, error) {
 func MustWriteString(w io.Writer, s string) {
 	MustWrite(WriteString(w, s))
 }
+
+// MustHandle panics if h is false.
+func MustHandle(h bool) {
+	if !h {
+		panic("not handled")
+	}
+}

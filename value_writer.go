@@ -29,9 +29,3 @@ func (vws ValueWriters) WriteValue(st *State, v reflect.Value) bool {
 	}
 	return false
 }
-
-func mustHandle(h bool) {
-	if !h {
-		panic("not handled")
-	}
-}

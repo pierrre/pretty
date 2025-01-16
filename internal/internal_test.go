@@ -36,3 +36,12 @@ func TestMustWritePanic(t *testing.T) {
 func TestMustWriteString(t *testing.T) {
 	MustWriteString(io.Discard, "test")
 }
+
+func TestMustHandle(t *testing.T) {
+	assert.NotPanics(t, func() {
+		MustHandle(true)
+	})
+	assert.Panics(t, func() {
+		MustHandle(false)
+	})
+}

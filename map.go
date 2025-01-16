@@ -5,6 +5,7 @@ import (
 
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/syncutil"
+	"github.com/pierrre/pretty/internal"
 )
 
 // MapValueWriter is a [ValueWriter] that handles map values.
@@ -153,10 +154,10 @@ func (vw *MapValueWriter) writeEntry(st *State, key reflect.Value, value reflect
 	}
 	showInfos := st.ShowInfos
 	st.ShowInfos = vw.ShowKeysInfos
-	mustHandle(vw.ValueWriter(st, key))
+	internal.MustHandle(vw.ValueWriter(st, key))
 	st.ShowInfos = showInfos
 	writeString(st.Writer, ": ")
-	mustHandle(vw.ValueWriter(st, value))
+	internal.MustHandle(vw.ValueWriter(st, value))
 	writeString(st.Writer, ",\n")
 	return true
 }

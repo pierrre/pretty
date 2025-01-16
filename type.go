@@ -6,6 +6,7 @@ import (
 	"unsafe" //nolint:depguard // Required for unsafe.Pointer.
 
 	"github.com/pierrre/go-libs/syncutil"
+	"github.com/pierrre/pretty/internal"
 )
 
 // TypeValueWriter is a [ValueWriter] that writes the type.
@@ -60,13 +61,13 @@ func NewTypeAndValueWriter(t, v ValueWriter) *TypeAndValueWriter {
 func (vw *TypeAndValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !st.KnownType || vw.ShowKnownTypes {
 		writeString(st.Writer, "[")
-		mustHandle(vw.Type(st, v))
+		internal.MustHandle(vw.Type(st, v))
 		writeString(st.Writer, "]")
 		vw.writeBaseType(st.Writer, v)
 		writeString(st.Writer, " ")
 	}
 	defer st.SetRestoreKnownType(true)() // The type is known, because we showed it.
-	mustHandle(vw.Value(st, v))
+	internal.MustHandle(vw.Value(st, v))
 	return true
 }
 

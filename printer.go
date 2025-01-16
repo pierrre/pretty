@@ -7,6 +7,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/bufpool"
+	"github.com/pierrre/pretty/internal"
 )
 
 // Write writes the value to the [io.Writer] with [DefaultPrinter].
@@ -55,7 +56,7 @@ func (p *Printer) Write(w io.Writer, vi any, opts ...Option) {
 	for _, opt := range opts {
 		opt(st)
 	}
-	mustHandle(p.ValueWriter(st, v))
+	internal.MustHandle(p.ValueWriter(st, v))
 }
 
 var bufPool = &bufpool.Pool{

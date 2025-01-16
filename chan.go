@@ -102,7 +102,7 @@ func (vw *ChanValueWriter) writeElem(st *State, v reflect.Value, i int) {
 		writeString(st.Writer, ": ")
 	}
 	e, _ := v.Recv()
-	mustHandle(vw.ValueWriter(st, e))
+	internal.MustHandle(vw.ValueWriter(st, e))
 	func() {
 		defer func() {
 			_ = recover()
