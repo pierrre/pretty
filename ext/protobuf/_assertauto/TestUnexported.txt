@@ -1,0 +1,13 @@
+[struct { unexported *wrapperspb.StringValue }] {
+	unexported: [*google.golang.org/protobuf/types/known/wrapperspb.StringValue] => {
+		state: [google.golang.org/protobuf/internal/impl.MessageState] {
+			NoUnkeyedLiterals: [google.golang.org/protobuf/internal/pragma.NoUnkeyedLiterals] {},
+			DoNotCompare: [google.golang.org/protobuf/internal/pragma.DoNotCompare]([0]func()) {},
+			DoNotCopy: [google.golang.org/protobuf/internal/pragma.DoNotCopy]([0]sync.Mutex) {},
+			atomicMessageInfo: [*google.golang.org/protobuf/internal/impl.MessageInfo] <nil>,
+		},
+		Value: [string] (len=4) "test",
+		unknownFields: [[]uint8] <nil>,
+		sizeCache: [int32] 0,
+	},
+}
