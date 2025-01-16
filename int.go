@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // IntValueWriter is a [ValueWriter] that handles int values.
@@ -27,7 +27,7 @@ func NewIntValueWriter() *IntValueWriter {
 func (vw *IntValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles int.
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		internal.MustWrite(strconvio.WriteInt(st.Writer, v.Int(), vw.Base))
+		write.Must(strconvio.WriteInt(st.Writer, v.Int(), vw.Base))
 		return true
 	}
 	return false

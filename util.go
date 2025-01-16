@@ -4,21 +4,21 @@ import (
 	"io"
 
 	"github.com/pierrre/go-libs/syncutil"
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 func writeArrow(w io.Writer) {
-	internal.MustWriteString(w, "=> ")
+	write.MustString(w, "=> ")
 }
 
 func writeArrowWrappedString(w io.Writer, s string) {
 	writeArrow(w)
-	internal.MustWriteString(w, s)
+	write.MustString(w, s)
 	writeArrow(w)
 }
 
 func writeTruncated(w io.Writer) {
-	internal.MustWriteString(w, "<truncated>")
+	write.MustString(w, "<truncated>")
 }
 
 var bytesPool = syncutil.Pool[*[]byte]{

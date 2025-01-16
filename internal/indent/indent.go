@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/pierrre/go-libs/syncutil"
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 const (
@@ -39,14 +39,14 @@ func Write(w io.Writer, str string, level int) (int, error) {
 		return 0, nil
 	}
 	if level == 1 {
-		return internal.WriteString(w, str) //nolint:wrapcheck // The error is not wrapped.
+		return write.String(w, str) //nolint:wrapcheck // The error is not wrapped.
 	}
 	return w.Write(getBytes(str, level)) //nolint:wrapcheck // The error is not wrapped.
 }
 
 // MustWrite writes an indentation string to a [io.Writer] and panics if an error occurs.
 func MustWrite(w io.Writer, str string, level int) {
-	internal.MustWrite(Write(w, str, level))
+	write.Must(Write(w, str, level))
 }
 
 // Writer is a [io.Writer] that indents.

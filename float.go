@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // FloatValueWriter is a [ValueWriter] that handles float values.
@@ -31,7 +31,7 @@ func NewFloatValueWriter() *FloatValueWriter {
 func (vw *FloatValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles float.
 	case reflect.Float32, reflect.Float64:
-		internal.MustWrite(strconvio.WriteFloat(st.Writer, v.Float(), vw.Format, vw.Precision, v.Type().Bits()))
+		write.Must(strconvio.WriteFloat(st.Writer, v.Float(), vw.Format, vw.Precision, v.Type().Bits()))
 		return true
 	}
 	return false

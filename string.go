@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // StringValueWriter is a [ValueWriter] that handles string values.
@@ -58,12 +58,12 @@ func writeStringValue(st *State, s string, showLen bool, showAddr bool, addr uin
 		truncated = true
 	}
 	if quote {
-		internal.MustWrite(strconvio.WriteQuote(st.Writer, s))
+		write.Must(strconvio.WriteQuote(st.Writer, s))
 	} else {
-		internal.MustWriteString(st.Writer, s)
+		write.MustString(st.Writer, s)
 	}
 	if truncated {
-		internal.MustWriteString(st.Writer, " ")
+		write.MustString(st.Writer, " ")
 		writeTruncated(st.Writer)
 	}
 }

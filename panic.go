@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"runtime"
 
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // PanicRecoverValueWriter is a [ValueWriter] that recovers from panics.
@@ -35,16 +35,16 @@ func (vw *PanicRecoverValueWriter) WriteValue(st *State, v reflect.Value) (handl
 			return
 		}
 		handled = true
-		_, _ = internal.WriteString(st.Writer, "<panic>: ")
+		_, _ = write.String(st.Writer, "<panic>: ")
 		switch r := r.(type) {
 		case string:
-			_, _ = internal.WriteString(st.Writer, r)
+			_, _ = write.String(st.Writer, r)
 		case error:
-			_, _ = internal.WriteString(st.Writer, r.Error())
+			_, _ = write.String(st.Writer, r.Error())
 		default:
 			_, _ = fmt.Fprint(st.Writer, r)
 		}
-		_, _ = internal.WriteString(st.Writer, "\n")
+		_, _ = write.String(st.Writer, "\n")
 		if vw.ShowStack {
 			writeStack(st.Writer)
 		}

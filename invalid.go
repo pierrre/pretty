@@ -4,7 +4,7 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // InvalidValueWriter is a [ValueWriter] that handles invalid values.
@@ -26,6 +26,6 @@ func checkInvalid(w io.Writer, v reflect.Value) bool {
 	if v.IsValid() {
 		return false
 	}
-	internal.MustWriteString(w, "<invalid>")
+	write.MustString(w, "<invalid>")
 	return true
 }

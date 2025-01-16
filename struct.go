@@ -4,8 +4,8 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/syncutil"
-	"github.com/pierrre/pretty/internal"
 	"github.com/pierrre/pretty/internal/must"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // StructValueWriter is a [ValueWriter] that handles struct values.
@@ -32,7 +32,7 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	defer st.SetRestoreKnownType(false)() // We want to show the types of fields and values.
-	internal.MustWriteString(st.Writer, "{")
+	write.MustString(st.Writer, "{")
 	fields := getStructFields(v.Type())
 	hasFields := false
 	st.IndentLevel++
@@ -41,20 +41,20 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 			continue
 		}
 		if !hasFields {
-			internal.MustWriteString(st.Writer, "\n")
+			write.MustString(st.Writer, "\n")
 			hasFields = true
 		}
 		st.writeIndent()
-		internal.MustWriteString(st.Writer, field.Name)
-		internal.MustWriteString(st.Writer, ": ")
+		write.MustString(st.Writer, field.Name)
+		write.MustString(st.Writer, ": ")
 		must.Handle(vw.ValueWriter(st, v.Field(i)))
-		internal.MustWriteString(st.Writer, ",\n")
+		write.MustString(st.Writer, ",\n")
 	}
 	st.IndentLevel--
 	if hasFields {
 		st.writeIndent()
 	}
-	internal.MustWriteString(st.Writer, "}")
+	write.MustString(st.Writer, "}")
 	return true
 }
 

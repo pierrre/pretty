@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	. "github.com/pierrre/pretty"
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 func init() {
@@ -15,7 +15,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = []ValueWriter{NewFilterValueWriter(
 					func(st *State, v reflect.Value) bool {
-						internal.MustWriteString(st.Writer, "aaaa")
+						write.MustString(st.Writer, "aaaa")
 						return true
 					},
 					func(v reflect.Value) bool {

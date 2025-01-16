@@ -5,7 +5,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // UintptrValueWriter is a [ValueWriter] that handles uintptr values.
@@ -28,6 +28,6 @@ func (vw *UintptrValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 func writeUintptr(w io.Writer, p uintptr) {
-	internal.MustWriteString(w, "0x")
-	internal.MustWrite(strconvio.WriteUint(w, uint64(p), 16))
+	write.MustString(w, "0x")
+	write.Must(strconvio.WriteUint(w, uint64(p), 16))
 }

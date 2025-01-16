@@ -4,7 +4,7 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 func checkNil(w io.Writer, v reflect.Value) bool {
@@ -16,5 +16,5 @@ func checkNil(w io.Writer, v reflect.Value) bool {
 }
 
 func writeNil(w io.Writer) {
-	internal.MustWriteString(w, "<nil>")
+	write.MustString(w, "<nil>")
 }

@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 var errorType = reflect.TypeFor[error]()
@@ -44,5 +44,5 @@ func (vw *ErrorValueWriter) WriteValue(st *State, v reflect.Value) bool {
 
 // WriteError writes the error with error.Error.
 func (vw *ErrorValueWriter) WriteError(st *State, err error) {
-	internal.MustWrite(strconvio.WriteQuote(st.Writer, err.Error()))
+	write.Must(strconvio.WriteQuote(st.Writer, err.Error()))
 }

@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"runtime"
 
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // FuncValueWriter is a [ValueWriter] that handles function values.
@@ -37,6 +37,6 @@ func (vw *FuncValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		addr:     p,
 	}.writeWithTrailingSpace(st)
 	name := runtime.FuncForPC(p).Name()
-	internal.MustWriteString(st.Writer, name)
+	write.MustString(st.Writer, name)
 	return true
 }

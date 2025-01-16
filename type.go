@@ -6,8 +6,8 @@ import (
 	"unsafe" //nolint:depguard // Required for unsafe.Pointer.
 
 	"github.com/pierrre/go-libs/syncutil"
-	"github.com/pierrre/pretty/internal"
 	"github.com/pierrre/pretty/internal/must"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // TypeValueWriter is a [ValueWriter] that writes the type.
@@ -28,7 +28,7 @@ func NewTypeValueWriter() *TypeValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *TypeValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	internal.MustWriteString(st.Writer, vw.Stringer(v.Type()))
+	write.MustString(st.Writer, vw.Stringer(v.Type()))
 	return true
 }
 
@@ -61,11 +61,11 @@ func NewTypeAndValueWriter(t, v ValueWriter) *TypeAndValueWriter {
 // WriteValue implements [ValueWriter].
 func (vw *TypeAndValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !st.KnownType || vw.ShowKnownTypes {
-		internal.MustWriteString(st.Writer, "[")
+		write.MustString(st.Writer, "[")
 		must.Handle(vw.Type(st, v))
-		internal.MustWriteString(st.Writer, "]")
+		write.MustString(st.Writer, "]")
 		vw.writeBaseType(st.Writer, v)
-		internal.MustWriteString(st.Writer, " ")
+		write.MustString(st.Writer, " ")
 	}
 	defer st.SetRestoreKnownType(true)() // The type is known, because we showed it.
 	must.Handle(vw.Value(st, v))
@@ -84,9 +84,9 @@ func (vw *TypeAndValueWriter) writeBaseType(w io.Writer, v reflect.Value) {
 	if baseType == nil {
 		return
 	}
-	internal.MustWriteString(w, "(")
-	internal.MustWriteString(w, baseType.String())
-	internal.MustWriteString(w, ")")
+	write.MustString(w, "(")
+	write.MustString(w, baseType.String())
+	write.MustString(w, ")")
 }
 
 var baseTypeCache syncutil.Map[reflect.Type, reflect.Type]

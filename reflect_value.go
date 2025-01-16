@@ -3,8 +3,8 @@ package pretty
 import (
 	"reflect"
 
-	"github.com/pierrre/pretty/internal"
 	"github.com/pierrre/pretty/internal/must"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 var reflectValueType = reflect.TypeFor[reflect.Value]()
@@ -29,7 +29,7 @@ func (vw *ReflectValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	if !v.CanInterface() {
-		internal.MustWriteString(st.Writer, "<unexported>")
+		write.MustString(st.Writer, "<unexported>")
 		return true
 	}
 	rv := v.Interface().(reflect.Value) //nolint:forcetypeassert // Checked above.

@@ -5,8 +5,8 @@ import (
 
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/syncutil"
-	"github.com/pierrre/pretty/internal"
 	"github.com/pierrre/pretty/internal/must"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // MapValueWriter is a [ValueWriter] that handles map values.
@@ -57,9 +57,9 @@ func (vw *MapValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		showAddr: vw.ShowAddr,
 		addr:     uintptr(v.UnsafePointer()),
 	}.writeWithTrailingSpace(st)
-	internal.MustWriteString(st.Writer, "{")
+	write.MustString(st.Writer, "{")
 	if v.Len() > 0 {
-		internal.MustWriteString(st.Writer, "\n")
+		write.MustString(st.Writer, "\n")
 		st.IndentLevel++
 		if vw.SortKeys {
 			vw.writeSorted(st, v)
@@ -69,7 +69,7 @@ func (vw *MapValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		st.IndentLevel--
 		st.writeIndent()
 	}
-	internal.MustWriteString(st.Writer, "}")
+	write.MustString(st.Writer, "}")
 	return true
 }
 
@@ -150,15 +150,15 @@ func (vw *MapValueWriter) writeEntry(st *State, key reflect.Value, value reflect
 	st.writeIndent()
 	if vw.MaxLen > 0 && i >= vw.MaxLen {
 		writeTruncated(st.Writer)
-		internal.MustWriteString(st.Writer, "\n")
+		write.MustString(st.Writer, "\n")
 		return false
 	}
 	showInfos := st.ShowInfos
 	st.ShowInfos = vw.ShowKeysInfos
 	must.Handle(vw.ValueWriter(st, key))
 	st.ShowInfos = showInfos
-	internal.MustWriteString(st.Writer, ": ")
+	write.MustString(st.Writer, ": ")
 	must.Handle(vw.ValueWriter(st, value))
-	internal.MustWriteString(st.Writer, ",\n")
+	write.MustString(st.Writer, ",\n")
 	return true
 }

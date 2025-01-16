@@ -2,7 +2,7 @@ package pretty
 
 import (
 	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 type infos struct {
@@ -22,34 +22,34 @@ func (i infos) write(st *State) bool {
 		return false
 	}
 	w := st.Writer
-	internal.MustWriteString(w, "(")
+	write.MustString(w, "(")
 	wrote := false
 	if i.showLen {
-		internal.MustWriteString(w, "len=")
-		internal.MustWrite(strconvio.WriteInt(w, int64(i.len), 10))
+		write.MustString(w, "len=")
+		write.Must(strconvio.WriteInt(w, int64(i.len), 10))
 		wrote = true
 	}
 	if i.showCap {
 		if wrote {
-			internal.MustWriteString(w, " ")
+			write.MustString(w, " ")
 		}
-		internal.MustWriteString(w, "cap=")
-		internal.MustWrite(strconvio.WriteInt(w, int64(i.cap), 10))
+		write.MustString(w, "cap=")
+		write.Must(strconvio.WriteInt(w, int64(i.cap), 10))
 		wrote = true
 	}
 	if i.showAddr {
 		if wrote {
-			internal.MustWriteString(w, " ")
+			write.MustString(w, " ")
 		}
-		internal.MustWriteString(w, "addr=")
+		write.MustString(w, "addr=")
 		writeUintptr(w, i.addr)
 	}
-	internal.MustWriteString(w, ")")
+	write.MustString(w, ")")
 	return true
 }
 
 func (i infos) writeWithTrailingSpace(st *State) {
 	if i.write(st) {
-		internal.MustWriteString(st.Writer, " ")
+		write.MustString(st.Writer, " ")
 	}
 }

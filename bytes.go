@@ -6,9 +6,9 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/syncutil"
-	"github.com/pierrre/pretty/internal"
 	"github.com/pierrre/pretty/internal/indent"
 	"github.com/pierrre/pretty/internal/must"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 var bytesType = reflect.TypeFor[[]byte]()
@@ -128,7 +128,7 @@ func writeBytesHexDumpCommon(st *State, v reflect.Value, b []byte, showLen bool,
 		b = b[:maxLen]
 		truncated = true
 	}
-	internal.MustWriteString(st.Writer, "\n")
+	write.MustString(st.Writer, "\n")
 	st.IndentLevel++
 	defer func() {
 		st.IndentLevel--
@@ -138,7 +138,7 @@ func writeBytesHexDumpCommon(st *State, v reflect.Value, b []byte, showLen bool,
 	e := getHexDumperPoolEntry(iw)
 	defer releaseHexDumperPoolEntry(e)
 	d := e.dumper
-	internal.MustWrite(d.Write(b))
+	write.Must(d.Write(b))
 	must.NoError(d.Close())
 	if truncated {
 		st.writeIndent()

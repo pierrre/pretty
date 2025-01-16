@@ -4,8 +4,8 @@ import (
 	"iter"
 	"reflect"
 
-	"github.com/pierrre/pretty/internal"
 	"github.com/pierrre/pretty/internal/must"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // IterValueWriter is a [ValueWriter] that handles iterators ([iter.Seq] or [iter.Seq2]).
@@ -50,46 +50,46 @@ func (vw *IterValueWriter) WriteValue(st *State, v reflect.Value) bool {
 
 func (vw *IterValueWriter) writeSeq(st *State, it iter.Seq[reflect.Value]) {
 	first := true
-	internal.MustWriteString(st.Writer, "{")
+	write.MustString(st.Writer, "{")
 	st.IndentLevel++
 	i := 0
 	for v := range it {
 		if first {
 			first = false
-			internal.MustWriteString(st.Writer, "\n")
+			write.MustString(st.Writer, "\n")
 		}
 		st.writeIndent()
 		if vw.MaxLen > 0 && i >= vw.MaxLen {
 			writeTruncated(st.Writer)
-			internal.MustWriteString(st.Writer, "\n")
+			write.MustString(st.Writer, "\n")
 			break
 		}
 		must.Handle(vw.ValueWriter(st, v))
-		internal.MustWriteString(st.Writer, ",\n")
+		write.MustString(st.Writer, ",\n")
 		i++
 	}
 	st.IndentLevel--
-	internal.MustWriteString(st.Writer, "}")
+	write.MustString(st.Writer, "}")
 }
 
 func (vw *IterValueWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, reflect.Value]) {
 	first := true
-	internal.MustWriteString(st.Writer, "{")
+	write.MustString(st.Writer, "{")
 	st.IndentLevel++
 	for k, v := range it {
 		if first {
 			first = false
-			internal.MustWriteString(st.Writer, "\n")
+			write.MustString(st.Writer, "\n")
 		}
 		showInfos := st.ShowInfos
 		st.ShowInfos = vw.ShowKeysInfos
 		st.writeIndent()
 		must.Handle(vw.ValueWriter(st, k))
 		st.ShowInfos = showInfos
-		internal.MustWriteString(st.Writer, ": ")
+		write.MustString(st.Writer, ": ")
 		must.Handle(vw.ValueWriter(st, v))
-		internal.MustWriteString(st.Writer, ",\n")
+		write.MustString(st.Writer, ",\n")
 	}
 	st.IndentLevel--
-	internal.MustWriteString(st.Writer, "}")
+	write.MustString(st.Writer, "}")
 }

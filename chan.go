@@ -4,8 +4,8 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal"
 	"github.com/pierrre/pretty/internal/must"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // ChanValueWriter is a [ValueWriter] that handles chan values.
@@ -78,9 +78,9 @@ func (vw *ChanValueWriter) writeElems(st *State, v reflect.Value) {
 		l = vw.MaxLen
 		truncated = true
 	}
-	internal.MustWriteString(st.Writer, "{")
+	write.MustString(st.Writer, "{")
 	if v.Len() > 0 {
-		internal.MustWriteString(st.Writer, "\n")
+		write.MustString(st.Writer, "\n")
 		st.IndentLevel++
 		for i := range l {
 			vw.writeElem(st, v, i)
@@ -88,19 +88,19 @@ func (vw *ChanValueWriter) writeElems(st *State, v reflect.Value) {
 		if truncated {
 			st.writeIndent()
 			writeTruncated(st.Writer)
-			internal.MustWriteString(st.Writer, "\n")
+			write.MustString(st.Writer, "\n")
 		}
 		st.IndentLevel--
 		st.writeIndent()
 	}
-	internal.MustWriteString(st.Writer, "}")
+	write.MustString(st.Writer, "}")
 }
 
 func (vw *ChanValueWriter) writeElem(st *State, v reflect.Value, i int) {
 	st.writeIndent()
 	if vw.ShowIndexes {
-		internal.MustWrite(strconvio.WriteInt(st.Writer, int64(i), 10))
-		internal.MustWriteString(st.Writer, ": ")
+		write.Must(strconvio.WriteInt(st.Writer, int64(i), 10))
+		write.MustString(st.Writer, ": ")
 	}
 	e, _ := v.Recv()
 	must.Handle(vw.ValueWriter(st, e))
@@ -110,5 +110,5 @@ func (vw *ChanValueWriter) writeElem(st *State, v reflect.Value, i int) {
 		}()
 		v.Send(e)
 	}()
-	internal.MustWriteString(st.Writer, ",\n")
+	write.MustString(st.Writer, ",\n")
 }

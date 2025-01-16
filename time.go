@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/pierrre/pretty/internal"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 type TimeValueWriter struct {
@@ -30,6 +30,6 @@ func (wv *TimeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	bp := bytesPool.Get()
 	defer bytesPool.Put(bp)
 	*bp = tm.AppendFormat((*bp)[:0], wv.Format)
-	internal.MustWrite(st.Writer.Write(*bp))
+	write.Must(st.Writer.Write(*bp))
 	return true
 }
