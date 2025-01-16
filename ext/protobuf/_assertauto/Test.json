@@ -1,0 +1,10 @@
+{
+	"entries": [
+		{
+			"equal": {
+				"type": "string",
+				"value": "[*wrapperspb.StringValue] {\n\tvalue: [string] (len=4) \"test\",\n}"
+			}
+		}
+	]
+}
