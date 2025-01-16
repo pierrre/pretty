@@ -22,34 +22,34 @@ func (i infos) write(st *State) bool {
 		return false
 	}
 	w := st.Writer
-	writeString(w, "(")
+	internal.MustWriteString(w, "(")
 	wrote := false
 	if i.showLen {
-		writeString(w, "len=")
+		internal.MustWriteString(w, "len=")
 		internal.MustWrite(strconvio.WriteInt(w, int64(i.len), 10))
 		wrote = true
 	}
 	if i.showCap {
 		if wrote {
-			writeString(w, " ")
+			internal.MustWriteString(w, " ")
 		}
-		writeString(w, "cap=")
+		internal.MustWriteString(w, "cap=")
 		internal.MustWrite(strconvio.WriteInt(w, int64(i.cap), 10))
 		wrote = true
 	}
 	if i.showAddr {
 		if wrote {
-			writeString(w, " ")
+			internal.MustWriteString(w, " ")
 		}
-		writeString(w, "addr=")
+		internal.MustWriteString(w, "addr=")
 		writeUintptr(w, i.addr)
 	}
-	writeString(w, ")")
+	internal.MustWriteString(w, ")")
 	return true
 }
 
 func (i infos) writeWithTrailingSpace(st *State) {
 	if i.write(st) {
-		writeString(st.Writer, " ")
+		internal.MustWriteString(st.Writer, " ")
 	}
 }

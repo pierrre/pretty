@@ -3,6 +3,8 @@ package pretty
 import (
 	"reflect"
 	"slices"
+
+	"github.com/pierrre/pretty/internal"
 )
 
 // RecursionValueWriter is a [ValueWriter] that prevents recursion.
@@ -28,7 +30,7 @@ func (vw *RecursionValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	}
 	vp := v.Pointer()
 	if slices.Contains(st.Visited, vp) {
-		writeString(st.Writer, "<recursion>")
+		internal.MustWriteString(st.Writer, "<recursion>")
 		return true
 	}
 	st.Visited = append(st.Visited, vp)

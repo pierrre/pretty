@@ -49,46 +49,46 @@ func (vw *IterValueWriter) WriteValue(st *State, v reflect.Value) bool {
 
 func (vw *IterValueWriter) writeSeq(st *State, it iter.Seq[reflect.Value]) {
 	first := true
-	writeString(st.Writer, "{")
+	internal.MustWriteString(st.Writer, "{")
 	st.IndentLevel++
 	i := 0
 	for v := range it {
 		if first {
 			first = false
-			writeString(st.Writer, "\n")
+			internal.MustWriteString(st.Writer, "\n")
 		}
 		st.writeIndent()
 		if vw.MaxLen > 0 && i >= vw.MaxLen {
 			writeTruncated(st.Writer)
-			writeString(st.Writer, "\n")
+			internal.MustWriteString(st.Writer, "\n")
 			break
 		}
 		internal.MustHandle(vw.ValueWriter(st, v))
-		writeString(st.Writer, ",\n")
+		internal.MustWriteString(st.Writer, ",\n")
 		i++
 	}
 	st.IndentLevel--
-	writeString(st.Writer, "}")
+	internal.MustWriteString(st.Writer, "}")
 }
 
 func (vw *IterValueWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, reflect.Value]) {
 	first := true
-	writeString(st.Writer, "{")
+	internal.MustWriteString(st.Writer, "{")
 	st.IndentLevel++
 	for k, v := range it {
 		if first {
 			first = false
-			writeString(st.Writer, "\n")
+			internal.MustWriteString(st.Writer, "\n")
 		}
 		showInfos := st.ShowInfos
 		st.ShowInfos = vw.ShowKeysInfos
 		st.writeIndent()
 		internal.MustHandle(vw.ValueWriter(st, k))
 		st.ShowInfos = showInfos
-		writeString(st.Writer, ": ")
+		internal.MustWriteString(st.Writer, ": ")
 		internal.MustHandle(vw.ValueWriter(st, v))
-		writeString(st.Writer, ",\n")
+		internal.MustWriteString(st.Writer, ",\n")
 	}
 	st.IndentLevel--
-	writeString(st.Writer, "}")
+	internal.MustWriteString(st.Writer, "}")
 }

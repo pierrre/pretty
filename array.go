@@ -45,26 +45,26 @@ func writeArray(st *State, v reflect.Value, showIndexes bool, maxLen int, vw Val
 		l = maxLen
 		truncated = true
 	}
-	writeString(st.Writer, "{")
+	internal.MustWriteString(st.Writer, "{")
 	if v.Len() > 0 {
-		writeString(st.Writer, "\n")
+		internal.MustWriteString(st.Writer, "\n")
 		st.IndentLevel++
 		for i := range l {
 			st.writeIndent()
 			if showIndexes {
 				internal.MustWrite(strconvio.WriteInt(st.Writer, int64(i), 10))
-				writeString(st.Writer, ": ")
+				internal.MustWriteString(st.Writer, ": ")
 			}
 			internal.MustHandle(vw(st, v.Index(i)))
-			writeString(st.Writer, ",\n")
+			internal.MustWriteString(st.Writer, ",\n")
 		}
 		if truncated {
 			st.writeIndent()
 			writeTruncated(st.Writer)
-			writeString(st.Writer, "\n")
+			internal.MustWriteString(st.Writer, "\n")
 		}
 		st.IndentLevel--
 		st.writeIndent()
 	}
-	writeString(st.Writer, "}")
+	internal.MustWriteString(st.Writer, "}")
 }

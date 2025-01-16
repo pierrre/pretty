@@ -28,7 +28,7 @@ func (vw *ReflectValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	if !v.CanInterface() {
-		writeString(st.Writer, "<unexported>")
+		internal.MustWriteString(st.Writer, "<unexported>")
 		return true
 	}
 	rv := v.Interface().(reflect.Value) //nolint:forcetypeassert // Checked above.

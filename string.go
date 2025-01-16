@@ -2,6 +2,9 @@ package pretty
 
 import (
 	"reflect"
+
+	"github.com/pierrre/go-libs/strconvio"
+	"github.com/pierrre/pretty/internal"
 )
 
 // StringValueWriter is a [ValueWriter] that handles string values.
@@ -55,12 +58,12 @@ func writeStringValue(st *State, s string, showLen bool, showAddr bool, addr uin
 		truncated = true
 	}
 	if quote {
-		writeQuote(st.Writer, s)
+		internal.MustWrite(strconvio.WriteQuote(st.Writer, s))
 	} else {
-		writeString(st.Writer, s)
+		internal.MustWriteString(st.Writer, s)
 	}
 	if truncated {
-		writeString(st.Writer, " ")
+		internal.MustWriteString(st.Writer, " ")
 		writeTruncated(st.Writer)
 	}
 }

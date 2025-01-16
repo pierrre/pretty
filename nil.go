@@ -3,6 +3,8 @@ package pretty
 import (
 	"io"
 	"reflect"
+
+	"github.com/pierrre/pretty/internal"
 )
 
 func checkNil(w io.Writer, v reflect.Value) bool {
@@ -14,5 +16,5 @@ func checkNil(w io.Writer, v reflect.Value) bool {
 }
 
 func writeNil(w io.Writer) {
-	writeString(w, "<nil>")
+	internal.MustWriteString(w, "<nil>")
 }

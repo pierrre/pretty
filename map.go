@@ -56,9 +56,9 @@ func (vw *MapValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		showAddr: vw.ShowAddr,
 		addr:     uintptr(v.UnsafePointer()),
 	}.writeWithTrailingSpace(st)
-	writeString(st.Writer, "{")
+	internal.MustWriteString(st.Writer, "{")
 	if v.Len() > 0 {
-		writeString(st.Writer, "\n")
+		internal.MustWriteString(st.Writer, "\n")
 		st.IndentLevel++
 		if vw.SortKeys {
 			vw.writeSorted(st, v)
@@ -68,7 +68,7 @@ func (vw *MapValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		st.IndentLevel--
 		st.writeIndent()
 	}
-	writeString(st.Writer, "}")
+	internal.MustWriteString(st.Writer, "}")
 	return true
 }
 
@@ -149,15 +149,15 @@ func (vw *MapValueWriter) writeEntry(st *State, key reflect.Value, value reflect
 	st.writeIndent()
 	if vw.MaxLen > 0 && i >= vw.MaxLen {
 		writeTruncated(st.Writer)
-		writeString(st.Writer, "\n")
+		internal.MustWriteString(st.Writer, "\n")
 		return false
 	}
 	showInfos := st.ShowInfos
 	st.ShowInfos = vw.ShowKeysInfos
 	internal.MustHandle(vw.ValueWriter(st, key))
 	st.ShowInfos = showInfos
-	writeString(st.Writer, ": ")
+	internal.MustWriteString(st.Writer, ": ")
 	internal.MustHandle(vw.ValueWriter(st, value))
-	writeString(st.Writer, ",\n")
+	internal.MustWriteString(st.Writer, ",\n")
 	return true
 }

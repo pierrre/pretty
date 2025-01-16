@@ -27,7 +27,7 @@ func NewTypeValueWriter() *TypeValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *TypeValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	writeString(st.Writer, vw.Stringer(v.Type()))
+	internal.MustWriteString(st.Writer, vw.Stringer(v.Type()))
 	return true
 }
 
@@ -60,11 +60,11 @@ func NewTypeAndValueWriter(t, v ValueWriter) *TypeAndValueWriter {
 // WriteValue implements [ValueWriter].
 func (vw *TypeAndValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !st.KnownType || vw.ShowKnownTypes {
-		writeString(st.Writer, "[")
+		internal.MustWriteString(st.Writer, "[")
 		internal.MustHandle(vw.Type(st, v))
-		writeString(st.Writer, "]")
+		internal.MustWriteString(st.Writer, "]")
 		vw.writeBaseType(st.Writer, v)
-		writeString(st.Writer, " ")
+		internal.MustWriteString(st.Writer, " ")
 	}
 	defer st.SetRestoreKnownType(true)() // The type is known, because we showed it.
 	internal.MustHandle(vw.Value(st, v))
@@ -83,9 +83,9 @@ func (vw *TypeAndValueWriter) writeBaseType(w io.Writer, v reflect.Value) {
 	if baseType == nil {
 		return
 	}
-	writeString(w, "(")
-	writeString(w, baseType.String())
-	writeString(w, ")")
+	internal.MustWriteString(w, "(")
+	internal.MustWriteString(w, baseType.String())
+	internal.MustWriteString(w, ")")
 }
 
 var baseTypeCache syncutil.Map[reflect.Type, reflect.Type]

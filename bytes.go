@@ -127,7 +127,7 @@ func writeBytesHexDumpCommon(st *State, v reflect.Value, b []byte, showLen bool,
 		b = b[:maxLen]
 		truncated = true
 	}
-	writeString(st.Writer, "\n")
+	internal.MustWriteString(st.Writer, "\n")
 	st.IndentLevel++
 	defer func() {
 		st.IndentLevel--

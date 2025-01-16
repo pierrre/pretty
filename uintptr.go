@@ -28,6 +28,6 @@ func (vw *UintptrValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 func writeUintptr(w io.Writer, p uintptr) {
-	writeString(w, "0x")
+	internal.MustWriteString(w, "0x")
 	internal.MustWrite(strconvio.WriteUint(w, uint64(p), 16))
 }

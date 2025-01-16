@@ -77,9 +77,9 @@ func (vw *ChanValueWriter) writeElems(st *State, v reflect.Value) {
 		l = vw.MaxLen
 		truncated = true
 	}
-	writeString(st.Writer, "{")
+	internal.MustWriteString(st.Writer, "{")
 	if v.Len() > 0 {
-		writeString(st.Writer, "\n")
+		internal.MustWriteString(st.Writer, "\n")
 		st.IndentLevel++
 		for i := range l {
 			vw.writeElem(st, v, i)
@@ -87,19 +87,19 @@ func (vw *ChanValueWriter) writeElems(st *State, v reflect.Value) {
 		if truncated {
 			st.writeIndent()
 			writeTruncated(st.Writer)
-			writeString(st.Writer, "\n")
+			internal.MustWriteString(st.Writer, "\n")
 		}
 		st.IndentLevel--
 		st.writeIndent()
 	}
-	writeString(st.Writer, "}")
+	internal.MustWriteString(st.Writer, "}")
 }
 
 func (vw *ChanValueWriter) writeElem(st *State, v reflect.Value, i int) {
 	st.writeIndent()
 	if vw.ShowIndexes {
 		internal.MustWrite(strconvio.WriteInt(st.Writer, int64(i), 10))
-		writeString(st.Writer, ": ")
+		internal.MustWriteString(st.Writer, ": ")
 	}
 	e, _ := v.Recv()
 	internal.MustHandle(vw.ValueWriter(st, e))
@@ -109,5 +109,5 @@ func (vw *ChanValueWriter) writeElem(st *State, v reflect.Value, i int) {
 		}()
 		v.Send(e)
 	}()
-	writeString(st.Writer, ",\n")
+	internal.MustWriteString(st.Writer, ",\n")
 }

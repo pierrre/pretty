@@ -2,6 +2,8 @@ package pretty
 
 import (
 	"reflect"
+
+	"github.com/pierrre/pretty/internal"
 )
 
 // MaxDepthValueWriter is a [ValueWriter] that limits the depth.
@@ -28,7 +30,7 @@ func (vw *MaxDepthValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		return vw.ValueWriter(st, v)
 	}
 	if st.Depth >= vw.Max {
-		writeString(st.Writer, "<max depth>")
+		internal.MustWriteString(st.Writer, "<max depth>")
 		return true
 	}
 	st.Depth++

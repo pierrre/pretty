@@ -31,7 +31,7 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	defer st.SetRestoreKnownType(false)() // We want to show the types of fields and values.
-	writeString(st.Writer, "{")
+	internal.MustWriteString(st.Writer, "{")
 	fields := getStructFields(v.Type())
 	hasFields := false
 	st.IndentLevel++
@@ -40,20 +40,20 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 			continue
 		}
 		if !hasFields {
-			writeString(st.Writer, "\n")
+			internal.MustWriteString(st.Writer, "\n")
 			hasFields = true
 		}
 		st.writeIndent()
-		writeString(st.Writer, field.Name)
-		writeString(st.Writer, ": ")
+		internal.MustWriteString(st.Writer, field.Name)
+		internal.MustWriteString(st.Writer, ": ")
 		internal.MustHandle(vw.ValueWriter(st, v.Field(i)))
-		writeString(st.Writer, ",\n")
+		internal.MustWriteString(st.Writer, ",\n")
 	}
 	st.IndentLevel--
 	if hasFields {
 		st.writeIndent()
 	}
-	writeString(st.Writer, "}")
+	internal.MustWriteString(st.Writer, "}")
 	return true
 }
 
