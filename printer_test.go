@@ -17,7 +17,7 @@ func newTestPrinter() (*Printer, *CommonValueWriter) {
 	c := NewConfig()
 	vw := NewCommonValueWriter()
 	vw.ConfigureTest()
-	p := NewPrinter(c, vw.WriteValue)
+	p := NewPrinter(c, vw)
 	return p, vw
 }
 
@@ -95,9 +95,9 @@ func TestPrinterPanicWriterError(t *testing.T) {
 
 func TestPrinterPanicNotHandled(t *testing.T) {
 	c := NewConfig()
-	vw := func(st *State, v reflect.Value) bool {
+	vw := ValueWriterFunc(func(st *State, v reflect.Value) bool {
 		return false
-	}
+	})
 	p := NewPrinter(c, vw)
 	assert.Panics(t, func() {
 		p.Write(io.Discard, "test")

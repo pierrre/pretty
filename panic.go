@@ -49,7 +49,7 @@ func (vw *PanicRecoverValueWriter) WriteValue(st *State, v reflect.Value) (handl
 			writeStack(st.Writer)
 		}
 	}()
-	return vw.ValueWriter(st, v)
+	return vw.ValueWriter.WriteValue(st, v)
 }
 
 func writeStack(w io.Writer) {

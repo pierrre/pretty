@@ -56,7 +56,7 @@ func writeArray(st *State, v reflect.Value, showIndexes bool, maxLen int, vw Val
 				write.Must(strconvio.WriteInt(st.Writer, int64(i), 10))
 				write.MustString(st.Writer, ": ")
 			}
-			must.Handle(vw(st, v.Index(i)))
+			must.Handle(vw.WriteValue(st, v.Index(i)))
 			write.MustString(st.Writer, ",\n")
 		}
 		if truncated {

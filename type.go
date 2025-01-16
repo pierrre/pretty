@@ -62,13 +62,13 @@ func NewTypeAndValueWriter(t, v ValueWriter) *TypeAndValueWriter {
 func (vw *TypeAndValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !st.KnownType || vw.ShowKnownTypes {
 		write.MustString(st.Writer, "[")
-		must.Handle(vw.Type(st, v))
+		must.Handle(vw.Type.WriteValue(st, v))
 		write.MustString(st.Writer, "]")
 		vw.writeBaseType(st.Writer, v)
 		write.MustString(st.Writer, " ")
 	}
 	defer st.SetRestoreKnownType(true)() // The type is known, because we showed it.
-	must.Handle(vw.Value(st, v))
+	must.Handle(vw.Value.WriteValue(st, v))
 	return true
 }
 

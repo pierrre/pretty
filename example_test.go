@@ -71,10 +71,10 @@ func ExampleFormatter() {
 
 func ExampleValueWriter() {
 	c := NewConfig()
-	vw := func(st *State, v reflect.Value) bool {
+	vw := ValueWriterFunc(func(st *State, v reflect.Value) bool {
 		_, _ = io.WriteString(st.Writer, "example")
 		return true
-	}
+	})
 	p := NewPrinter(c, vw)
 	s := p.String("test")
 	fmt.Println(s)

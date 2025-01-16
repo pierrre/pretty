@@ -26,7 +26,7 @@ func (vw *RecursionValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles pointer kinds.
 	case reflect.Chan, reflect.Func, reflect.Map, reflect.Pointer, reflect.Slice, reflect.UnsafePointer:
 	default:
-		return vw.ValueWriter(st, v)
+		return vw.ValueWriter.WriteValue(st, v)
 	}
 	vp := v.Pointer()
 	if slices.Contains(st.Visited, vp) {
@@ -37,5 +37,5 @@ func (vw *RecursionValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	defer func() {
 		st.Visited = st.Visited[:len(st.Visited)-1]
 	}()
-	return vw.ValueWriter(st, v)
+	return vw.ValueWriter.WriteValue(st, v)
 }

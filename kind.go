@@ -58,40 +58,40 @@ func NewKindValueWriter(vw ValueWriter) *KindValueWriter {
 		BaseUnsafePointer: NewUnsafePointerValueWriter(),
 	}
 	kindVW.ValueWriters = [kindsCount]ValueWriter{
-		reflect.Invalid:       kindVW.writeInvalid,
-		reflect.Bool:          kindVW.writeBool,
-		reflect.Int:           kindVW.writeInt,
-		reflect.Int8:          kindVW.writeInt,
-		reflect.Int16:         kindVW.writeInt,
-		reflect.Int32:         kindVW.writeInt,
-		reflect.Int64:         kindVW.writeInt,
-		reflect.Uint:          kindVW.writeUint,
-		reflect.Uint8:         kindVW.writeUint,
-		reflect.Uint16:        kindVW.writeUint,
-		reflect.Uint32:        kindVW.writeUint,
-		reflect.Uint64:        kindVW.writeUint,
-		reflect.Uintptr:       kindVW.writeUintptr,
-		reflect.Float32:       kindVW.writeFloat,
-		reflect.Float64:       kindVW.writeFloat,
-		reflect.Complex64:     kindVW.writeComplex,
-		reflect.Complex128:    kindVW.writeComplex,
-		reflect.Array:         kindVW.writeArray,
-		reflect.Chan:          kindVW.writeChan,
-		reflect.Func:          kindVW.writeFunc,
-		reflect.Interface:     kindVW.writeInterface,
-		reflect.Map:           kindVW.writeMap,
-		reflect.Pointer:       kindVW.writePointer,
-		reflect.Slice:         kindVW.writeSlice,
-		reflect.String:        kindVW.writeString,
-		reflect.Struct:        kindVW.writeStruct,
-		reflect.UnsafePointer: kindVW.writeUnsafePointer,
+		reflect.Invalid:       ValueWriterFunc(kindVW.writeInvalid),
+		reflect.Bool:          ValueWriterFunc(kindVW.writeBool),
+		reflect.Int:           ValueWriterFunc(kindVW.writeInt),
+		reflect.Int8:          ValueWriterFunc(kindVW.writeInt),
+		reflect.Int16:         ValueWriterFunc(kindVW.writeInt),
+		reflect.Int32:         ValueWriterFunc(kindVW.writeInt),
+		reflect.Int64:         ValueWriterFunc(kindVW.writeInt),
+		reflect.Uint:          ValueWriterFunc(kindVW.writeUint),
+		reflect.Uint8:         ValueWriterFunc(kindVW.writeUint),
+		reflect.Uint16:        ValueWriterFunc(kindVW.writeUint),
+		reflect.Uint32:        ValueWriterFunc(kindVW.writeUint),
+		reflect.Uint64:        ValueWriterFunc(kindVW.writeUint),
+		reflect.Uintptr:       ValueWriterFunc(kindVW.writeUintptr),
+		reflect.Float32:       ValueWriterFunc(kindVW.writeFloat),
+		reflect.Float64:       ValueWriterFunc(kindVW.writeFloat),
+		reflect.Complex64:     ValueWriterFunc(kindVW.writeComplex),
+		reflect.Complex128:    ValueWriterFunc(kindVW.writeComplex),
+		reflect.Array:         ValueWriterFunc(kindVW.writeArray),
+		reflect.Chan:          ValueWriterFunc(kindVW.writeChan),
+		reflect.Func:          ValueWriterFunc(kindVW.writeFunc),
+		reflect.Interface:     ValueWriterFunc(kindVW.writeInterface),
+		reflect.Map:           ValueWriterFunc(kindVW.writeMap),
+		reflect.Pointer:       ValueWriterFunc(kindVW.writePointer),
+		reflect.Slice:         ValueWriterFunc(kindVW.writeSlice),
+		reflect.String:        ValueWriterFunc(kindVW.writeString),
+		reflect.Struct:        ValueWriterFunc(kindVW.writeStruct),
+		reflect.UnsafePointer: ValueWriterFunc(kindVW.writeUnsafePointer),
 	}
 	return kindVW
 }
 
 // WriteValue implements [ValueWriter].
 func (vw *KindValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	return vw.ValueWriters[v.Kind()](st, v)
+	return vw.ValueWriters[v.Kind()].WriteValue(st, v)
 }
 
 func (vw *KindValueWriter) writeInvalid(st *State, v reflect.Value) bool {

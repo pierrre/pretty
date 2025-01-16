@@ -36,21 +36,21 @@ type CommonValueWriter struct {
 // NewCommonValueWriter creates a new [CommonValueWriter] initialized with default values.
 func NewCommonValueWriter() *CommonValueWriter {
 	vw := &CommonValueWriter{}
-	vw.PanicRecover = NewPanicRecoverValueWriter(vw.postPanicRecover)
-	vw.UnwrapInterface = NewUnwrapInterfaceValueWriter(vw.postUnwrapInterface)
-	vw.Recursion = NewRecursionValueWriter(vw.postRecursion)
-	vw.MaxDepth = NewMaxDepthValueWriter(vw.postMaxDepth)
-	vw.CanInterface = NewCanInterfaceValueWriter(vw.postCanInterface)
-	vw.TypeAndValue = NewTypeAndValueWriter(vw.writeType, vw.postTypeAndValue)
+	vw.PanicRecover = NewPanicRecoverValueWriter(ValueWriterFunc(vw.postPanicRecover))
+	vw.UnwrapInterface = NewUnwrapInterfaceValueWriter(ValueWriterFunc(vw.postUnwrapInterface))
+	vw.Recursion = NewRecursionValueWriter(ValueWriterFunc(vw.postRecursion))
+	vw.MaxDepth = NewMaxDepthValueWriter(ValueWriterFunc(vw.postMaxDepth))
+	vw.CanInterface = NewCanInterfaceValueWriter(ValueWriterFunc(vw.postCanInterface))
+	vw.TypeAndValue = NewTypeAndValueWriter(ValueWriterFunc(vw.writeType), ValueWriterFunc(vw.postTypeAndValue))
 	vw.Type = NewTypeValueWriter()
-	vw.ReflectValue = NewReflectValueWriter(vw.loopback)
+	vw.ReflectValue = NewReflectValueWriter(ValueWriterFunc(vw.loopback))
 	vw.Time = NewTimeValueWriter()
 	vw.Error = NewErrorValueWriter()
 	vw.BytesHexDump = NewBytesHexDumpValueWriter()
 	vw.BytesableHexDump = NewBytesableHexDumpValueWriter()
 	vw.Stringer = NewStringerValueWriter()
-	vw.Iter = NewIterValueWriter(vw.loopback)
-	vw.Kind = NewKindValueWriter(vw.loopback)
+	vw.Iter = NewIterValueWriter(ValueWriterFunc(vw.loopback))
+	vw.Kind = NewKindValueWriter(ValueWriterFunc(vw.loopback))
 	return vw
 }
 

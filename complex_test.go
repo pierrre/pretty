@@ -18,7 +18,7 @@ func init() {
 			name:  "Not",
 			value: "test",
 			configure: func(vw *CommonValueWriter) {
-				vw.ValueWriters = ValueWriters{vw.Kind.BaseComplex.WriteValue}
+				vw.ValueWriters = ValueWriters{vw.Kind.BaseComplex}
 			},
 			ignoreBenchmark: true,
 		},

@@ -155,10 +155,10 @@ func (vw *MapValueWriter) writeEntry(st *State, key reflect.Value, value reflect
 	}
 	showInfos := st.ShowInfos
 	st.ShowInfos = vw.ShowKeysInfos
-	must.Handle(vw.ValueWriter(st, key))
+	must.Handle(vw.ValueWriter.WriteValue(st, key))
 	st.ShowInfos = showInfos
 	write.MustString(st.Writer, ": ")
-	must.Handle(vw.ValueWriter(st, value))
+	must.Handle(vw.ValueWriter.WriteValue(st, value))
 	write.MustString(st.Writer, ",\n")
 	return true
 }

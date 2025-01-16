@@ -14,13 +14,13 @@ func init() {
 			value: "test",
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = []ValueWriter{NewFilterValueWriter(
-					func(st *State, v reflect.Value) bool {
+					ValueWriterFunc(func(st *State, v reflect.Value) bool {
 						write.MustString(st.Writer, "aaaa")
 						return true
-					},
+					}),
 					func(v reflect.Value) bool {
 						return v.Type() == reflect.TypeFor[string]()
-					}).WriteValue}
+					})}
 			},
 		},
 		{
@@ -28,12 +28,12 @@ func init() {
 			value: 123,
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = []ValueWriter{NewFilterValueWriter(
-					func(st *State, v reflect.Value) bool {
+					ValueWriterFunc(func(st *State, v reflect.Value) bool {
 						panic("should not be called")
-					},
+					}),
 					func(v reflect.Value) bool {
 						return v.Type() == reflect.TypeFor[string]()
-					}).WriteValue}
+					})}
 			},
 		},
 	})

@@ -25,5 +25,5 @@ func (vw *FilterValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !vw.Filter(v) {
 		return false
 	}
-	return vw.ValueWriter(st, v)
+	return vw.ValueWriter.WriteValue(st, v)
 }

@@ -64,7 +64,7 @@ func (vw *IterValueWriter) writeSeq(st *State, it iter.Seq[reflect.Value]) {
 			write.MustString(st.Writer, "\n")
 			break
 		}
-		must.Handle(vw.ValueWriter(st, v))
+		must.Handle(vw.ValueWriter.WriteValue(st, v))
 		write.MustString(st.Writer, ",\n")
 		i++
 	}
@@ -84,10 +84,10 @@ func (vw *IterValueWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, refl
 		showInfos := st.ShowInfos
 		st.ShowInfos = vw.ShowKeysInfos
 		st.writeIndent()
-		must.Handle(vw.ValueWriter(st, k))
+		must.Handle(vw.ValueWriter.WriteValue(st, k))
 		st.ShowInfos = showInfos
 		write.MustString(st.Writer, ": ")
-		must.Handle(vw.ValueWriter(st, v))
+		must.Handle(vw.ValueWriter.WriteValue(st, v))
 		write.MustString(st.Writer, ",\n")
 	}
 	st.IndentLevel--

@@ -26,7 +26,7 @@ func Formatter(vi any, opts ...Option) fmt.Formatter {
 }
 
 // DefaultPrinter is the default [Printer].
-var DefaultPrinter = NewPrinter(DefaultConfig, DefaultCommonValueWriter.WriteValue)
+var DefaultPrinter = NewPrinter(DefaultConfig, DefaultCommonValueWriter)
 
 // Printer pretty-prints values.
 //
@@ -56,7 +56,7 @@ func (p *Printer) Write(w io.Writer, vi any, opts ...Option) {
 	for _, opt := range opts {
 		opt(st)
 	}
-	must.Handle(p.ValueWriter(st, v))
+	must.Handle(p.ValueWriter.WriteValue(st, v))
 }
 
 var bufPool = &bufpool.Pool{

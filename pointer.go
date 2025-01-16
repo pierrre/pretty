@@ -37,6 +37,6 @@ func (vw *PointerValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		addr:     uintptr(v.UnsafePointer()),
 	}.writeWithTrailingSpace(st)
 	writeArrow(st.Writer)
-	must.Handle(vw.ValueWriter(st, v.Elem()))
+	must.Handle(vw.ValueWriter.WriteValue(st, v.Elem()))
 	return true
 }

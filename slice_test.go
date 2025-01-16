@@ -70,7 +70,7 @@ func init() {
 			name:  "Not",
 			value: "test",
 			configure: func(vw *CommonValueWriter) {
-				vw.ValueWriters = ValueWriters{vw.Kind.BaseSlice.WriteValue}
+				vw.ValueWriters = ValueWriters{vw.Kind.BaseSlice}
 			},
 			ignoreBenchmark: true,
 		},

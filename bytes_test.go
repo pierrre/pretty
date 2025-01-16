@@ -47,7 +47,7 @@ func init() {
 			name:  "Not",
 			value: "test",
 			configure: func(vw *CommonValueWriter) {
-				vw.ValueWriters = ValueWriters{vw.BytesHexDump.WriteValue}
+				vw.ValueWriters = ValueWriters{vw.BytesHexDump}
 			},
 			ignoreBenchmark: true,
 		},
@@ -97,8 +97,8 @@ func init() {
 			value: reflect.ValueOf(123),
 			configure: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{
-					vw.BytesableHexDump.WriteValue,
-					vw.ReflectValue.WriteValue,
+					vw.BytesableHexDump,
+					vw.ReflectValue,
 				}
 			},
 			ignoreBenchmark: true,
@@ -124,7 +124,7 @@ func init() {
 			name:  "Not",
 			value: "test",
 			configure: func(vw *CommonValueWriter) {
-				vw.ValueWriters = ValueWriters{vw.BytesableHexDump.WriteValue}
+				vw.ValueWriters = ValueWriters{vw.BytesableHexDump}
 			},
 			ignoreBenchmark: true,
 		},
