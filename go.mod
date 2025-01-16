@@ -6,6 +6,7 @@ require (
 	github.com/pierrre/assert v0.6.4
 	github.com/pierrre/errors v0.10.1
 	github.com/pierrre/go-libs v0.10.3
+	google.golang.org/protobuf v1.36.3
 )
 
 require github.com/pierrre/compare v1.4.13 // indirect
