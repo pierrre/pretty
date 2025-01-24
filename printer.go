@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+	"runtime"
 
 	"github.com/pierrre/go-libs/bufpool"
 	"github.com/pierrre/pretty/internal/must"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // Write writes the value to the [io.Writer] with [DefaultPrinter].
@@ -46,6 +48,15 @@ func NewPrinter(c *Config, vw ValueWriter) *Printer {
 
 // Write writes the value to the [io.Writer].
 func (p *Printer) Write(w io.Writer, vi any) {
+	if p.Config.PanicRecover {
+		defer func() {
+			r := recover()
+			if r == nil {
+				return
+			}
+			writePanic(w, r)
+		}()
+	}
 	v := reflect.ValueOf(vi)
 	if !v.IsValid() {
 		writeNil(w)
@@ -54,6 +65,33 @@ func (p *Printer) Write(w io.Writer, vi any) {
 	st := newState(w, p.Config.Indent)
 	defer st.release()
 	must.Handle(p.ValueWriter.WriteValue(st, v))
+}
+
+func writePanic(w io.Writer, r any) {
+	_, _ = write.String(w, "<panic>: ")
+	switch r := r.(type) {
+	case string:
+		_, _ = write.String(w, r)
+	case error:
+		_, _ = write.String(w, r.Error())
+	default:
+		_, _ = fmt.Fprint(w, r)
+	}
+	_, _ = write.String(w, "\n")
+	writeStack(w)
+}
+
+func writeStack(w io.Writer) {
+	bp := bytesPool.Get()
+	defer bytesPool.Put(bp)
+	for {
+		n := runtime.Stack(*bp, false)
+		if n < len(*bp) {
+			_, _ = w.Write((*bp)[:n])
+			return
+		}
+		*bp = make([]byte, 2*len(*bp))
+	}
 }
 
 var bufPool = &bufpool.Pool{

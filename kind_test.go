@@ -7,13 +7,12 @@ import (
 func init() {
 	addTestCasesPrefix("Kind", []*testCase{
 		{
-			name:         "Disabled",
-			value:        "test",
-			panicRecover: true,
+			name:  "Disabled",
+			value: "test",
 			configure: func(vw *CommonValueWriter) {
-				vw.PanicRecover.ShowStack = false
 				vw.Kind = nil
 			},
+			ignoreResult:    true,
 			ignoreBenchmark: true,
 		},
 	})

@@ -14,11 +14,15 @@ type Config struct {
 	// Indent is the string used to indent.
 	// Default: "\t".
 	Indent string
+	// PanicRecover enables panic recovery.
+	// Default: true.
+	PanicRecover bool
 }
 
 // NewConfig creates a new [Config] initialized with default values.
 func NewConfig() *Config {
 	return &Config{
-		Indent: indent.Default,
+		Indent:       indent.Default,
+		PanicRecover: true,
 	}
 }
