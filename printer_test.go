@@ -26,7 +26,6 @@ type testCase struct {
 	value           any
 	panicRecover    bool
 	configure       func(vw *CommonValueWriter)
-	options         []Option
 	ignoreResult    bool
 	ignoreAllocs    bool
 	ignoreBenchmark bool
@@ -43,15 +42,7 @@ func (tc *testCase) newPrinter() *Printer {
 	return p
 }
 
-var testCases = []*testCase{
-	{
-		name:  "Options",
-		value: 123,
-		options: []Option{func(st *State) {
-			st.KnownType = true
-		}},
-	},
-}
+var testCases []*testCase
 
 func addTestCases(tcs []*testCase) {
 	testCases = append(testCases, tcs...)
@@ -68,7 +59,7 @@ func Test(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			p := tc.newPrinter()
-			s := p.String(tc.value, tc.options...)
+			s := p.String(tc.value)
 			if !tc.ignoreResult {
 				assertauto.Equal(t, s, assertauto.Name("result"))
 			}
@@ -112,7 +103,7 @@ func Benchmark(b *testing.B) {
 		b.Run(tc.name, func(b *testing.B) {
 			p := tc.newPrinter()
 			for range b.N {
-				p.Write(io.Discard, tc.value, tc.options...)
+				p.Write(io.Discard, tc.value)
 			}
 		})
 	}

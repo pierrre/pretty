@@ -11,18 +11,18 @@ import (
 )
 
 // Write writes the value to the [io.Writer] with [DefaultPrinter].
-func Write(w io.Writer, vi any, opts ...Option) {
-	DefaultPrinter.Write(w, vi, opts...)
+func Write(w io.Writer, vi any) {
+	DefaultPrinter.Write(w, vi)
 }
 
 // String returns the value as a string with [DefaultPrinter].
-func String(vi any, opts ...Option) string {
-	return DefaultPrinter.String(vi, opts...)
+func String(vi any) string {
+	return DefaultPrinter.String(vi)
 }
 
 // Formatter returns a [fmt.Formatter] for the value with [DefaultPrinter].
-func Formatter(vi any, opts ...Option) fmt.Formatter {
-	return DefaultPrinter.Formatter(vi, opts...)
+func Formatter(vi any) fmt.Formatter {
+	return DefaultPrinter.Formatter(vi)
 }
 
 // DefaultPrinter is the default [Printer].
@@ -45,7 +45,7 @@ func NewPrinter(c *Config, vw ValueWriter) *Printer {
 }
 
 // Write writes the value to the [io.Writer].
-func (p *Printer) Write(w io.Writer, vi any, opts ...Option) {
+func (p *Printer) Write(w io.Writer, vi any) {
 	v := reflect.ValueOf(vi)
 	if !v.IsValid() {
 		writeNil(w)
@@ -53,9 +53,6 @@ func (p *Printer) Write(w io.Writer, vi any, opts ...Option) {
 	}
 	st := newState(w, p.Config.Indent)
 	defer st.release()
-	for _, opt := range opts {
-		opt(st)
-	}
 	must.Handle(p.ValueWriter.WriteValue(st, v))
 }
 
@@ -64,35 +61,31 @@ var bufPool = &bufpool.Pool{
 }
 
 // String returns the value as a string.
-func (p *Printer) String(vi any, opts ...Option) string {
-	buf := p.getBuf(vi, opts...)
+func (p *Printer) String(vi any) string {
+	buf := p.getBuf(vi)
 	defer bufPool.Put(buf)
 	return buf.String()
 }
 
-func (p *Printer) getBuf(vi any, opts ...Option) *bytes.Buffer {
+func (p *Printer) getBuf(vi any) *bytes.Buffer {
 	buf := bufPool.Get()
-	p.Write(buf, vi, opts...)
+	p.Write(buf, vi)
 	return buf
 }
 
 // Formatter returns a [fmt.Formatter] for the value.
-func (p *Printer) Formatter(vi any, opts ...Option) fmt.Formatter {
+func (p *Printer) Formatter(vi any) fmt.Formatter {
 	return &formatter{
 		printer: p,
 		value:   vi,
 	}
 }
 
-// Option represents an option for the [Printer].
-type Option func(*State)
-
 type formatter struct {
 	printer *Printer
 	value   any
-	opts    []Option
 }
 
 func (ft *formatter) Format(f fmt.State, verb rune) {
-	ft.printer.Write(f, ft.value, ft.opts...)
+	ft.printer.Write(f, ft.value)
 }
