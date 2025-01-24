@@ -8,6 +8,7 @@ import (
 
 	"github.com/pierrre/go-libs/bufpool"
 	"github.com/pierrre/pretty/internal/must"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 // Write writes the value to the [io.Writer] with [DefaultPrinter].
@@ -46,6 +47,13 @@ func NewPrinter(c *Config, vw ValueWriter) *Printer {
 
 // Write writes the value to the [io.Writer].
 func (p *Printer) Write(w io.Writer, vi any) {
+	defer func() {
+		r := recover()
+		if r == nil {
+			return
+		}
+		writePanic(w, r)
+	}()
 	v := reflect.ValueOf(vi)
 	if !v.IsValid() {
 		writeNil(w)
@@ -54,6 +62,11 @@ func (p *Printer) Write(w io.Writer, vi any) {
 	st := newState(w, p.Config.Indent)
 	defer st.release()
 	must.Handle(p.ValueWriter.WriteValue(st, v))
+}
+
+func writePanic(w io.Writer, r any) {
+	_, _ = write.String(w, "<panic>: ")
+	_, _ = fmt.Fprint(w, r)
 }
 
 var bufPool = &bufpool.Pool{

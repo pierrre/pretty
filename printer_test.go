@@ -2,10 +2,8 @@ package pretty_test
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
-	"reflect"
 	"testing"
 
 	"github.com/pierrre/assert"
@@ -24,7 +22,6 @@ func newTestPrinter() (*Printer, *CommonValueWriter) {
 type testCase struct {
 	name            string
 	value           any
-	panicRecover    bool
 	configure       func(vw *CommonValueWriter)
 	ignoreResult    bool
 	ignoreAllocs    bool
@@ -33,9 +30,6 @@ type testCase struct {
 
 func (tc *testCase) newPrinter() *Printer {
 	p, vw := newTestPrinter()
-	if !tc.panicRecover {
-		vw.PanicRecover = nil
-	}
 	if tc.configure != nil {
 		tc.configure(vw)
 	}
@@ -73,26 +67,6 @@ func Test(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestPrinterPanicWriterError(t *testing.T) {
-	p, vw := newTestPrinter()
-	vw.PanicRecover = nil
-	w := &testErrorWriter{}
-	assert.Panics(t, func() {
-		p.Write(w, "test")
-	})
-}
-
-func TestPrinterPanicNotHandled(t *testing.T) {
-	c := NewConfig()
-	vw := ValueWriterFunc(func(st *State, v reflect.Value) bool {
-		return false
-	})
-	p := NewPrinter(c, vw)
-	assert.Panics(t, func() {
-		p.Write(io.Discard, "test")
-	})
 }
 
 func Benchmark(b *testing.B) {
@@ -141,10 +115,4 @@ func TestFormatter(t *testing.T) {
 		_, err := fmt.Fprintf(io.Discard, "%v", f)
 		assert.NoError(t, err)
 	}, assertauto.Name("allocs"))
-}
-
-type testErrorWriter struct{}
-
-func (w *testErrorWriter) Write(p []byte) (int, error) {
-	return 0, errors.New("test")
 }
