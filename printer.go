@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"reflect"
@@ -75,15 +74,10 @@ var bufPool = &bufpool.Pool{
 
 // String returns the value as a string.
 func (p *Printer) String(vi any) string {
-	buf := p.getBuf(vi)
-	defer bufPool.Put(buf)
-	return buf.String()
-}
-
-func (p *Printer) getBuf(vi any) *bytes.Buffer {
 	buf := bufPool.Get()
+	defer bufPool.Put(buf)
 	p.Write(buf, vi)
-	return buf
+	return buf.String()
 }
 
 // Formatter returns a [fmt.Formatter] for the value.
