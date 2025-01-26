@@ -141,7 +141,7 @@ func writeBytesHexDumpCommon(st *State, v reflect.Value, b []byte, showLen bool,
 	write.Must(d.Write(b))
 	must.NoError(d.Close())
 	if truncated {
-		st.writeIndent()
+		st.WriteIndent()
 		writeTruncated(st.Writer)
 	}
 }

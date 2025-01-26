@@ -44,7 +44,7 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 			write.MustString(st.Writer, "\n")
 			hasFields = true
 		}
-		st.writeIndent()
+		st.WriteIndent()
 		write.MustString(st.Writer, field.Name)
 		write.MustString(st.Writer, ": ")
 		must.Handle(vw.ValueWriter.WriteValue(st, v.Field(i)))
@@ -52,7 +52,7 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	}
 	st.IndentLevel--
 	if hasFields {
-		st.writeIndent()
+		st.WriteIndent()
 	}
 	write.MustString(st.Writer, "}")
 	return true

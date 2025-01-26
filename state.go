@@ -38,7 +38,8 @@ func newState(w io.Writer, indentString string) *State {
 	return st
 }
 
-func (st *State) writeIndent() {
+// WriteIndent writes the current indentation to the [io.Writer].
+func (st *State) WriteIndent() {
 	indent.MustWrite(st.Writer, st.IndentString, st.IndentLevel)
 }
 

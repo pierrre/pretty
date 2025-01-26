@@ -86,18 +86,18 @@ func (vw *ChanValueWriter) writeElems(st *State, v reflect.Value) {
 			vw.writeElem(st, v, i)
 		}
 		if truncated {
-			st.writeIndent()
+			st.WriteIndent()
 			writeTruncated(st.Writer)
 			write.MustString(st.Writer, "\n")
 		}
 		st.IndentLevel--
-		st.writeIndent()
+		st.WriteIndent()
 	}
 	write.MustString(st.Writer, "}")
 }
 
 func (vw *ChanValueWriter) writeElem(st *State, v reflect.Value, i int) {
-	st.writeIndent()
+	st.WriteIndent()
 	if vw.ShowIndexes {
 		write.Must(strconvio.WriteInt(st.Writer, int64(i), 10))
 		write.MustString(st.Writer, ": ")

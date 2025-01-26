@@ -67,7 +67,7 @@ func (vw *MapValueWriter) WriteValue(st *State, v reflect.Value) bool {
 			vw.writeUnsorted(st, v)
 		}
 		st.IndentLevel--
-		st.writeIndent()
+		st.WriteIndent()
 	}
 	write.MustString(st.Writer, "}")
 	return true
@@ -147,7 +147,7 @@ func (vw *MapValueWriter) writeUnsortedUnexported(st *State, v reflect.Value) {
 }
 
 func (vw *MapValueWriter) writeEntry(st *State, key reflect.Value, value reflect.Value, i int) bool {
-	st.writeIndent()
+	st.WriteIndent()
 	if vw.MaxLen > 0 && i >= vw.MaxLen {
 		writeTruncated(st.Writer)
 		write.MustString(st.Writer, "\n")
