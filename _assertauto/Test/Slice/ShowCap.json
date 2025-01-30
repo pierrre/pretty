@@ -4,7 +4,7 @@
 			"name": "result",
 			"equal": {
 				"type": "string",
-				"value": "[[]uint8] (len=4)\n\t00000000  74 65                                             |te|\n\t<truncated>"
+				"value": "[[]int] (len=3 cap=3) {\n\t1,\n\t2,\n\t3,\n}"
 			}
 		},
 		{

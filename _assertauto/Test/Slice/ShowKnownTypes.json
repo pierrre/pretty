@@ -4,7 +4,7 @@
 			"name": "result",
 			"equal": {
 				"type": "string",
-				"value": "[[]int] (len=3 cap=3) {\n\t[int] 1,\n\t[int] 2,\n\t[int] 3,\n}"
+				"value": "[[]int] (len=3) {\n\t[int] 1,\n\t[int] 2,\n\t[int] 3,\n}"
 			}
 		},
 		{

@@ -17,7 +17,7 @@ type ChanValueWriter struct {
 	// Default: true.
 	ShowLen bool
 	// ShowCap shows the cap.
-	// Default: true.
+	// Default: false.
 	ShowCap bool
 	// ShowAddr shows the address.
 	// Default: false.
@@ -41,7 +41,7 @@ func NewChanValueWriter(vw ValueWriter) *ChanValueWriter {
 	return &ChanValueWriter{
 		ValueWriter: vw,
 		ShowLen:     true,
-		ShowCap:     true,
+		ShowCap:     false,
 		ShowAddr:    false,
 		ShowElems:   false,
 		ShowIndexes: false,

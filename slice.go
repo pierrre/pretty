@@ -13,7 +13,7 @@ type SliceValueWriter struct {
 	// Default: true.
 	ShowLen bool
 	// ShowCap shows the cap.
-	// Default: true.
+	// Default: false.
 	ShowCap bool
 	// ShowAddr shows the address.
 	// Default: false.
@@ -31,7 +31,7 @@ func NewSliceValueWriter(vw ValueWriter) *SliceValueWriter {
 	return &SliceValueWriter{
 		ValueWriter: vw,
 		ShowLen:     true,
-		ShowCap:     true,
+		ShowCap:     false,
 		ShowAddr:    false,
 		ShowIndexes: false,
 		MaxLen:      0,

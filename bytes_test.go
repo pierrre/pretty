@@ -27,6 +27,14 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name:  "ShowCap",
+			value: []byte("test"),
+			configure: func(vw *CommonValueWriter) {
+				vw.BytesHexDump.ShowCap = true
+			},
+			ignoreBenchmark: true,
+		},
+		{
 			name:  "ShowAddr",
 			value: []byte("test"),
 			configure: func(vw *CommonValueWriter) {
@@ -100,6 +108,14 @@ func init() {
 					vw.BytesableHexDump,
 					vw.ReflectValue,
 				}
+			},
+			ignoreBenchmark: true,
+		},
+		{
+			name:  "ShowCap",
+			value: &testBytesable{b: []byte("test")},
+			configure: func(vw *CommonValueWriter) {
+				vw.BytesableHexDump.ShowCap = true
 			},
 			ignoreBenchmark: true,
 		},
