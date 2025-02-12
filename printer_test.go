@@ -76,7 +76,7 @@ func Benchmark(b *testing.B) {
 		}
 		b.Run(tc.name, func(b *testing.B) {
 			p := tc.newPrinter()
-			for range b.N {
+			for b.Loop() {
 				p.Write(io.Discard, tc.value)
 			}
 		})

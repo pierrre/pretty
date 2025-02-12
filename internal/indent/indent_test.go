@@ -51,7 +51,7 @@ func BenchmarkWrite(b *testing.B) {
 		b.Run(tc.name, func(b *testing.B) {
 			for _, level := range testWriteLevels {
 				b.Run(strconv.Itoa(level), func(b *testing.B) {
-					for range b.N {
+					for b.Loop() {
 						MustWrite(io.Discard, tc.string, level)
 					}
 				})
@@ -135,7 +135,7 @@ func TestWriterErrorIndented(t *testing.T) {
 func BenchmarkWriter(b *testing.B) {
 	iw := NewWriter(io.Discard, Default, 1, false)
 	defer iw.Release()
-	for range b.N {
+	for b.Loop() {
 		for _, v := range testWriterValues {
 			_, _ = iw.Write(v.b)
 		}
