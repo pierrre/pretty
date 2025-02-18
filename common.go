@@ -86,11 +86,10 @@ func (vw *CommonValueWriter) SetShowAddr(show bool) {
 // ConfigureTest configures the [CommonValueWriter] for testing.
 //
 // It makes the result deterministic.
-// It sorts the keys of maps and disables the address/capacity.
+// It sorts the keys of maps and disables the address.
 func (vw *CommonValueWriter) ConfigureTest() {
 	vw.Kind.BaseMap.SortKeys = true
 	vw.SetShowAddr(false)
-	vw.SetShowCap(false)
 }
 
 // WriteValue implements [ValueWriter].

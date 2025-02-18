@@ -21,7 +21,7 @@ type BytesHexDumpValueWriter struct {
 	// Default: true.
 	ShowLen bool
 	// ShowCap shows the cap.
-	// Default: false.
+	// Default: true.
 	ShowCap bool
 	// ShowAddr shows the address.
 	// Default: false.
@@ -35,7 +35,7 @@ type BytesHexDumpValueWriter struct {
 func NewBytesHexDumpValueWriter() *BytesHexDumpValueWriter {
 	return &BytesHexDumpValueWriter{
 		ShowLen:  true,
-		ShowCap:  false,
+		ShowCap:  true,
 		ShowAddr: false,
 		MaxLen:   0,
 	}
@@ -69,7 +69,7 @@ type BytesableHexDumpValueWriter struct {
 	// Default: true.
 	ShowLen bool
 	// ShowCap shows the cap.
-	// Default: false.
+	// Default: true.
 	ShowCap bool
 	// ShowAddr shows the address.
 	// Default: false.
@@ -83,7 +83,7 @@ type BytesableHexDumpValueWriter struct {
 func NewBytesableHexDumpValueWriter() *BytesableHexDumpValueWriter {
 	return &BytesableHexDumpValueWriter{
 		ShowLen:  true,
-		ShowCap:  false,
+		ShowCap:  true,
 		ShowAddr: false,
 		MaxLen:   0,
 	}

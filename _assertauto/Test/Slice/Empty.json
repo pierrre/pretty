@@ -4,7 +4,7 @@
 			"name": "result",
 			"equal": {
 				"type": "string",
-				"value": "[[]int] (len=0) {}"
+				"value": "[[]int] (len=0 cap=0) {}"
 			}
 		},
 		{

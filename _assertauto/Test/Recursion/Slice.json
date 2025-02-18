@@ -4,7 +4,7 @@
 			"name": "result",
 			"equal": {
 				"type": "string",
-				"value": "[[]interface {}] (len=1) {\n\t<recursion>,\n}"
+				"value": "[[]interface {}] (len=1 cap=1) {\n\t<recursion>,\n}"
 			}
 		},
 		{

@@ -20,18 +20,6 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
-			name: "ShowCap",
-			value: func() chan int {
-				c := make(chan int, 5)
-				c <- 123
-				return c
-			}(),
-			configure: func(vw *CommonValueWriter) {
-				vw.Kind.BaseChan.ShowCap = true
-			},
-			ignoreBenchmark: true,
-		},
-		{
 			name: "ShowAddr",
 			value: func() chan int {
 				c := make(chan int, 5)
