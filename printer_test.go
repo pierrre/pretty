@@ -14,7 +14,7 @@ import (
 func newTestPrinter() (*Printer, *CommonValueWriter) {
 	c := NewConfig()
 	vw := NewCommonValueWriter()
-	vw.ConfigureTest()
+	vw.ConfigureTest(true)
 	p := NewPrinter(c, vw)
 	return p, vw
 }

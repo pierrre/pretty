@@ -46,7 +46,7 @@ func init() {
 			},
 		},
 		{
-			name: "ShowElemsIndexes",
+			name: "ShowIndexes",
 			value: func() chan string {
 				c := make(chan string, 5)
 				c <- "a"

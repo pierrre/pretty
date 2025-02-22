@@ -25,12 +25,12 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
-			name:  "ShowLenCapDisabled",
+			name:  "ShowCap",
 			value: []int{1, 2, 3},
 			configure: func(vw *CommonValueWriter) {
-				vw.SetShowLen(false)
-				vw.SetShowCap(false)
+				vw.Kind.BaseSlice.ShowCap = true
 			},
+			ignoreResult:    true,
 			ignoreBenchmark: true,
 		},
 		{

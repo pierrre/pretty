@@ -7,10 +7,6 @@ import (
 	"reflect"
 )
 
-func init() {
-	DefaultCommonValueWriter.ConfigureTest()
-}
-
 func Example() {
 	type exampleStruct struct {
 		Int    int
@@ -40,7 +36,7 @@ func Example() {
 	// 		"bar": 2,
 	// 		"foo": 1,
 	// 	},
-	// 	Slice: [[]int] (len=3 cap=3) {
+	// 	Slice: [[]int] (len=3) {
 	// 		1,
 	// 		2,
 	// 		3,

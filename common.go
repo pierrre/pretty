@@ -2,10 +2,17 @@ package pretty
 
 import (
 	"reflect"
+	"testing"
 )
 
 // DefaultCommonValueWriter is the default [CommonValueWriter].
+//
+// It is configured with [CommonValueWriter.ConfigureTest] and [testing.Testing].
 var DefaultCommonValueWriter = NewCommonValueWriter()
+
+func init() {
+	DefaultCommonValueWriter.ConfigureTest(testing.Testing())
+}
 
 // CommonValueWriter is a [ValueWriter] with common [ValueWriter].
 //
@@ -83,13 +90,22 @@ func (vw *CommonValueWriter) SetShowAddr(show bool) {
 	vw.BytesableHexDump.ShowAddr = show
 }
 
+// SetShowIndexes sets ShowIndexes on all [ValueWriter] that supports it.
+func (vw *CommonValueWriter) SetShowIndexes(show bool) {
+	vw.Kind.BaseArray.ShowIndexes = show
+	vw.Kind.BaseSlice.ShowIndexes = show
+	vw.Kind.BaseChan.ShowIndexes = show
+}
+
 // ConfigureTest configures the [CommonValueWriter] for testing.
 //
 // It makes the result deterministic.
-// It sorts the keys of maps and disables the address.
-func (vw *CommonValueWriter) ConfigureTest() {
-	vw.Kind.BaseMap.SortKeys = true
-	vw.SetShowAddr(false)
+// It sorts the keys of maps and disables the address/capacity.
+// The enabled boolean is used to enable or disable the configuration.
+func (vw *CommonValueWriter) ConfigureTest(enabled bool) {
+	vw.Kind.BaseMap.SortKeys = enabled
+	vw.SetShowAddr(!enabled)
+	vw.SetShowCap(!enabled)
 }
 
 // WriteValue implements [ValueWriter].

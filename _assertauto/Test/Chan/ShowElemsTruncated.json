@@ -4,7 +4,7 @@
 			"name": "result",
 			"equal": {
 				"type": "string",
-				"value": "[chan string] (len=3 cap=5) {\n\t(len=1) \"a\",\n\t(len=1) \"b\",\n\t<truncated>\n}"
+				"value": "[chan string] (len=3) {\n\t(len=1) \"a\",\n\t(len=1) \"b\",\n\t<truncated>\n}"
 			}
 		},
 		{
