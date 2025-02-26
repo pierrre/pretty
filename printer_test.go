@@ -53,16 +53,16 @@ func Test(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			p := tc.newPrinter()
-			s := p.String(tc.value)
 			if !tc.ignoreResult {
-				assertauto.Equal(t, s, assertauto.Name("result"))
+				assertauto.Equal(t, tc.value, assertauto.ValueStringer(p.String))
 			}
+			s := p.String(tc.value)
 			t.Log(s)
 			if !tc.ignoreAllocs {
 				allocs, _ := assertauto.AllocsPerRun(t, 100, func() {
 					t.Helper()
 					p.Write(io.Discard, tc.value)
-				}, assertauto.Name("allocs"))
+				})
 				t.Logf("allocs: %g", allocs)
 			}
 		})
@@ -87,20 +87,20 @@ func TestWrite(t *testing.T) {
 	buf := new(bytes.Buffer)
 	Write(buf, "test")
 	s := buf.String()
-	assertauto.Equal(t, s, assertauto.Name("result"))
+	assertauto.Equal(t, s)
 	assertauto.AllocsPerRun(t, 100, func() {
 		t.Helper()
 		Write(io.Discard, "test")
-	}, assertauto.Name("allocs"))
+	})
 }
 
 func TestString(t *testing.T) {
 	s := String("test")
-	assertauto.Equal(t, s, assertauto.Name("result"))
+	assertauto.Equal(t, s)
 	assertauto.AllocsPerRun(t, 100, func() {
 		t.Helper()
 		String("test")
-	}, assertauto.Name("allocs"))
+	})
 }
 
 func TestFormatter(t *testing.T) {
@@ -109,10 +109,10 @@ func TestFormatter(t *testing.T) {
 	_, err := fmt.Fprintf(buf, "%v", f)
 	assert.NoError(t, err)
 	s := buf.String()
-	assertauto.Equal(t, s, assertauto.Name("result"))
+	assertauto.Equal(t, s)
 	assertauto.AllocsPerRun(t, 100, func() {
 		t.Helper()
 		_, err := fmt.Fprintf(io.Discard, "%v", f)
 		assert.NoError(t, err)
-	}, assertauto.Name("allocs"))
+	})
 }

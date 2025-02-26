@@ -1,0 +1,6 @@
+[func() *pretty.Config] github.com/pierrre/pretty.NewConfig
+	========== assertauto ==========
+[assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

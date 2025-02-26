@@ -1,0 +1,6 @@
+[string] (len=4) "te" <truncated>
+	========== assertauto ==========
+[assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

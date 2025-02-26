@@ -1,0 +1,11 @@
+[[]uint8] (len=4) {
+	116,
+	101,
+	115,
+	116,
+}
+	========== assertauto ==========
+[assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

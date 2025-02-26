@@ -1,0 +1,6 @@
+[pretty_test.myBool] false
+	========== assertauto ==========
+[assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

@@ -1,0 +1,10 @@
+[map[string]int] (len=3) {
+	[string] "a": [int] 1,
+	[string] "b": [int] 2,
+	[string] "c": [int] 3,
+}
+	========== assertauto ==========
+[assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

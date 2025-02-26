@@ -1,0 +1,10 @@
+[pretty_test.testUnexported] {
+	v: [*pretty_test.testBytesable] => {
+		b: [[]uint8] <nil>,
+	},
+}
+	========== assertauto ==========
+[assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

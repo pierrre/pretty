@@ -1,0 +1,10 @@
+[chan string] (len=3) {
+	(len=1) "a",
+	(len=1) "b",
+	(len=1) "c",
+}
+	========== assertauto ==========
+[assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 6,
+}
