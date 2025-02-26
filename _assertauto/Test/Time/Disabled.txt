@@ -1,6 +1,6 @@
 [time.Time] => .String() => (len=29) "2009-11-10 23:00:00 +0000 UTC"
 	========== assertauto ==========
-[assertauto.allocsPerRun] {
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,
 	Allocs: [float64] 1,
 }

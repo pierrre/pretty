@@ -28,7 +28,7 @@ func Example() {
 	s := String(v)
 	fmt.Println(s)
 	// Output:
-	// [pretty.exampleStruct] {
+	// [github.com/pierrre/pretty.exampleStruct] {
 	// 	Int: [int] 123,
 	// 	Float: [float64] 123.456,
 	// 	String: [string] (len=4) "test",

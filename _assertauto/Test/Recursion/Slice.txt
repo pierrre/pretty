@@ -2,7 +2,7 @@
 	<recursion>,
 }
 	========== assertauto ==========
-[assertauto.allocsPerRun] {
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,
 	Allocs: [float64] 0,
 }

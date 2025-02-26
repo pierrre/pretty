@@ -1,6 +1,6 @@
 [iter.Seq2[int,string]](func(func(int, string) bool)) {}
 	========== assertauto ==========
-[assertauto.allocsPerRun] {
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,
 	Allocs: [float64] 7,
 }

@@ -1,4 +1,4 @@
-[*pretty_test.testBytesable] => .Bytes() => (len=400)
+[*github.com/pierrre/pretty_test.testBytesable] => .Bytes() => (len=400)
 	00000000  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|
 	00000010  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|
 	00000020  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|
@@ -26,7 +26,7 @@
 	00000180  74 65 73 74 74 65 73 74  74 65 73 74 74 65 73 74  |testtesttesttest|
 
 	========== assertauto ==========
-[assertauto.allocsPerRun] {
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,
 	Allocs: [float64] 0,
 }

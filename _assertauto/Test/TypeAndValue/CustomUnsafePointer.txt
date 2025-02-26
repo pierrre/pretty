@@ -1,6 +1,6 @@
-[pretty_test.myUnsafePointer](unsafe.Pointer) <nil>
+[github.com/pierrre/pretty_test.myUnsafePointer](unsafe.Pointer) <nil>
 	========== assertauto ==========
-[assertauto.allocsPerRun] {
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,
 	Allocs: [float64] 0,
 }

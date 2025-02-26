@@ -1,6 +1,6 @@
-[*pretty_test.testStringer] => .String() => (len=4) "te" <truncated>
+[*github.com/pierrre/pretty_test.testStringer] => .String() => (len=4) "te" <truncated>
 	========== assertauto ==========
-[assertauto.allocsPerRun] {
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,
 	Allocs: [float64] 0,
 }

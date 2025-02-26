@@ -1,4 +1,4 @@
-[pretty_test.testUnexported] {
+[github.com/pierrre/pretty_test.testUnexported] {
 	v: [map[int]int] (len=3) {
 		1: 2,
 		3: 4,
@@ -6,7 +6,7 @@
 	},
 }
 	========== assertauto ==========
-[assertauto.allocsPerRun] {
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,
 	Allocs: [float64] 7,
 }

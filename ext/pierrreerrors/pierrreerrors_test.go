@@ -16,20 +16,20 @@ func init() {
 func TestValueWriter(t *testing.T) {
 	err := errors.New("error")
 	s := pretty.String(err)
-	assert.StringHasPrefix(t, s, "[*errstack.stack] => .Error() => error\n\tstack:\n")
+	assert.StringHasPrefix(t, s, "[*github.com/pierrre/errors/errstack.stack] => .Error() => error\n\tstack:\n")
 }
 
 func TestValueWriterNil(t *testing.T) {
 	var err error = (*testError)(nil)
 	s := pretty.String(err)
-	assert.Equal(t, s, "[*pierrreerrors.testError] <nil>")
+	assert.Equal(t, s, "[*github.com/pierrre/pretty/ext/pierrreerrors.testError] <nil>")
 }
 
 func TestValueWriterUnexported(t *testing.T) {
 	err := errors.New("error")
 	v := &testUnexported{v: err}
 	s := pretty.String(v)
-	assert.StringHasPrefix(t, s, "[*pierrreerrors.testUnexported] => {\n\tv: [*errstack.stack] => {\n\t\terror: [*errors.errorString] => {")
+	assert.StringHasPrefix(t, s, "[*github.com/pierrre/pretty/ext/pierrreerrors.testUnexported] => {\n\tv: [*github.com/pierrre/errors/errstack.stack] => {\n\t\terror: [*errors.errorString] => {")
 }
 
 type testError struct{}

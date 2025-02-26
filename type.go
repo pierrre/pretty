@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"unsafe" //nolint:depguard // Required for unsafe.Pointer.
 
+	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/pretty/internal/must"
 	"github.com/pierrre/pretty/internal/write"
@@ -15,14 +16,14 @@ import (
 // It should be created with [NewTypeValueWriter].
 type TypeValueWriter struct {
 	// Stringer converts the [reflect.Type] to a string.
-	// Default: [reflect.Type.String].
+	// Default: [reflectutil.TypeFullName].
 	Stringer func(reflect.Type) string
 }
 
 // NewTypeValueWriter creates a new [TypeValueWriter] with default values.
 func NewTypeValueWriter() *TypeValueWriter {
 	return &TypeValueWriter{
-		Stringer: reflect.Type.String,
+		Stringer: reflectutil.TypeFullName,
 	}
 }
 
