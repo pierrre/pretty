@@ -48,14 +48,14 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.CanInterface = NewCanInterfaceValueWriter(ValueWriterFunc(vw.postCanInterface))
 	vw.TypeAndValue = NewTypeAndValueWriter(ValueWriterFunc(vw.writeType), ValueWriterFunc(vw.postTypeAndValue))
 	vw.Type = NewTypeValueWriter()
-	vw.ReflectValue = NewReflectValueWriter(ValueWriterFunc(vw.WriteValue))
+	vw.ReflectValue = NewReflectValueWriter(vw)
 	vw.Time = NewTimeValueWriter()
 	vw.Error = NewErrorValueWriter()
 	vw.BytesHexDump = NewBytesHexDumpValueWriter()
 	vw.BytesableHexDump = NewBytesableHexDumpValueWriter()
 	vw.Stringer = NewStringerValueWriter()
-	vw.Iter = NewIterValueWriter(ValueWriterFunc(vw.WriteValue))
-	vw.Kind = NewKindValueWriter(ValueWriterFunc(vw.WriteValue))
+	vw.Iter = NewIterValueWriter(vw)
+	vw.Kind = NewKindValueWriter(vw)
 	return vw
 }
 
