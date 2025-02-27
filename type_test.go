@@ -1,10 +1,12 @@
 package pretty_test
 
 import (
+	"reflect"
 	"unsafe" //nolint:depguard // Required for test.
 
 	"github.com/pierrre/go-libs/reflectutil"
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/write"
 )
 
 func init() {
@@ -216,6 +218,25 @@ func init() {
 				vw.TypeAndValue = nil
 			},
 			ignoreBenchmark: true,
+		},
+	})
+	addTestCasesPrefix("ByType", []*testCase{
+		{
+			name:  "Default",
+			value: "test",
+			configure: func(vw *CommonValueWriter) {
+				vw.ByTypeValueWriters["string"] = ValueWriterFunc(func(st *State, v reflect.Value) bool {
+					write.MustString(st.Writer, "custom")
+					return true
+				})
+			},
+		},
+		{
+			name:  "NotFound",
+			value: "test",
+			configure: func(vw *CommonValueWriter) {
+				vw.ByTypeValueWriters["unknown"] = nil
+			},
 		},
 	})
 }

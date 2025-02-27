@@ -172,3 +172,27 @@ func (vw *TypeAndValueWriter) getBaseType(typ reflect.Type) reflect.Type {
 	}
 	return baseType
 }
+
+// ByTypeValueWriters is a [ValueWriter] that selects a [ValueWriter] by type name.
+//
+// It should be created with [NewByTypeValueWriters].
+type ByTypeValueWriters map[string]ValueWriter
+
+// NewByTypeValueWriters creates a new [ByTypeValueWriters].
+func NewByTypeValueWriters() ByTypeValueWriters {
+	return make(ByTypeValueWriters)
+}
+
+// WriteValue implements [ValueWriter].
+func (vw ByTypeValueWriters) WriteValue(st *State, v reflect.Value) bool {
+	if len(vw) == 0 {
+		return false
+	}
+	typ := v.Type()
+	name := reflectutil.TypeFullName(typ)
+	w, ok := vw[name]
+	if !ok {
+		return false
+	}
+	return w.WriteValue(st, v)
+}

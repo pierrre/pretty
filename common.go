@@ -22,21 +22,22 @@ func init() {
 //
 // It should be created with [NewCommonValueWriter].
 type CommonValueWriter struct {
-	UnwrapInterface  *UnwrapInterfaceValueWriter
-	Recursion        *RecursionValueWriter
-	MaxDepth         *MaxDepthValueWriter
-	CanInterface     *CanInterfaceValueWriter
-	TypeAndValue     *TypeAndValueWriter
-	Type             *TypeValueWriter
-	ValueWriters     ValueWriters
-	ReflectValue     *ReflectValueWriter
-	Time             *TimeValueWriter
-	Error            *ErrorValueWriter
-	BytesHexDump     *BytesHexDumpValueWriter
-	BytesableHexDump *BytesableHexDumpValueWriter
-	Stringer         *StringerValueWriter
-	Iter             *IterValueWriter
-	Kind             *KindValueWriter
+	UnwrapInterface    *UnwrapInterfaceValueWriter
+	Recursion          *RecursionValueWriter
+	MaxDepth           *MaxDepthValueWriter
+	CanInterface       *CanInterfaceValueWriter
+	TypeAndValue       *TypeAndValueWriter
+	Type               *TypeValueWriter
+	ByTypeValueWriters ByTypeValueWriters
+	ValueWriters       ValueWriters
+	ReflectValue       *ReflectValueWriter
+	Time               *TimeValueWriter
+	Error              *ErrorValueWriter
+	BytesHexDump       *BytesHexDumpValueWriter
+	BytesableHexDump   *BytesableHexDumpValueWriter
+	Stringer           *StringerValueWriter
+	Iter               *IterValueWriter
+	Kind               *KindValueWriter
 }
 
 // NewCommonValueWriter creates a new [CommonValueWriter] initialized with default values.
@@ -48,6 +49,7 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.CanInterface = NewCanInterfaceValueWriter(ValueWriterFunc(vw.postCanInterface))
 	vw.TypeAndValue = NewTypeAndValueWriter(ValueWriterFunc(vw.writeType), ValueWriterFunc(vw.postTypeAndValue))
 	vw.Type = NewTypeValueWriter()
+	vw.ByTypeValueWriters = NewByTypeValueWriters()
 	vw.ReflectValue = NewReflectValueWriter(vw)
 	vw.Time = NewTimeValueWriter()
 	vw.Error = NewErrorValueWriter()
@@ -174,6 +176,9 @@ func (vw *CommonValueWriter) postTypeAndValue(st *State, v reflect.Value) bool {
 
 //nolint:gocyclo // We need to call all [ValueWriter].
 func (vw *CommonValueWriter) internal(st *State, v reflect.Value) bool {
+	if vw.ByTypeValueWriters != nil && vw.ByTypeValueWriters.WriteValue(st, v) {
+		return true
+	}
 	if vw.ValueWriters.WriteValue(st, v) {
 		return true
 	}
