@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/pierrre/pretty"
-	"github.com/pierrre/pretty/internal/indent"
 	"github.com/pierrre/pretty/internal/must"
 	"github.com/pierrre/pretty/internal/write"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -62,7 +61,7 @@ func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 			write.MustString(st.Writer, "\n")
 			hasFields = true
 		}
-		indent.MustWrite(st.Writer, st.IndentString, st.IndentLevel)
+		st.WriteIndent()
 		write.MustString(st.Writer, string(fd.Name()))
 		write.MustString(st.Writer, ": ")
 		must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(m.Get(fd).Interface())))
@@ -70,7 +69,7 @@ func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 	}
 	st.IndentLevel--
 	if hasFields {
-		indent.MustWrite(st.Writer, st.IndentString, st.IndentLevel)
+		st.WriteIndent()
 	}
 	write.MustString(st.Writer, "}")
 	return true
