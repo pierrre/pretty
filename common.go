@@ -58,6 +58,7 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.Stringer = NewStringerValueWriter()
 	vw.Iter = NewIterValueWriter(vw)
 	vw.Kind = NewKindValueWriter(vw)
+	vw.ByTypeValueWriters["*math/big.Int"] = vw.Stringer
 	return vw
 }
 
