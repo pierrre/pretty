@@ -226,5 +226,20 @@ func init() {
 				vw.ByTypeValueWriters["unknown"] = nil
 			},
 		},
+		{
+			name:  "Empty",
+			value: "test",
+			configure: func(vw *CommonValueWriter) {
+				clear(vw.ByTypeValueWriters)
+			},
+		},
+		{
+			name:  "Disabled",
+			value: "test",
+			configure: func(vw *CommonValueWriter) {
+				vw.ByTypeValueWriters = nil
+			},
+			ignoreBenchmark: true,
+		},
 	})
 }
