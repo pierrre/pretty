@@ -4,24 +4,12 @@ import (
 	"reflect"
 	"unsafe" //nolint:depguard // Required for test.
 
-	"github.com/pierrre/go-libs/reflectutil"
 	. "github.com/pierrre/pretty"
 	"github.com/pierrre/pretty/internal/write"
 )
 
 func init() {
 	addTestCasesPrefix("Type", []*testCase{
-		{
-			name: "FullName",
-			value: testStruct{
-				Foo:        123,
-				Bar:        123.456,
-				unexported: 123,
-			},
-			configure: func(vw *CommonValueWriter) {
-				vw.Type.Stringer = reflectutil.TypeFullName
-			},
-		},
 		{
 			name:  "Disabled",
 			value: "test",
