@@ -57,6 +57,9 @@ func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 	st.IndentLevel++
 	for i := range l {
 		fd := fs.Get(i)
+		if fd.ContainingOneof() != nil && !m.Has(fd) {
+			continue
+		}
 		if !hasFields {
 			write.MustString(st.Writer, "\n")
 			hasFields = true
@@ -64,7 +67,7 @@ func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 		st.WriteIndent()
 		write.MustString(st.Writer, string(fd.Name()))
 		write.MustString(st.Writer, ": ")
-		must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(m.Get(fd).Interface())))
+		must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(vw.getValueInterface(m.Get(fd), fd))))
 		write.MustString(st.Writer, ",\n")
 	}
 	st.IndentLevel--
@@ -73,4 +76,55 @@ func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 	}
 	write.MustString(st.Writer, "}")
 	return true
+}
+
+func (vw *ValueWriter) getValueInterface(v protoreflect.Value, fd protoreflect.FieldDescriptor) any {
+	itf := v.Interface()
+	switch itf := itf.(type) {
+	case protoreflect.Message:
+		return itf.Interface()
+	case protoreflect.List:
+		return vw.getValueInterfaceList(itf, fd)
+	case protoreflect.Map:
+		return vw.getValueInterfaceMap(itf, fd)
+	case protoreflect.EnumNumber:
+		return vw.getValueInterfaceEnum(itf, fd)
+	}
+	return itf
+}
+
+func (vw *ValueWriter) getValueInterfaceList(l protoreflect.List, fd protoreflect.FieldDescriptor) any {
+	// TODO create typed slice
+	res := make([]any, l.Len())
+	for i := range l.Len() {
+		res[i] = vw.getValueInterface(l.Get(i), fd)
+	}
+	return res
+}
+
+func (vw *ValueWriter) getValueInterfaceMap(m protoreflect.Map, fd protoreflect.FieldDescriptor) any {
+	// TODO create typed map
+	res := make(map[any]any, m.Len())
+	m.Range(func(key protoreflect.MapKey, value protoreflect.Value) bool {
+		res[vw.getValueInterface(key.Value(), fd.MapKey())] = vw.getValueInterface(value, fd.MapValue())
+		return true
+	})
+	return res
+}
+
+func (vw *ValueWriter) getValueInterfaceEnum(e protoreflect.EnumNumber, fd protoreflect.FieldDescriptor) EnumValue {
+	res := EnumValue{
+		Number: int32(e),
+	}
+	ed := fd.Enum().Values().ByNumber(e)
+	if ed != nil {
+		res.Name = string(ed.Name())
+	}
+	return res
+}
+
+// EnumValue represents an enum value.
+type EnumValue struct {
+	Number int32
+	Name   string
 }

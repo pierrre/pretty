@@ -1,0 +1,12 @@
+[*google.golang.org/protobuf/types/known/apipb.Api] {
+	name: [string] (len=0) "",
+	methods: [[]interface {}] (len=0) {},
+	options: [[]interface {}] (len=0) {},
+	version: [string] (len=0) "",
+	source_context: [*google.golang.org/protobuf/types/known/sourcecontextpb.SourceContext] <nil>,
+	mixins: [[]interface {}] (len=0) {},
+	syntax: [github.com/pierrre/pretty/ext/protobuf.EnumValue] {
+		Number: [int32] 0,
+		Name: [string] (len=13) "SYNTAX_PROTO2",
+	},
+}

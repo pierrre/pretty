@@ -1,0 +1,10 @@
+[*google.golang.org/protobuf/types/known/structpb.ListValue] {
+	values: [[]interface {}] (len=2) {
+		[*google.golang.org/protobuf/types/known/structpb.Value] {
+			string_value: [string] (len=4) "test",
+		},
+		[*google.golang.org/protobuf/types/known/structpb.Value] {
+			number_value: [float64] 123,
+		},
+	},
+}
