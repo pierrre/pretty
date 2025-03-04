@@ -1,0 +1,20 @@
+[*google.golang.org/protobuf/types/known/structpb.Struct] {
+	fields: [map[interface {}]interface {}] (len=2) {
+		[string] "test1": [*google.golang.org/protobuf/types/known/structpb.Value] {
+			null_value: [google.golang.org/protobuf/reflect/protoreflect.EnumNumber](int32) 0,
+			number_value: [float64] 0,
+			string_value: [string] (len=4) "test",
+			bool_value: [bool] false,
+			struct_value: [*google.golang.org/protobuf/types/known/structpb.Struct] <nil>,
+			list_value: [*google.golang.org/protobuf/types/known/structpb.ListValue] <nil>,
+		},
+		[string] "test2": [*google.golang.org/protobuf/types/known/structpb.Value] {
+			null_value: [google.golang.org/protobuf/reflect/protoreflect.EnumNumber](int32) 0,
+			number_value: [float64] 123,
+			string_value: [string] (len=0) "",
+			bool_value: [bool] false,
+			struct_value: [*google.golang.org/protobuf/types/known/structpb.Struct] <nil>,
+			list_value: [*google.golang.org/protobuf/types/known/structpb.ListValue] <nil>,
+		},
+	},
+}
