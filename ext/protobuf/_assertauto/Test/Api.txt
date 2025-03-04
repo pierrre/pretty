@@ -1,0 +1,19 @@
+[*google.golang.org/protobuf/types/known/apipb.Api] {
+	name: [string] (len=0) "",
+	methods: [[]interface {}] (len=1) {
+		[*google.golang.org/protobuf/types/known/apipb.Method] {
+			name: [string] (len=0) "",
+			request_type_url: [string] (len=0) "",
+			request_streaming: [bool] false,
+			response_type_url: [string] (len=0) "",
+			response_streaming: [bool] false,
+			options: [[]interface {}] (len=0) {},
+			syntax: [google.golang.org/protobuf/reflect/protoreflect.EnumNumber](int32) 0,
+		},
+	},
+	options: [[]interface {}] (len=0) {},
+	version: [string] (len=0) "",
+	source_context: [*google.golang.org/protobuf/types/known/sourcecontextpb.SourceContext] <nil>,
+	mixins: [[]interface {}] (len=0) {},
+	syntax: [google.golang.org/protobuf/reflect/protoreflect.EnumNumber](int32) 0,
+}

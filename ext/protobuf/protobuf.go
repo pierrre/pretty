@@ -64,7 +64,7 @@ func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 		st.WriteIndent()
 		write.MustString(st.Writer, string(fd.Name()))
 		write.MustString(st.Writer, ": ")
-		must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(m.Get(fd).Interface())))
+		must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(vw.getValueInterface(m.Get(fd)))))
 		write.MustString(st.Writer, ",\n")
 	}
 	st.IndentLevel--
@@ -73,4 +73,34 @@ func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 	}
 	write.MustString(st.Writer, "}")
 	return true
+}
+
+func (vw *ValueWriter) getValueInterface(v protoreflect.Value) any {
+	itf := v.Interface()
+	switch itf := itf.(type) {
+	case protoreflect.Message:
+		return itf.Interface()
+	case protoreflect.List:
+		return vw.getValueInterfaceList(itf)
+	case protoreflect.Map:
+		return vw.getValueInterfaceMap(itf)
+	}
+	return itf
+}
+
+func (vw *ValueWriter) getValueInterfaceList(l protoreflect.List) any {
+	res := make([]any, l.Len())
+	for i := range l.Len() {
+		res[i] = vw.getValueInterface(l.Get(i))
+	}
+	return res
+}
+
+func (vw *ValueWriter) getValueInterfaceMap(m protoreflect.Map) any {
+	res := make(map[any]any, m.Len())
+	m.Range(func(key protoreflect.MapKey, value protoreflect.Value) bool {
+		res[key.Interface()] = vw.getValueInterface(value)
+		return true
+	})
+	return res
 }
