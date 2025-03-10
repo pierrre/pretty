@@ -105,10 +105,9 @@ func (vw *ValueWriter) getValueInterfaceList(l protoreflect.List, fd protoreflec
 func (vw *ValueWriter) getValueInterfaceMap(m protoreflect.Map, fd protoreflect.FieldDescriptor) any {
 	// TODO create typed map
 	res := make(map[any]any, m.Len())
-	m.Range(func(key protoreflect.MapKey, value protoreflect.Value) bool {
+	for key, value := range m.Range {
 		res[vw.getValueInterface(key.Value(), fd.MapKey())] = vw.getValueInterface(value, fd.MapValue())
-		return true
-	})
+	}
 	return res
 }
 
