@@ -27,7 +27,7 @@ func init() {
 				unexported: 123,
 			},
 			configure: func(vw *CommonValueWriter) {
-				vw.Kind.BaseStruct.FieldFilter = ExportedStructFieldFilter
+				vw.Kind.BaseStruct.FieldFilter = NewExportedStructFieldFilter()
 			},
 		},
 		{

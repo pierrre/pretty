@@ -15,7 +15,7 @@ type StructValueWriter struct {
 	ValueWriter
 	// FieldFilter filters the fields.
 	// Default: nil.
-	FieldFilter func(v reflect.Value, field reflect.StructField) bool
+	FieldFilter StructFieldFilter
 }
 
 // NewStructValueWriter creates a new [StructValueWriter] with default values.
@@ -73,7 +73,16 @@ func getStructFields(typ reflect.Type) []reflect.StructField {
 	return fields
 }
 
-// UnsafePointerValueWriter is a struct field filter that returns true for exported fields.
-func ExportedStructFieldFilter(v reflect.Value, field reflect.StructField) bool { //nolint:gocritic // The StructField type is large, but we need to use it.
+// StructFieldFilter is a function that filters struct fields.
+//
+// It's used by [StructValueWriter].
+type StructFieldFilter func(v reflect.Value, field reflect.StructField) bool
+
+// NewExportedStructFieldFilter creates a new [StructFieldFilter] that returns true for exported fields and false otherwise.
+func NewExportedStructFieldFilter() StructFieldFilter {
+	return exportedStructFieldFilter
+}
+
+func exportedStructFieldFilter(v reflect.Value, field reflect.StructField) bool { //nolint:gocritic // The StructField type is large, but we need to use it.
 	return field.IsExported()
 }
