@@ -1,4 +1,4 @@
-[reflect.Value] => <nil>
+[string] <nil>
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,

@@ -113,6 +113,9 @@ func (vw *CommonValueWriter) ConfigureTest(enabled bool) {
 
 // WriteValue implements [ValueWriter].
 func (vw *CommonValueWriter) WriteValue(st *State, v reflect.Value) bool {
+	if checkInvalidNil(st.Writer, v) {
+		return true
+	}
 	return vw.unwrapInterface(st, v)
 }
 

@@ -54,8 +54,7 @@ func (p *Printer) Write(w io.Writer, vi any) {
 		writePanic(w, r)
 	}()
 	v := reflect.ValueOf(vi)
-	if !v.IsValid() {
-		writeNil(w)
+	if checkInvalidNil(w, v) {
 		return
 	}
 	st := newState(w, p.Config.Indent)

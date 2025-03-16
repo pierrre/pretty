@@ -34,7 +34,7 @@ func (vw *ReflectValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	}
 	rv := v.Interface().(reflect.Value) //nolint:forcetypeassert // Checked above.
 	writeArrow(st.Writer)
-	if checkInvalid(st.Writer, rv) {
+	if checkInvalidNil(st.Writer, rv) {
 		return true
 	}
 	defer st.SetRestoreKnownType(false)() // We want to show the type of the value.

@@ -19,13 +19,17 @@ func NewInvalidValueWriter() *InvalidValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *InvalidValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	return checkInvalid(st.Writer, v)
-}
-
-func checkInvalid(w io.Writer, v reflect.Value) bool {
 	if v.IsValid() {
 		return false
 	}
-	write.MustString(w, "<invalid>")
+	write.MustString(st.Writer, "<invalid>")
+	return true
+}
+
+func checkInvalidNil(w io.Writer, v reflect.Value) bool {
+	if v.IsValid() {
+		return false
+	}
+	writeNil(w)
 	return true
 }
