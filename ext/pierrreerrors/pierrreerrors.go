@@ -14,7 +14,7 @@ func ConfigureDefault() {
 	ConfigureCommonValueWriter(pretty.DefaultCommonValueWriter)
 }
 
-// Configure configures a [pretty.CommonValueWriter].
+// ConfigureCommonValueWriter configures a [pretty.CommonValueWriter].
 //
 // It calls [ConfigureErrorValueWriter] with [pretty.CommonValueWriter.Error].
 func ConfigureCommonValueWriter(vw *pretty.CommonValueWriter) {

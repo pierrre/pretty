@@ -1,3 +1,4 @@
+// Package indent provides utilities for writing indented output.
 package indent
 
 import (

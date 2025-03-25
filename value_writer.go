@@ -16,8 +16,10 @@ type ValueWriter interface {
 	WriteValue(st *State, v reflect.Value) bool
 }
 
+// ValueWriterFunc is a function that implements [ValueWriter].
 type ValueWriterFunc func(st *State, v reflect.Value) bool
 
+// WriteValue implements [ValueWriter].
 func (f ValueWriterFunc) WriteValue(st *State, v reflect.Value) bool {
 	return f(st, v)
 }
