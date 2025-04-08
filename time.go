@@ -14,6 +14,10 @@ type TimeValueWriter struct {
 	// Format is the format of the time.
 	// Default: [time.RFC3339Nano].
 	Format string
+
+	// Location to convert the time before formatting.
+	// Default: nil (no conversion).
+	Location *time.Location
 }
 
 // NewTimeValueWriter creates a new [TimeValueWriter] with default values.
@@ -34,6 +38,9 @@ func (wv *TimeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	tm := v.Interface().(time.Time) //nolint:forcetypeassert // Check above.
+	if wv.Location != nil {
+		tm = tm.In(wv.Location)
+	}
 	bp := bytesPool.Get()
 	defer bytesPool.Put(bp)
 	*bp = tm.AppendFormat((*bp)[:0], wv.Format)

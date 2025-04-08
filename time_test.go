@@ -4,6 +4,7 @@ import (
 	"time"
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/must"
 )
 
 var testTime = time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
@@ -18,6 +19,15 @@ func init() {
 			name:            "Zero",
 			value:           time.Time{},
 			ignoreBenchmark: true,
+		},
+		{
+			name:  "Location",
+			value: testTime,
+			configure: func(vw *CommonValueWriter) {
+				var err error
+				vw.Time.Location, err = time.LoadLocation("Europe/Paris")
+				must.NoError(err)
+			},
 		},
 		{
 			name: "Unexported",

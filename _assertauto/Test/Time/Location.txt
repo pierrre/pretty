@@ -1,0 +1,6 @@
+[time.Time] 2009-11-11T00:00:00+01:00
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}
