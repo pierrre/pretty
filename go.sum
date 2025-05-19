@@ -6,8 +6,8 @@ github.com/pierrre/compare v1.4.13 h1:b6gi3OgN1emmD1Ly37m+B/Pbq6tac+w3lNGT5xu4I1
 github.com/pierrre/compare v1.4.13/go.mod h1:+ie0ecM2nS32oLck0FWDstwIUSZ0YF4KBIaACOvKhJM=
 github.com/pierrre/errors v0.10.1 h1:kSwceHaLh/yQ4MfJ7buh/HK5/pl+CZYQmb+ailJ9gmI=
 github.com/pierrre/errors v0.10.1/go.mod h1:IAGTUdSAq0X50i9MGEVXwhGAyRqXqC3/8qYSxaWFGks=
-github.com/pierrre/go-libs v0.11.1 h1:U64G80Lfa5Ypjzxs/EFBaQt6LOTi0W0GH/qX4+K8y0U=
-github.com/pierrre/go-libs v0.11.1/go.mod h1:Ozj0Tz6gkjEM+EuuVAEKplaBvuMZTKPTHd+8aX9MbvU=
+github.com/pierrre/go-libs v0.12.0 h1:oNh+Et/bBj5Onj3jVnfRdJV4ILtrt78uSgSs2X3S9s0=
+github.com/pierrre/go-libs v0.12.0/go.mod h1:KzB6wXz2QK97zUGJpQ8n3cftty5tQwClltyrTmvNy6Y=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 h1:E7g+9GITq07hpfrRu66IVDexMakfv52eLZ2CXBWiKr4=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 google.golang.org/protobuf v1.36.6 h1:z1NpPI8ku2WgiWnf+t9wTPsn6eP1L7ksHUlkfLvd9xY=
