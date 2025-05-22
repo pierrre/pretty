@@ -7,7 +7,7 @@ toolchain go1.24.1
 require (
 	github.com/pierrre/assert v0.8.2
 	github.com/pierrre/errors v0.10.1
-	github.com/pierrre/go-libs v0.12.0
+	github.com/pierrre/go-libs v0.12.1
 	google.golang.org/protobuf v1.36.6
 )
 
