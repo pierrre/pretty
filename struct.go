@@ -69,7 +69,7 @@ func getStructFields(typ reflect.Type) []reflect.StructField {
 		field := typ.Field(i)
 		fields = append(fields, field)
 	}
-	structFieldsCache.Store(typ, fields)
+	fields, _ = structFieldsCache.LoadOrStore(typ, fields)
 	return fields
 }
 

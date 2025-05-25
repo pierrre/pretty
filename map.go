@@ -105,7 +105,7 @@ func getReflectValuePool(typ reflect.Type) *syncutil.Pool[*reflect.Value] {
 			return &v
 		},
 	}
-	reflectValuePools.Store(typ, pool)
+	pool, _ = reflectValuePools.LoadOrStore(typ, pool)
 	return pool
 }
 
