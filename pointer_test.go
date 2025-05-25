@@ -45,7 +45,7 @@ func init() {
 				return &i
 			}(),
 			configure: func(vw *CommonValueWriter) {
-				vw.TypeAndValue.ShowKnownTypes = true
+				vw.Type.ShowKnownTypes = true
 			},
 			ignoreBenchmark: true,
 		},

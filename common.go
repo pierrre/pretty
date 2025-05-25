@@ -26,7 +26,6 @@ type CommonValueWriter struct {
 	Recursion          *RecursionValueWriter
 	MaxDepth           *MaxDepthValueWriter
 	CanInterface       *CanInterfaceValueWriter
-	TypeAndValue       *TypeAndValueWriter
 	Type               *TypeValueWriter
 	ByTypeValueWriters ByTypeValueWriters
 	ValueWriters       ValueWriters
@@ -47,8 +46,7 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.Recursion = NewRecursionValueWriter(ValueWriterFunc(vw.postRecursion))
 	vw.MaxDepth = NewMaxDepthValueWriter(ValueWriterFunc(vw.postMaxDepth))
 	vw.CanInterface = NewCanInterfaceValueWriter(ValueWriterFunc(vw.postCanInterface))
-	vw.TypeAndValue = NewTypeAndValueWriter(ValueWriterFunc(vw.writeType), ValueWriterFunc(vw.postTypeAndValue))
-	vw.Type = NewTypeValueWriter()
+	vw.Type = NewTypeValueWriter(ValueWriterFunc(vw.postType))
 	vw.ByTypeValueWriters = NewByTypeValueWriters()
 	vw.ReflectValue = NewReflectValueWriter(vw)
 	vw.Time = NewTimeValueWriter()
@@ -160,21 +158,17 @@ func (vw *CommonValueWriter) canInterface(st *State, v reflect.Value) bool {
 }
 
 func (vw *CommonValueWriter) postCanInterface(st *State, v reflect.Value) bool {
-	return vw.typeAndValue(st, v)
+	return vw.writeType(st, v)
 }
 
 func (vw *CommonValueWriter) writeType(st *State, v reflect.Value) bool {
+	if vw.Type == nil {
+		return vw.postType(st, v)
+	}
 	return vw.Type.WriteValue(st, v)
 }
 
-func (vw *CommonValueWriter) typeAndValue(st *State, v reflect.Value) bool {
-	if vw.TypeAndValue == nil || vw.Type == nil {
-		return vw.postTypeAndValue(st, v)
-	}
-	return vw.TypeAndValue.WriteValue(st, v)
-}
-
-func (vw *CommonValueWriter) postTypeAndValue(st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) postType(st *State, v reflect.Value) bool {
 	return vw.internal(st, v)
 }
 

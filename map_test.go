@@ -38,7 +38,7 @@ func init() {
 			configure: func(vw *CommonValueWriter) {
 				vw.Kind.BaseMap.SortKeys = false
 				vw.UnwrapInterface = nil
-				vw.TypeAndValue.ShowKnownTypes = true
+				vw.Type.ShowKnownTypes = true
 			},
 		},
 		{
@@ -105,7 +105,7 @@ func init() {
 			name:  "ShowKnownTypes",
 			value: map[string]int{"a": 1, "b": 2, "c": 3},
 			configure: func(vw *CommonValueWriter) {
-				vw.TypeAndValue.ShowKnownTypes = true
+				vw.Type.ShowKnownTypes = true
 			},
 		},
 		{

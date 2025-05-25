@@ -39,7 +39,7 @@ func init() {
 			name:  "ShowKnownTypes",
 			value: [...]int{1, 2, 3},
 			configure: func(vw *CommonValueWriter) {
-				vw.TypeAndValue.ShowKnownTypes = true
+				vw.Type.ShowKnownTypes = true
 			},
 			ignoreBenchmark: true,
 		},

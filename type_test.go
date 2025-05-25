@@ -11,16 +11,6 @@ import (
 func init() {
 	addTestCasesPrefix("Type", []*testCase{
 		{
-			name:  "Disabled",
-			value: "test",
-			configure: func(vw *CommonValueWriter) {
-				vw.Type = nil
-			},
-			ignoreBenchmark: true,
-		},
-	})
-	addTestCasesPrefix("TypeAndValue", []*testCase{
-		{
 			name: "CustomBool",
 			value: func() any {
 				type myBool bool
@@ -195,7 +185,7 @@ func init() {
 				return myBool(false)
 			}(),
 			configure: func(vw *CommonValueWriter) {
-				vw.TypeAndValue.ShowBaseType = false
+				vw.Type.ShowBaseType = false
 			},
 			ignoreBenchmark: true,
 		},
@@ -203,7 +193,7 @@ func init() {
 			name:  "Disabled",
 			value: "test",
 			configure: func(vw *CommonValueWriter) {
-				vw.TypeAndValue = nil
+				vw.Type = nil
 			},
 			ignoreBenchmark: true,
 		},
