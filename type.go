@@ -41,7 +41,7 @@ func NewTypeValueWriter(vw ValueWriter) *TypeValueWriter {
 func (vw *TypeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !st.KnownType || vw.ShowKnownTypes {
 		write.MustString(st.Writer, "[")
-		write.MustString(st.Writer, vw.Stringer(v.Type()))
+		vw.writeType(st.Writer, v.Type())
 		write.MustString(st.Writer, "]")
 		vw.writeBaseType(st.Writer, v)
 		write.MustString(st.Writer, " ")
