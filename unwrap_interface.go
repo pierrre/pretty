@@ -25,7 +25,8 @@ func (vw *UnwrapInterfaceValueWriter) WriteValue(st *State, v reflect.Value) boo
 			return true
 		}
 		v = v.Elem()
-		defer st.SetRestoreKnownType(false)() // We want to show the type of the value.
+		st.KnownType = false // We want to show the type of the value.
 	}
-	return vw.ValueWriter.WriteValue(st, v)
+	ok := vw.ValueWriter.WriteValue(st, v)
+	return ok
 }

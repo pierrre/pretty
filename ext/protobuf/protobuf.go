@@ -49,7 +49,6 @@ func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 	}
 	pm := v.Interface().(protoreflect.ProtoMessage) //nolint:forcetypeassert // Checked above.
 	m := pm.ProtoReflect()
-	defer st.SetRestoreKnownType(false)() // We want to show the types of fields and values.
 	write.MustString(st.Writer, "{")
 	fs := m.Descriptor().Fields()
 	l := fs.Len()
@@ -67,6 +66,7 @@ func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 		st.WriteIndent()
 		write.MustString(st.Writer, string(fd.Name()))
 		write.MustString(st.Writer, ": ")
+		st.KnownType = false // We want to show the types of fields and values.
 		must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(vw.getValueInterface(m.Get(fd), fd))))
 		write.MustString(st.Writer, ",\n")
 	}

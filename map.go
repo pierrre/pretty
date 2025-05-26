@@ -75,13 +75,13 @@ func (vw *MapValueWriter) WriteValue(st *State, v reflect.Value) bool {
 
 func (vw *MapValueWriter) writeSorted(st *State, v reflect.Value) {
 	es := reflectutil.GetSortedMap(v)
-	defer es.Release()
 	for i, e := range es {
 		ok := vw.writeEntry(st, e.Key, e.Value, i)
 		if !ok {
 			break
 		}
 	}
+	es.Release()
 }
 
 func (vw *MapValueWriter) writeUnsorted(st *State, v reflect.Value) {
@@ -118,12 +118,6 @@ func (vw *MapValueWriter) writeUnsortedExported(st *State, v reflect.Value) {
 	valueP := valuePool.Get()
 	key := *keyP
 	value := *valueP
-	defer func() {
-		key.SetZero()
-		value.SetZero()
-		keyPool.Put(keyP)
-		valuePool.Put(valueP)
-	}()
 	for i := 0; iter.Next(); i++ {
 		key.SetIterKey(iter)
 		value.SetIterValue(iter)
@@ -132,6 +126,10 @@ func (vw *MapValueWriter) writeUnsortedExported(st *State, v reflect.Value) {
 			break
 		}
 	}
+	key.SetZero()
+	value.SetZero()
+	keyPool.Put(keyP)
+	valuePool.Put(valueP)
 }
 
 func (vw *MapValueWriter) writeUnsortedUnexported(st *State, v reflect.Value) {

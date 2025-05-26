@@ -31,7 +31,6 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Struct {
 		return false
 	}
-	defer st.SetRestoreKnownType(false)() // We want to show the types of fields and values.
 	write.MustString(st.Writer, "{")
 	fields := getStructFields(v.Type())
 	hasFields := false
@@ -47,6 +46,7 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		st.WriteIndent()
 		write.MustString(st.Writer, field.Name)
 		write.MustString(st.Writer, ": ")
+		st.KnownType = false // We want to show the types of fields and values.
 		must.Handle(vw.ValueWriter.WriteValue(st, v.Field(i)))
 		write.MustString(st.Writer, ",\n")
 	}

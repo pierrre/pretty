@@ -29,7 +29,7 @@ func (vw *InterfaceValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if checkNil(st.Writer, v) {
 		return true
 	}
-	defer st.SetRestoreKnownType(false)() // We want to show the type of the value.
+	st.KnownType = false // We want to show the type of the value.
 	must.Handle(vw.ValueWriter.WriteValue(st, v.Elem()))
 	return true
 }

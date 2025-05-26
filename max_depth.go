@@ -34,8 +34,7 @@ func (vw *MaxDepthValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		return true
 	}
 	st.Depth++
-	defer func() {
-		st.Depth--
-	}()
-	return vw.ValueWriter.WriteValue(st, v)
+	ok := vw.ValueWriter.WriteValue(st, v)
+	st.Depth--
+	return ok
 }

@@ -43,14 +43,6 @@ func (st *State) WriteIndent() {
 	indent.MustWrite(st.Writer, st.IndentString, st.IndentLevel)
 }
 
-// SetRestoreKnownType sets the KnownType and returns a function to restore it.
-func (st *State) SetRestoreKnownType(knownType bool) func() {
-	st.KnownType, knownType = knownType, st.KnownType
-	return func() {
-		st.KnownType = knownType
-	}
-}
-
 func (st *State) release() {
 	st.Writer = nil
 	statePool.Put(st)

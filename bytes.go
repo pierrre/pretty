@@ -130,20 +130,18 @@ func writeBytesHexDumpCommon(st *State, v reflect.Value, b []byte, showLen bool,
 	}
 	write.MustString(st.Writer, "\n")
 	st.IndentLevel++
-	defer func() {
-		st.IndentLevel--
-	}()
 	iw := indent.NewWriter(st.Writer, st.IndentString, st.IndentLevel, false)
-	defer iw.Release()
 	e := getHexDumperPoolEntry(iw)
-	defer releaseHexDumperPoolEntry(e)
 	d := e.dumper
 	write.Must(d.Write(b))
 	must.NoError(d.Close())
+	releaseHexDumperPoolEntry(e)
+	iw.Release()
 	if truncated {
 		st.WriteIndent()
 		writeTruncated(st.Writer)
 	}
+	st.IndentLevel--
 }
 
 type hexDumperPoolEntry struct {

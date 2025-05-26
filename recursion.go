@@ -33,9 +33,9 @@ func (vw *RecursionValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		write.MustString(st.Writer, "<recursion>")
 		return true
 	}
+	l := len(st.Visited)
 	st.Visited = append(st.Visited, vp)
-	defer func() {
-		st.Visited = st.Visited[:len(st.Visited)-1]
-	}()
-	return vw.ValueWriter.WriteValue(st, v)
+	ok := vw.ValueWriter.WriteValue(st, v)
+	st.Visited = st.Visited[:l]
+	return ok
 }

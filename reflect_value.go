@@ -37,7 +37,7 @@ func (vw *ReflectValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if checkInvalidNil(st.Writer, rv) {
 		return true
 	}
-	defer st.SetRestoreKnownType(false)() // We want to show the type of the value.
+	st.KnownType = false // We want to show the type of the value.
 	must.Handle(vw.ValueWriter.WriteValue(st, rv))
 	return true
 }

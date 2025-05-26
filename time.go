@@ -42,8 +42,8 @@ func (wv *TimeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		tm = tm.In(wv.Location)
 	}
 	bp := bytesPool.Get()
-	defer bytesPool.Put(bp)
 	*bp = tm.AppendFormat((*bp)[:0], wv.Format)
 	write.Must(st.Writer.Write(*bp))
+	bytesPool.Put(bp)
 	return true
 }

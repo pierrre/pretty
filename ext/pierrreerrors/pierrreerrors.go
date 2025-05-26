@@ -29,10 +29,8 @@ func ConfigureErrorValueWriter(vw *pretty.ErrorValueWriter) {
 // Write writes the error with [errverbose.Write].
 func Write(st *pretty.State, err error) {
 	st.IndentLevel++
-	defer func() {
-		st.IndentLevel--
-	}()
 	iw := indent.NewWriter(st.Writer, st.IndentString, st.IndentLevel, true)
-	defer iw.Release()
 	errverbose.Write(iw, err)
+	iw.Release()
+	st.IndentLevel--
 }

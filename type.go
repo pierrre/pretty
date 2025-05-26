@@ -46,8 +46,10 @@ func (vw *TypeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		vw.writeBaseType(st.Writer, v)
 		write.MustString(st.Writer, " ")
 	}
-	defer st.SetRestoreKnownType(true)() // The type is known, because we showed it.
+	knownType := st.KnownType
+	st.KnownType = true // The type is known, because we showed it.
 	must.Handle(vw.ValueWriter.WriteValue(st, v))
+	st.KnownType = knownType
 	return true
 }
 
