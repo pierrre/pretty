@@ -20,5 +20,7 @@ func String(w io.Writer, s string) (int, error) {
 
 // MustString writes a string to a [io.Writer] and panics if an error occurs.
 func MustString(w io.Writer, s string) {
-	Must(String(w, s))
+	Must(
+		String(w, s),
+	)
 }
