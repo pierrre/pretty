@@ -1,0 +1,19 @@
+[*reflect.rtype] reflect.Type {
+	FullName: chan<- int,
+	String: chan<- int,
+	Kind: chan,
+	Size: 8,
+	Elem: {
+		FullName: int,
+		Name: int,
+		String: int,
+		Kind: int,
+		Size: 8,
+	},
+	ChanDir: chan<-,
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

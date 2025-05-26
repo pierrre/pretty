@@ -30,6 +30,7 @@ type CommonValueWriter struct {
 	ByTypeValueWriters ByTypeValueWriters
 	ValueWriters       ValueWriters
 	ReflectValue       *ReflectValueWriter
+	ReflectType        *ReflectTypeWriter
 	Time               *TimeValueWriter
 	Error              *ErrorValueWriter
 	BytesHexDump       *BytesHexDumpValueWriter
@@ -49,6 +50,7 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.Type = NewTypeValueWriter(ValueWriterFunc(vw.postType))
 	vw.ByTypeValueWriters = NewByTypeValueWriters()
 	vw.ReflectValue = NewReflectValueWriter(vw)
+	vw.ReflectType = NewReflectTypeWriter()
 	vw.Time = NewTimeValueWriter()
 	vw.Error = NewErrorValueWriter()
 	vw.BytesHexDump = NewBytesHexDumpValueWriter()
@@ -181,6 +183,9 @@ func (vw *CommonValueWriter) internal(st *State, v reflect.Value) bool {
 		return true
 	}
 	if vw.ReflectValue != nil && vw.ReflectValue.WriteValue(st, v) {
+		return true
+	}
+	if vw.ReflectType != nil && vw.ReflectType.WriteValue(st, v) {
 		return true
 	}
 	if vw.Time != nil && vw.Time.WriteValue(st, v) {

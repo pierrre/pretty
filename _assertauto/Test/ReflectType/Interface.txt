@@ -1,0 +1,24 @@
+[*reflect.rtype] reflect.Type {
+	FullName: io.Writer,
+	PkgPath: io,
+	Name: Writer,
+	String: io.Writer,
+	Kind: interface,
+	Size: 16,
+	Methods: {
+		Write: {
+			In: (
+				[]uint8,
+			),
+			Out: (
+				int,
+				error,
+			),
+		},
+	},
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

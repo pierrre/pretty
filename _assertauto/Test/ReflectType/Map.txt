@@ -1,0 +1,25 @@
+[*reflect.rtype] reflect.Type {
+	FullName: map[string]int,
+	String: map[string]int,
+	Kind: map,
+	Size: 8,
+	Key: {
+		FullName: string,
+		Name: string,
+		String: string,
+		Kind: string,
+		Size: 16,
+	},
+	Elem: {
+		FullName: int,
+		Name: int,
+		String: int,
+		Kind: int,
+		Size: 8,
+	},
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

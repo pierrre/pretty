@@ -1,0 +1,11 @@
+[*reflect.rtype] reflect.Type {
+	FullName: struct {},
+	String: struct {},
+	Kind: struct,
+	Size: 0,
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

@@ -1,0 +1,19 @@
+[*reflect.rtype] reflect.Type {
+	FullName: github.com/pierrre/pretty_test.CustomStruct,
+	PkgPath: github.com/pierrre/pretty_test,
+	Name: CustomStruct,
+	String: pretty_test.CustomStruct,
+	Kind: struct,
+	Size: 40,
+	Fields: {
+		String string,
+		Int int,
+		Float float64,
+		Bool bool,
+	},
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

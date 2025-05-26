@@ -1,0 +1,17 @@
+[*reflect.rtype] reflect.Type {
+	FullName: func(int) int,
+	String: func(int) int,
+	Kind: func,
+	Size: 8,
+	In: (
+		int,
+	),
+	Out: (
+		int,
+	),
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

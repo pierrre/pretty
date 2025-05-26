@@ -1,0 +1,179 @@
+[*reflect.rtype] reflect.Type {
+	FullName: *bytes.Buffer,
+	String: *bytes.Buffer,
+	Kind: ptr,
+	Size: 8,
+	Elem: {
+		FullName: bytes.Buffer,
+		PkgPath: bytes,
+		Name: Buffer,
+		String: bytes.Buffer,
+		Kind: struct,
+		Size: 40,
+		Fields: {
+			buf []uint8,
+			off int,
+			lastRead bytes.readOp,
+		},
+	},
+	Methods: {
+		Available: {
+			Out: (
+				int,
+			),
+		},
+		AvailableBuffer: {
+			Out: (
+				[]uint8,
+			),
+		},
+		Bytes: {
+			Out: (
+				[]uint8,
+			),
+		},
+		Cap: {
+			Out: (
+				int,
+			),
+		},
+		Grow: {
+			In: (
+				int,
+			),
+		},
+		Len: {
+			Out: (
+				int,
+			),
+		},
+		Next: {
+			In: (
+				int,
+			),
+			Out: (
+				[]uint8,
+			),
+		},
+		Read: {
+			In: (
+				[]uint8,
+			),
+			Out: (
+				int,
+				error,
+			),
+		},
+		ReadByte: {
+			Out: (
+				uint8,
+				error,
+			),
+		},
+		ReadBytes: {
+			In: (
+				uint8,
+			),
+			Out: (
+				[]uint8,
+				error,
+			),
+		},
+		ReadFrom: {
+			In: (
+				io.Reader,
+			),
+			Out: (
+				int64,
+				error,
+			),
+		},
+		ReadRune: {
+			Out: (
+				int32,
+				int,
+				error,
+			),
+		},
+		ReadString: {
+			In: (
+				uint8,
+			),
+			Out: (
+				string,
+				error,
+			),
+		},
+		Reset: {
+		},
+		String: {
+			Out: (
+				string,
+			),
+		},
+		Truncate: {
+			In: (
+				int,
+			),
+		},
+		UnreadByte: {
+			Out: (
+				error,
+			),
+		},
+		UnreadRune: {
+			Out: (
+				error,
+			),
+		},
+		Write: {
+			In: (
+				[]uint8,
+			),
+			Out: (
+				int,
+				error,
+			),
+		},
+		WriteByte: {
+			In: (
+				uint8,
+			),
+			Out: (
+				error,
+			),
+		},
+		WriteRune: {
+			In: (
+				int32,
+			),
+			Out: (
+				int,
+				error,
+			),
+		},
+		WriteString: {
+			In: (
+				string,
+			),
+			Out: (
+				int,
+				error,
+			),
+		},
+		WriteTo: {
+			In: (
+				io.Writer,
+			),
+			Out: (
+				int64,
+				error,
+			),
+		},
+	},
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}
