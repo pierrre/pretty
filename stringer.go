@@ -3,9 +3,11 @@ package pretty
 import (
 	"fmt"
 	"reflect"
+
+	"github.com/pierrre/go-libs/reflectutil"
 )
 
-var stringerType = reflect.TypeFor[fmt.Stringer]()
+var stringerImplementsCache = reflectutil.NewImplementsCacheFor[fmt.Stringer]()
 
 // StringerValueWriter is a [ValueWriter] that handles [fmt.Stringer].
 //
@@ -33,7 +35,7 @@ func NewStringerValueWriter() *StringerValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *StringerValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	if !v.Type().Implements(stringerType) {
+	if !stringerImplementsCache.ImplementedBy(v.Type()) {
 		return false
 	}
 	if v.Kind() == reflect.Pointer && v.IsNil() {

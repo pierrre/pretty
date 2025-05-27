@@ -5,6 +5,7 @@ import (
 	"io"
 	"reflect"
 
+	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/pretty/internal/indent"
 	"github.com/pierrre/pretty/internal/must"
@@ -59,7 +60,7 @@ type Bytesable interface {
 	Bytes() []byte
 }
 
-var bytesableType = reflect.TypeFor[Bytesable]()
+var bytesableImplementsCache = reflectutil.NewImplementsCacheFor[Bytesable]()
 
 // BytesableHexDumpValueWriter is a [ValueWriter] that handles [Bytesable] and writes thems with [hex.Dumper].
 //
@@ -91,7 +92,7 @@ func NewBytesableHexDumpValueWriter() *BytesableHexDumpValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *BytesableHexDumpValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	if !v.Type().Implements(bytesableType) {
+	if !bytesableImplementsCache.ImplementedBy(v.Type()) {
 		return false
 	}
 	if v.Kind() == reflect.Pointer && v.IsNil() {

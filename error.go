@@ -3,11 +3,12 @@ package pretty
 import (
 	"reflect"
 
+	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/strconvio"
 	"github.com/pierrre/pretty/internal/write"
 )
 
-var errorType = reflect.TypeFor[error]()
+var errorImplementsCache = reflectutil.NewImplementsCacheFor[error]()
 
 // ErrorValueWriter is a [ValueWriter] that handles errors.
 //
@@ -27,7 +28,7 @@ func NewErrorValueWriter() *ErrorValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *ErrorValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	if !v.Type().Implements(errorType) {
+	if !errorImplementsCache.ImplementedBy(v.Type()) {
 		return false
 	}
 	if v.Kind() == reflect.Pointer && v.IsNil() {

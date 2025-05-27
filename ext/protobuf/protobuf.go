@@ -4,13 +4,14 @@ package protobuf
 import (
 	"reflect"
 
+	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/pretty"
 	"github.com/pierrre/pretty/internal/must"
 	"github.com/pierrre/pretty/internal/write"
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
-var protoMessageType = reflect.TypeFor[protoreflect.ProtoMessage]()
+var messageImplementsCache = reflectutil.NewImplementsCacheFor[protoreflect.ProtoMessage]()
 
 // ConfigureDefault configures [pretty.DefaultCommonValueWriter] with [ConfigureCommonValueWriter].
 func ConfigureDefault() {
@@ -38,7 +39,7 @@ func NewValueWriter(vw pretty.ValueWriter) *ValueWriter {
 
 // WriteValue implements [pretty.ValueWriter].
 func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
-	if !v.Type().Implements(protoMessageType) {
+	if !messageImplementsCache.ImplementedBy(v.Type()) {
 		return false
 	}
 	if v.Kind() == reflect.Pointer && v.IsNil() {
