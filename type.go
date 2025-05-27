@@ -65,7 +65,7 @@ func (vw *TypeValueWriter) writeBaseType(w io.Writer, v reflect.Value) {
 	if typ.PkgPath() == "" {
 		return
 	}
-	baseType := vw.getCachedBaseType(typ)
+	baseType := getCachedBaseType(typ)
 	if baseType == nil {
 		return
 	}
@@ -76,18 +76,18 @@ func (vw *TypeValueWriter) writeBaseType(w io.Writer, v reflect.Value) {
 
 var baseTypeCache syncutil.Map[reflect.Type, reflect.Type]
 
-func (vw *TypeValueWriter) getCachedBaseType(typ reflect.Type) reflect.Type {
+func getCachedBaseType(typ reflect.Type) reflect.Type {
 	baseType, ok := baseTypeCache.Load(typ)
 	if ok {
 		return baseType
 	}
-	baseType = vw.getBaseType(typ)
+	baseType = getBaseType(typ)
 	baseTypeCache.Store(typ, baseType)
 	return baseType
 }
 
 //nolint:gocyclo // We need to handle all kinds.
-func (vw *TypeValueWriter) getBaseType(typ reflect.Type) reflect.Type {
+func getBaseType(typ reflect.Type) reflect.Type {
 	var baseType reflect.Type
 	switch typ.Kind() { //nolint:exhaustive //Some kinds are not handled.
 	case reflect.Bool:
