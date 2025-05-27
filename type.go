@@ -3,10 +3,8 @@ package pretty
 import (
 	"io"
 	"reflect"
-	"unsafe" //nolint:depguard // Required for unsafe.Pointer.
 
 	"github.com/pierrre/go-libs/reflectutil"
-	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/pretty/internal/must"
 	"github.com/pierrre/pretty/internal/write"
 )
@@ -62,99 +60,13 @@ func (vw *TypeValueWriter) writeBaseType(w io.Writer, v reflect.Value) {
 		return
 	}
 	typ := v.Type()
-	if typ.PkgPath() == "" {
-		return
-	}
-	baseType := getCachedBaseType(typ)
-	if baseType == nil {
+	baseType := reflectutil.GetBaseType(typ)
+	if baseType == nil || baseType == typ {
 		return
 	}
 	write.MustString(w, "(")
 	vw.writeType(w, baseType)
 	write.MustString(w, ")")
-}
-
-var baseTypeCache syncutil.Map[reflect.Type, reflect.Type]
-
-func getCachedBaseType(typ reflect.Type) reflect.Type {
-	baseType, ok := baseTypeCache.Load(typ)
-	if ok {
-		return baseType
-	}
-	baseType = getBaseType(typ)
-	baseTypeCache.Store(typ, baseType)
-	return baseType
-}
-
-//nolint:gocyclo // We need to handle all kinds.
-func getBaseType(typ reflect.Type) reflect.Type {
-	var baseType reflect.Type
-	switch typ.Kind() { //nolint:exhaustive //Some kinds are not handled.
-	case reflect.Bool:
-		baseType = reflect.TypeFor[bool]()
-	case reflect.Int:
-		baseType = reflect.TypeFor[int]()
-	case reflect.Int8:
-		baseType = reflect.TypeFor[int8]()
-	case reflect.Int16:
-		baseType = reflect.TypeFor[int16]()
-	case reflect.Int32:
-		baseType = reflect.TypeFor[int32]()
-	case reflect.Int64:
-		baseType = reflect.TypeFor[int64]()
-	case reflect.Uint:
-		baseType = reflect.TypeFor[uint]()
-	case reflect.Uint8:
-		baseType = reflect.TypeFor[uint8]()
-	case reflect.Uint16:
-		baseType = reflect.TypeFor[uint16]()
-	case reflect.Uint32:
-		baseType = reflect.TypeFor[uint32]()
-	case reflect.Uint64:
-		baseType = reflect.TypeFor[uint64]()
-	case reflect.Uintptr:
-		baseType = reflect.TypeFor[uintptr]()
-	case reflect.Float32:
-		baseType = reflect.TypeFor[float32]()
-	case reflect.Float64:
-		baseType = reflect.TypeFor[float64]()
-	case reflect.Complex64:
-		baseType = reflect.TypeFor[complex64]()
-	case reflect.Complex128:
-		baseType = reflect.TypeFor[complex128]()
-	case reflect.Array:
-		baseType = reflect.ArrayOf(typ.Len(), typ.Elem())
-	case reflect.Chan:
-		baseType = reflect.ChanOf(typ.ChanDir(), typ.Elem())
-	case reflect.Func:
-		in := make([]reflect.Type, typ.NumIn())
-		for i := range in {
-			in[i] = typ.In(i)
-		}
-		out := make([]reflect.Type, typ.NumOut())
-		for i := range out {
-			out[i] = typ.Out(i)
-		}
-		baseType = reflect.FuncOf(in, out, typ.IsVariadic())
-	case reflect.Map:
-		baseType = reflect.MapOf(typ.Key(), typ.Elem())
-	case reflect.Pointer:
-		baseType = reflect.PointerTo(typ.Elem())
-	case reflect.Slice:
-		baseType = reflect.SliceOf(typ.Elem())
-	case reflect.String:
-		baseType = reflect.TypeFor[string]()
-	case reflect.UnsafePointer:
-		baseType = reflect.TypeFor[unsafe.Pointer]()
-	}
-	if baseType == nil {
-		// Unimplemented: invalid, interface, struct.
-		return nil
-	}
-	if baseType == typ {
-		return nil
-	}
-	return baseType
 }
 
 // ByTypeValueWriters is a [ValueWriter] that selects a [ValueWriter] by type name.
