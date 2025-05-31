@@ -26,19 +26,6 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
-			name:  "Unexported",
-			value: testUnexported{v: &testStringer{}},
-			configure: func(vw *CommonValueWriter) {
-				vw.CanInterface = nil
-			},
-			ignoreBenchmark: true,
-		},
-		{
-			name:            "UnexportedCanInterface",
-			value:           testUnexported{v: &testStringer{}},
-			ignoreBenchmark: true,
-		},
-		{
 			name:  "ReflectValue",
 			value: reflect.ValueOf(123),
 			configure: func(vw *CommonValueWriter) {
@@ -54,14 +41,6 @@ func init() {
 			value: &testStringer{s: "test"},
 			configure: func(vw *CommonValueWriter) {
 				vw.Stringer = nil
-			},
-			ignoreBenchmark: true,
-		},
-		{
-			name:  "Not",
-			value: "test",
-			configure: func(vw *CommonValueWriter) {
-				vw.ValueWriters = ValueWriters{vw.Stringer}
 			},
 			ignoreBenchmark: true,
 		},

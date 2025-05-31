@@ -6,6 +6,7 @@ import (
 
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/itfassert"
 	"github.com/pierrre/pretty/internal/must"
 	"github.com/pierrre/pretty/internal/write"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -39,17 +40,20 @@ func NewValueWriter(vw pretty.ValueWriter) *ValueWriter {
 
 // WriteValue implements [pretty.ValueWriter].
 func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
-	if !messageImplementsCache.ImplementedBy(v.Type()) {
+	typ := v.Type()
+	if !messageImplementsCache.ImplementedBy(typ) {
 		return false
 	}
-	if v.Kind() == reflect.Pointer && v.IsNil() {
+	pm, ok := itfassert.Assert[protoreflect.ProtoMessage](v)
+	if !ok {
 		return false
 	}
-	if !v.CanInterface() {
-		return false
-	}
-	pm := v.Interface().(protoreflect.ProtoMessage) //nolint:forcetypeassert // Checked above.
 	m := pm.ProtoReflect()
+	vw.writeMessage(st, m)
+	return true
+}
+
+func (vw *ValueWriter) writeMessage(st *pretty.State, m protoreflect.Message) {
 	write.MustString(st.Writer, "{")
 	fs := m.Descriptor().Fields()
 	l := fs.Len()
@@ -68,7 +72,7 @@ func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 		write.MustString(st.Writer, string(fd.Name()))
 		write.MustString(st.Writer, ": ")
 		st.KnownType = false // We want to show the types of fields and values.
-		must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(vw.getValueInterface(m.Get(fd), fd))))
+		must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(vw.getInterface(m.Get(fd), fd))))
 		write.MustString(st.Writer, ",\n")
 	}
 	st.IndentLevel--
@@ -76,43 +80,42 @@ func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 		st.WriteIndent()
 	}
 	write.MustString(st.Writer, "}")
-	return true
 }
 
-func (vw *ValueWriter) getValueInterface(v protoreflect.Value, fd protoreflect.FieldDescriptor) any {
+func (vw *ValueWriter) getInterface(v protoreflect.Value, fd protoreflect.FieldDescriptor) any {
 	itf := v.Interface()
 	switch itf := itf.(type) {
 	case protoreflect.Message:
 		return itf.Interface()
 	case protoreflect.List:
-		return vw.getValueInterfaceList(itf, fd)
+		return vw.getList(itf, fd)
 	case protoreflect.Map:
-		return vw.getValueInterfaceMap(itf, fd)
+		return vw.getMap(itf, fd)
 	case protoreflect.EnumNumber:
-		return vw.getValueInterfaceEnum(itf, fd)
+		return vw.getEnum(itf, fd)
 	}
 	return itf
 }
 
-func (vw *ValueWriter) getValueInterfaceList(l protoreflect.List, fd protoreflect.FieldDescriptor) any {
+func (vw *ValueWriter) getList(l protoreflect.List, fd protoreflect.FieldDescriptor) any {
 	// TODO create typed slice
 	res := make([]any, l.Len())
 	for i := range l.Len() {
-		res[i] = vw.getValueInterface(l.Get(i), fd)
+		res[i] = vw.getInterface(l.Get(i), fd)
 	}
 	return res
 }
 
-func (vw *ValueWriter) getValueInterfaceMap(m protoreflect.Map, fd protoreflect.FieldDescriptor) any {
+func (vw *ValueWriter) getMap(m protoreflect.Map, fd protoreflect.FieldDescriptor) any {
 	// TODO create typed map
 	res := make(map[any]any, m.Len())
 	for key, value := range m.Range {
-		res[vw.getValueInterface(key.Value(), fd.MapKey())] = vw.getValueInterface(value, fd.MapValue())
+		res[vw.getInterface(key.Value(), fd.MapKey())] = vw.getInterface(value, fd.MapValue())
 	}
 	return res
 }
 
-func (vw *ValueWriter) getValueInterfaceEnum(e protoreflect.EnumNumber, fd protoreflect.FieldDescriptor) EnumValue {
+func (vw *ValueWriter) getEnum(e protoreflect.EnumNumber, fd protoreflect.FieldDescriptor) EnumValue {
 	res := EnumValue{
 		Number: int32(e),
 	}

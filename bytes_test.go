@@ -85,23 +85,6 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
-			name: "Unexported",
-			value: testUnexported{
-				v: &testBytesable{},
-			},
-			configure: func(vw *CommonValueWriter) {
-				vw.CanInterface = nil
-			},
-			ignoreBenchmark: true,
-		},
-		{
-			name: "UnexportedCanInterface",
-			value: testUnexported{
-				v: &testBytesable{},
-			},
-			ignoreBenchmark: true,
-		},
-		{
 			name:  "ReflectValue",
 			value: reflect.ValueOf(123),
 			configure: func(vw *CommonValueWriter) {
@@ -135,14 +118,6 @@ func init() {
 			value: &testBytesable{b: []byte("test")},
 			configure: func(vw *CommonValueWriter) {
 				vw.BytesableHexDump = nil
-			},
-			ignoreBenchmark: true,
-		},
-		{
-			name:  "Not",
-			value: "test",
-			configure: func(vw *CommonValueWriter) {
-				vw.ValueWriters = ValueWriters{vw.BytesableHexDump}
 			},
 			ignoreBenchmark: true,
 		},

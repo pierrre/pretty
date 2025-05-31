@@ -8,6 +8,7 @@ import (
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/pretty/internal/indent"
+	"github.com/pierrre/pretty/internal/itfassert"
 	"github.com/pierrre/pretty/internal/must"
 	"github.com/pierrre/pretty/internal/write"
 )
@@ -92,19 +93,17 @@ func NewBytesableHexDumpValueWriter() *BytesableHexDumpValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *BytesableHexDumpValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	if !bytesableImplementsCache.ImplementedBy(v.Type()) {
+	typ := v.Type()
+	if !bytesableImplementsCache.ImplementedBy(typ) {
 		return false
 	}
-	if v.Kind() == reflect.Pointer && v.IsNil() {
+	if typ == reflectValueType {
 		return false
 	}
-	if v.Type() == reflectValueType {
+	br, ok := itfassert.Assert[Bytesable](v)
+	if !ok {
 		return false
 	}
-	if !v.CanInterface() {
-		return false
-	}
-	br := v.Interface().(Bytesable) //nolint:forcetypeassert // Checked above.
 	b := br.Bytes()
 	writeArrowWrappedString(st.Writer, ".Bytes() ")
 	if b == nil {

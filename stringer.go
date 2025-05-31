@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/reflectutil"
+	"github.com/pierrre/pretty/internal/itfassert"
 )
 
 var stringerImplementsCache = reflectutil.NewImplementsCacheFor[fmt.Stringer]()
@@ -35,19 +36,17 @@ func NewStringerValueWriter() *StringerValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *StringerValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	if !stringerImplementsCache.ImplementedBy(v.Type()) {
+	typ := v.Type()
+	if !stringerImplementsCache.ImplementedBy(typ) {
 		return false
 	}
-	if v.Kind() == reflect.Pointer && v.IsNil() {
+	if typ == reflectValueType {
 		return false
 	}
-	if v.Type() == reflectValueType {
+	sr, ok := itfassert.Assert[fmt.Stringer](v)
+	if !ok {
 		return false
 	}
-	if !v.CanInterface() {
-		return false
-	}
-	sr := v.Interface().(fmt.Stringer) //nolint:forcetypeassert // Checked above.
 	s := sr.String()
 	writeArrowWrappedString(st.Writer, ".String() ")
 	writeStringValue(st, s, vw.ShowLen, false, 0, vw.Quote, vw.MaxLen)

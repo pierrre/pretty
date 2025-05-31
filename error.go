@@ -5,6 +5,7 @@ import (
 
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/strconvio"
+	"github.com/pierrre/pretty/internal/itfassert"
 	"github.com/pierrre/pretty/internal/write"
 )
 
@@ -28,16 +29,14 @@ func NewErrorValueWriter() *ErrorValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *ErrorValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	if !errorImplementsCache.ImplementedBy(v.Type()) {
+	typ := v.Type()
+	if !errorImplementsCache.ImplementedBy(typ) {
 		return false
 	}
-	if v.Kind() == reflect.Pointer && v.IsNil() {
+	err, ok := itfassert.Assert[error](v)
+	if !ok {
 		return false
 	}
-	if !v.CanInterface() {
-		return false
-	}
-	err := v.Interface().(error) //nolint:forcetypeassert // Checked above.
 	writeArrowWrappedString(st.Writer, ".Error() ")
 	vw.Write(st, err)
 	return true

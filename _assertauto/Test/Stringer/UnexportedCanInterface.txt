@@ -1,8 +1,0 @@
-[github.com/pierrre/pretty_test.testUnexported] {
-	v: [*github.com/pierrre/pretty_test.testStringer] => .String() => (len=0) "",
-}
-	========== assertauto ==========
-[github.com/pierrre/assert/assertauto.allocsPerRun] {
-	Runs: [int] 100,
-	Allocs: [float64] 0,
-}
