@@ -1,10 +1,11 @@
 // Package write provides helpers to write.
+//
+//nolint:gosec // It uses unsafe.
 package write
 
 import (
 	"io"
-
-	"github.com/pierrre/go-libs/unsafeio"
+	"unsafe" //nolint:depguard // The current package is unsafe.
 )
 
 // Must panics if err is not nil.
@@ -16,12 +17,22 @@ func Must(_ int, err error) {
 
 // String writes a string to a [io.Writer].
 func String(w io.Writer, s string) (int, error) {
-	return unsafeio.WriteString(w, s) //nolint:wrapcheck // The error is not wrapped.
+	return w.Write( //nolint:gosec,wrapcheck // The error is not wrapped.
+		unsafe.Slice(
+			unsafe.StringData(s),
+			len(s),
+		),
+	)
 }
 
 // MustString writes a string to a [io.Writer] and panics if an error occurs.
 func MustString(w io.Writer, s string) {
-	_, err := String(w, s)
+	_, err := w.Write(
+		unsafe.Slice(
+			unsafe.StringData(s),
+			len(s),
+		),
+	)
 	if err != nil {
 		panic(err)
 	}

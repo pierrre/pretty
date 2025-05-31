@@ -1,8 +1,8 @@
 package write_test
 
 import (
+	"bytes"
 	"errors"
-	"io"
 	"testing"
 
 	"github.com/pierrre/assert"
@@ -18,6 +18,34 @@ func TestMust(t *testing.T) {
 	})
 }
 
+func TestString(t *testing.T) {
+	buf := new(bytes.Buffer)
+	n, err := String(buf, "test")
+	assert.NoError(t, err)
+	assert.Equal(t, n, 4)
+	assert.Equal(t, buf.String(), "test")
+}
+
+func TestStringError(t *testing.T) {
+	n, err := String(&testErrorWriter{}, "test")
+	assert.Error(t, err)
+	assert.Equal(t, n, 0)
+}
+
 func TestMustString(t *testing.T) {
-	MustString(io.Discard, "test")
+	buf := new(bytes.Buffer)
+	MustString(buf, "test")
+	assert.Equal(t, buf.String(), "test")
+}
+
+func TestMustStringPanic(t *testing.T) {
+	assert.Panics(t, func() {
+		MustString(&testErrorWriter{}, "test")
+	})
+}
+
+type testErrorWriter struct{}
+
+func (w *testErrorWriter) Write(p []byte) (n int, err error) {
+	return 0, errors.New("error")
 }
