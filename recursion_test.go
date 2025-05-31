@@ -34,9 +34,21 @@ func init() {
 			name:  "Disabled",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.Recursion = nil
+				vw.RecursionCheck = false
 			},
 			ignoreBenchmark: true,
+		},
+		{
+			name: "Writer",
+			value: func() any {
+				var v any
+				v = &v
+				return v
+			}(),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.RecursionCheck = false
+				vw.ValueWriters = ValueWriters{NewRecursionValueWriter(vw)}
+			},
 		},
 	})
 }

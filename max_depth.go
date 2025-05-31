@@ -29,12 +29,23 @@ func (vw *MaxDepthValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if vw.Max <= 0 {
 		return vw.ValueWriter.WriteValue(st, v)
 	}
-	if st.Depth >= vw.Max {
+	if checkMaxDepth(st, vw.Max) {
+		return true
+	}
+	ok := vw.ValueWriter.WriteValue(st, v)
+	postMaxDepth(st)
+	return ok
+}
+
+func checkMaxDepth(st *State, maxDepth int) bool {
+	if st.Depth >= maxDepth {
 		write.MustString(st.Writer, "<max depth>")
 		return true
 	}
 	st.Depth++
-	ok := vw.ValueWriter.WriteValue(st, v)
+	return false
+}
+
+func postMaxDepth(st *State) {
 	st.Depth--
-	return ok
 }

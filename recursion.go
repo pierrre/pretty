@@ -23,19 +23,32 @@ func NewRecursionValueWriter(vw ValueWriter) *RecursionValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *RecursionValueWriter) WriteValue(st *State, v reflect.Value) bool {
+	visitedAdded, recursionDetected := checkRecursion(st, v)
+	if recursionDetected {
+		return true
+	}
+	ok := vw.ValueWriter.WriteValue(st, v)
+	if visitedAdded {
+		postRecursion(st)
+	}
+	return ok
+}
+
+func checkRecursion(st *State, v reflect.Value) (visitedAdded bool, recursionDetected bool) {
 	switch v.Kind() { //nolint:exhaustive // Only handles pointer kinds.
 	case reflect.Chan, reflect.Func, reflect.Map, reflect.Pointer, reflect.Slice, reflect.UnsafePointer:
 	default:
-		return vw.ValueWriter.WriteValue(st, v)
+		return false, false
 	}
 	vp := v.Pointer()
 	if slices.Contains(st.Visited, vp) {
 		write.MustString(st.Writer, "<recursion>")
-		return true
+		return false, true
 	}
-	l := len(st.Visited)
 	st.Visited = append(st.Visited, vp)
-	ok := vw.ValueWriter.WriteValue(st, v)
-	st.Visited = st.Visited[:l]
-	return ok
+	return true, false
+}
+
+func postRecursion(st *State) {
+	st.Visited = st.Visited[:len(st.Visited)-1]
 }

@@ -3,6 +3,8 @@ package pretty
 import (
 	"reflect"
 	"testing"
+
+	"github.com/pierrre/go-libs/reflectutil"
 )
 
 // DefaultCommonValueWriter is the default [CommonValueWriter].
@@ -22,11 +24,25 @@ func init() {
 //
 // It should be created with [NewCommonValueWriter].
 type CommonValueWriter struct {
-	UnwrapInterface    *UnwrapInterfaceValueWriter
-	Recursion          *RecursionValueWriter
-	MaxDepth           *MaxDepthValueWriter
-	CanInterface       *CanInterfaceValueWriter
-	Type               *TypeValueWriter
+	// UnwrapInterface indicates whether to unwrap interface values.
+	// Default: true.
+	UnwrapInterface bool
+	// RecursionCheck indicates whether to check for infinite recursion.
+	// Default: true.
+	RecursionCheck bool
+	// MaxDepth indicates the maximum depth to write.
+	// Default: 0 (no limit).
+	MaxDepth int
+	// CanInterface indicates whether to convert the [reflect.Value] so it can be used with [reflect.Value.Interface].
+	// Default: true.
+	CanInterface bool
+	// ShowType indicates whether to show the type of values.
+	// Default: true.
+	ShowType bool
+	// Type is the [ValueWriter] for types.
+	Type TypeValueWriter
+
+	// THe [ValueWriter]s below can be set to nil to disable them.
 	ByTypeValueWriters ByTypeValueWriters
 	ValueWriters       ValueWriters
 	ReflectValue       *ReflectValueWriter
@@ -45,11 +61,12 @@ type CommonValueWriter struct {
 // NewCommonValueWriter creates a new [CommonValueWriter] initialized with default values.
 func NewCommonValueWriter() *CommonValueWriter {
 	vw := &CommonValueWriter{}
-	vw.UnwrapInterface = NewUnwrapInterfaceValueWriter(ValueWriterFunc(vw.postUnwrapInterface))
-	vw.Recursion = NewRecursionValueWriter(ValueWriterFunc(vw.postRecursion))
-	vw.MaxDepth = NewMaxDepthValueWriter(ValueWriterFunc(vw.postMaxDepth))
-	vw.CanInterface = NewCanInterfaceValueWriter(ValueWriterFunc(vw.postCanInterface))
-	vw.Type = NewTypeValueWriter(ValueWriterFunc(vw.postType))
+	vw.UnwrapInterface = true
+	vw.RecursionCheck = true
+	vw.MaxDepth = 0
+	vw.CanInterface = true
+	vw.ShowType = true
+	vw.Type = *NewTypeValueWriter(ValueWriterFunc(vw.internal))
 	vw.ByTypeValueWriters = NewByTypeValueWriters()
 	vw.ReflectValue = NewReflectValueWriter(vw)
 	vw.ReflectType = NewReflectTypeWriter()
@@ -116,64 +133,34 @@ func (vw *CommonValueWriter) ConfigureTest(enabled bool) {
 
 // WriteValue implements [ValueWriter].
 func (vw *CommonValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	if checkInvalidNil(st.Writer, v) {
-		return true
+	if vw.UnwrapInterface {
+		var isNil bool
+		v, isNil = unwrapInterface(st, v)
+		if isNil {
+			return true
+		}
 	}
-	return vw.unwrapInterface(st, v)
-}
-
-func (vw *CommonValueWriter) unwrapInterface(st *State, v reflect.Value) bool {
-	if vw.UnwrapInterface == nil {
-		return vw.postUnwrapInterface(st, v)
+	if vw.RecursionCheck {
+		visitedAdded, recursionDetected := checkRecursion(st, v)
+		if recursionDetected {
+			return true
+		}
+		if visitedAdded {
+			defer postRecursion(st)
+		}
 	}
-	return vw.UnwrapInterface.WriteValue(st, v)
-}
-
-func (vw *CommonValueWriter) postUnwrapInterface(st *State, v reflect.Value) bool {
-	return vw.recursion(st, v)
-}
-
-func (vw *CommonValueWriter) recursion(st *State, v reflect.Value) bool {
-	if vw.Recursion == nil {
-		return vw.postRecursion(st, v)
+	if vw.MaxDepth > 0 {
+		if checkMaxDepth(st, vw.MaxDepth) {
+			return true
+		}
+		defer postMaxDepth(st)
 	}
-	return vw.Recursion.WriteValue(st, v)
-}
-
-func (vw *CommonValueWriter) postRecursion(st *State, v reflect.Value) bool {
-	return vw.maxDepth(st, v)
-}
-
-func (vw *CommonValueWriter) maxDepth(st *State, v reflect.Value) bool {
-	if vw.MaxDepth == nil {
-		return vw.postMaxDepth(st, v)
+	if vw.CanInterface {
+		v, _ = reflectutil.ConvertValueCanInterface(v)
 	}
-	return vw.MaxDepth.WriteValue(st, v)
-}
-
-func (vw *CommonValueWriter) postMaxDepth(st *State, v reflect.Value) bool {
-	return vw.canInterface(st, v)
-}
-
-func (vw *CommonValueWriter) canInterface(st *State, v reflect.Value) bool {
-	if vw.CanInterface == nil {
-		return vw.postCanInterface(st, v)
+	if vw.ShowType {
+		return vw.Type.WriteValue(st, v)
 	}
-	return vw.CanInterface.WriteValue(st, v)
-}
-
-func (vw *CommonValueWriter) postCanInterface(st *State, v reflect.Value) bool {
-	return vw.writeType(st, v)
-}
-
-func (vw *CommonValueWriter) writeType(st *State, v reflect.Value) bool {
-	if vw.Type == nil {
-		return vw.postType(st, v)
-	}
-	return vw.Type.WriteValue(st, v)
-}
-
-func (vw *CommonValueWriter) postType(st *State, v reflect.Value) bool {
 	return vw.internal(st, v)
 }
 

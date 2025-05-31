@@ -20,12 +20,17 @@ func NewUnwrapInterfaceValueWriter(vw ValueWriter) *UnwrapInterfaceValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *UnwrapInterfaceValueWriter) WriteValue(st *State, v reflect.Value) bool {
+	v, isNil := unwrapInterface(st, v)
+	return isNil || vw.ValueWriter.WriteValue(st, v)
+}
+
+func unwrapInterface(st *State, v reflect.Value) (_ reflect.Value, isNil bool) {
 	if v.Kind() == reflect.Interface {
 		if checkNil(st.Writer, v) {
-			return true
+			return reflect.Value{}, true
 		}
 		v = v.Elem()
 		st.KnownType = false // We want to show the type of the value.
 	}
-	return vw.ValueWriter.WriteValue(st, v)
+	return v, false
 }

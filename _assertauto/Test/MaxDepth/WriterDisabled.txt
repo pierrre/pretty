@@ -1,4 +1,4 @@
-[***interface {}] => => => <nil>
+[int] 123
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,

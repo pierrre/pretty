@@ -1,4 +1,4 @@
-[iter.Seq[string]](func(func(string) bool)) github.com/pierrre/pretty_test.init.12.Values[...].func11
+[iter.Seq[string]](func(func(string) bool)) github.com/pierrre/pretty_test.init.13.Values[...].func11
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,

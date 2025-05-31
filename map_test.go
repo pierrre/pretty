@@ -37,7 +37,7 @@ func init() {
 			value: map[int]int{1: 2},
 			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseMap.SortKeys = false
-				vw.UnwrapInterface = nil
+				vw.UnwrapInterface = false
 				vw.Type.ShowKnownTypes = true
 			},
 		},
@@ -123,7 +123,7 @@ func init() {
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.ValueWriters = ValueWriters{vw.Kind.BaseMap}
+				vw.ValueWriters = ValueWriters{&vw.Kind.BaseMap}
 			},
 			ignoreBenchmark: true,
 		},

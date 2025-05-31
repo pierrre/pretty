@@ -193,7 +193,7 @@ func init() {
 			name:  "Disabled",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.Type = nil
+				vw.ShowType = false
 			},
 			ignoreBenchmark: true,
 		},

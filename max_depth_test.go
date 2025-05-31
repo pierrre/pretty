@@ -16,22 +16,24 @@ func init() {
 				return v4
 			}(),
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.MaxDepth.Max = 2
+				vw.MaxDepth = 2
 			},
 		},
 		{
-			name: "Disabled",
-			value: func() any {
-				var v1 any
-				v2 := &v1
-				v3 := &v2
-				v4 := &v3
-				return v4
-			}(),
+			name:  "Writer",
+			value: 123,
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.MaxDepth = nil
+				mdvw := NewMaxDepthValueWriter(vw)
+				mdvw.Max = 2
+				vw.ValueWriters = ValueWriters{mdvw}
 			},
-			ignoreBenchmark: true,
+		},
+		{
+			name:  "WriterDisabled",
+			value: 123,
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.ValueWriters = ValueWriters{NewMaxDepthValueWriter(&vw.Kind.BaseInt)}
+			},
 		},
 	})
 }

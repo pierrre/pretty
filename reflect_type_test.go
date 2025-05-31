@@ -100,7 +100,7 @@ func init() {
 			name:  "Nil",
 			value: [1]reflect.Type{},
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.UnwrapInterface = nil
+				vw.UnwrapInterface = false
 			},
 			ignoreBenchmark: true,
 		},
