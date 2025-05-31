@@ -5,12 +5,13 @@ import (
 	"io"
 
 	"github.com/pierrre/go-libs/unsafeio"
-	"github.com/pierrre/pretty/internal/must"
 )
 
 // Must panics if err is not nil.
 func Must(_ int, err error) {
-	must.NoError(err)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // String writes a string to a [io.Writer].
@@ -20,7 +21,8 @@ func String(w io.Writer, s string) (int, error) {
 
 // MustString writes a string to a [io.Writer] and panics if an error occurs.
 func MustString(w io.Writer, s string) {
-	Must(
-		String(w, s),
-	)
+	_, err := String(w, s)
+	if err != nil {
+		panic(err)
+	}
 }
