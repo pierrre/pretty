@@ -34,6 +34,7 @@ type CommonValueWriter struct {
 	Time               *TimeValueWriter
 	Error              *ErrorValueWriter
 	MathBigInt         *MathBigIntWriter
+	WeakPointer        *WeakPointerWriter
 	BytesHexDump       *BytesHexDumpValueWriter
 	BytesableHexDump   *BytesableHexDumpValueWriter
 	Stringer           *StringerValueWriter
@@ -55,6 +56,7 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.Time = NewTimeValueWriter()
 	vw.Error = NewErrorValueWriter()
 	vw.MathBigInt = NewMathBigIntWriter()
+	vw.WeakPointer = NewWeakPointerWriter(vw)
 	vw.BytesHexDump = NewBytesHexDumpValueWriter()
 	vw.BytesableHexDump = NewBytesableHexDumpValueWriter()
 	vw.Stringer = NewStringerValueWriter()
@@ -196,6 +198,9 @@ func (vw *CommonValueWriter) internal(st *State, v reflect.Value) bool {
 		return true
 	}
 	if vw.MathBigInt != nil && vw.MathBigInt.WriteValue(st, v) {
+		return true
+	}
+	if vw.WeakPointer != nil && vw.WeakPointer.WriteValue(st, v) {
 		return true
 	}
 	if vw.BytesHexDump != nil && vw.BytesHexDump.WriteValue(st, v) {
