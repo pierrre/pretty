@@ -20,7 +20,7 @@ func init() {
 		{
 			name:  "Truncated",
 			value: &testStringer{s: "test"},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Stringer.MaxLen = 2
 			},
 			ignoreBenchmark: true,
@@ -28,7 +28,7 @@ func init() {
 		{
 			name:  "ReflectValue",
 			value: reflect.ValueOf(123),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{
 					vw.Stringer,
 					vw.ReflectValue,
@@ -39,7 +39,7 @@ func init() {
 		{
 			name:  "Disabled",
 			value: &testStringer{s: "test"},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Stringer = nil
 			},
 			ignoreBenchmark: true,

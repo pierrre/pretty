@@ -16,22 +16,27 @@ func newTestPrinter() (*Printer, *CommonValueWriter) {
 	vw := NewCommonValueWriter()
 	vw.ConfigureTest(true)
 	p := NewPrinter(c, vw)
+	p.PanicRecover = false
 	return p, vw
 }
 
 type testCase struct {
-	name            string
-	value           any
-	configure       func(vw *CommonValueWriter)
-	ignoreResult    bool
-	ignoreAllocs    bool
-	ignoreBenchmark bool
+	name             string
+	value            any
+	configurePrinter func(p *Printer)
+	configureWriter  func(vw *CommonValueWriter)
+	ignoreResult     bool
+	ignoreAllocs     bool
+	ignoreBenchmark  bool
 }
 
 func (tc *testCase) newPrinter() *Printer {
 	p, vw := newTestPrinter()
-	if tc.configure != nil {
-		tc.configure(vw)
+	if tc.configurePrinter != nil {
+		tc.configurePrinter(p)
+	}
+	if tc.configureWriter != nil {
+		tc.configureWriter(vw)
 	}
 	return p
 }

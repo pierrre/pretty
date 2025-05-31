@@ -18,7 +18,7 @@ func init() {
 		{
 			name:  "ShowAddr",
 			value: []int{1, 2, 3},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseSlice.ShowAddr = true
 			},
 			ignoreResult:    true,
@@ -27,7 +27,7 @@ func init() {
 		{
 			name:  "ShowCap",
 			value: []int{1, 2, 3},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseSlice.ShowCap = true
 			},
 			ignoreResult:    true,
@@ -36,7 +36,7 @@ func init() {
 		{
 			name:  "ShowIndexes",
 			value: []int{1, 2, 3},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseSlice.ShowIndexes = true
 			},
 		},
@@ -48,7 +48,7 @@ func init() {
 		{
 			name:  "Truncated",
 			value: []int{1, 2, 3},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseSlice.MaxLen = 2
 			},
 			ignoreBenchmark: true,
@@ -61,7 +61,7 @@ func init() {
 		{
 			name:  "ShowKnownTypes",
 			value: []int{1, 2, 3},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Type.ShowKnownTypes = true
 			},
 			ignoreBenchmark: true,
@@ -69,7 +69,7 @@ func init() {
 		{
 			name:  "Not",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.BaseSlice}
 			},
 			ignoreBenchmark: true,

@@ -18,7 +18,7 @@ func init() {
 		{
 			name:  "Disabled",
 			value: [1]any{123},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.UnwrapInterface = nil
 			},
 			ignoreBenchmark: true,
@@ -26,7 +26,7 @@ func init() {
 		{
 			name:  "DisabledNil",
 			value: [1]any{},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.UnwrapInterface = nil
 			},
 			ignoreBenchmark: true,

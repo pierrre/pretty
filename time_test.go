@@ -23,7 +23,7 @@ func init() {
 		{
 			name:  "Location",
 			value: testTime,
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				var err error
 				vw.Time.Location, err = time.LoadLocation("Europe/Paris")
 				must.NoError(err)
@@ -34,7 +34,7 @@ func init() {
 			value: testUnexported{
 				v: testTime,
 			},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.CanInterface = nil
 			},
 			ignoreBenchmark: true,
@@ -49,7 +49,7 @@ func init() {
 		{
 			name:  "Disabled",
 			value: testTime,
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Time = nil
 			},
 			ignoreBenchmark: true,
@@ -57,7 +57,7 @@ func init() {
 		{
 			name:  "Not",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Time}
 			},
 			ignoreBenchmark: true,

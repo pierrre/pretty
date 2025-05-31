@@ -184,7 +184,7 @@ func init() {
 				type myBool bool
 				return myBool(false)
 			}(),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Type.ShowBaseType = false
 			},
 			ignoreBenchmark: true,
@@ -192,7 +192,7 @@ func init() {
 		{
 			name:  "Disabled",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Type = nil
 			},
 			ignoreBenchmark: true,
@@ -202,7 +202,7 @@ func init() {
 		{
 			name:  "Default",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ByTypeValueWriters["string"] = ValueWriterFunc(func(st *State, v reflect.Value) bool {
 					write.MustString(st.Writer, "custom")
 					return true
@@ -212,21 +212,21 @@ func init() {
 		{
 			name:  "NotFound",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ByTypeValueWriters["unknown"] = nil
 			},
 		},
 		{
 			name:  "Empty",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				clear(vw.ByTypeValueWriters)
 			},
 		},
 		{
 			name:  "Disabled",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ByTypeValueWriters = nil
 			},
 			ignoreBenchmark: true,

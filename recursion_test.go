@@ -33,7 +33,7 @@ func init() {
 		{
 			name:  "Disabled",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Recursion = nil
 			},
 			ignoreBenchmark: true,

@@ -32,27 +32,35 @@ var DefaultPrinter = NewPrinter(DefaultConfig, DefaultCommonValueWriter)
 //
 // It should be created with [NewPrinter].
 type Printer struct {
-	Config      *Config
+	// Config is the configuration for the printer.
+	Config *Config
+	// ValueWriter is the [ValueWriter] used to write values.
 	ValueWriter ValueWriter
+	// PanicRecover indicates whether to recover from panics.
+	// Default: true.
+	PanicRecover bool
 }
 
 // NewPrinter creates a new [Printer].
 func NewPrinter(c *Config, vw ValueWriter) *Printer {
 	return &Printer{
-		Config:      c,
-		ValueWriter: vw,
+		Config:       c,
+		ValueWriter:  vw,
+		PanicRecover: true,
 	}
 }
 
 // Write writes the value to the [io.Writer].
 func (p *Printer) Write(w io.Writer, vi any) {
-	defer func() {
-		r := recover()
-		if r == nil {
-			return
-		}
-		writePanic(w, r)
-	}()
+	if p.PanicRecover {
+		defer func() {
+			r := recover()
+			if r == nil {
+				return
+			}
+			writePanic(w, r)
+		}()
+	}
 	v := reflect.ValueOf(vi)
 	if checkInvalidNil(w, v) {
 		return

@@ -15,7 +15,7 @@ func init() {
 				v4 := &v3
 				return v4
 			}(),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.MaxDepth.Max = 2
 			},
 		},
@@ -28,7 +28,7 @@ func init() {
 				v4 := &v3
 				return v4
 			}(),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.MaxDepth = nil
 			},
 			ignoreBenchmark: true,

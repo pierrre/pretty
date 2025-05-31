@@ -9,7 +9,10 @@ func init() {
 		{
 			name:  "Disabled",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configurePrinter: func(p *Printer) {
+				p.PanicRecover = true
+			},
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind = nil
 			},
 			ignoreBenchmark: true,

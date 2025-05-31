@@ -12,7 +12,7 @@ func init() {
 		{
 			name:  "Match",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ValueWriters = []ValueWriter{NewFilterValueWriter(
 					ValueWriterFunc(func(st *State, v reflect.Value) bool {
 						write.MustString(st.Writer, "aaaa")
@@ -26,7 +26,7 @@ func init() {
 		{
 			name:  "NoMatch",
 			value: 123,
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ValueWriters = []ValueWriter{NewFilterValueWriter(
 					ValueWriterFunc(func(st *State, v reflect.Value) bool {
 						panic("should not be called")

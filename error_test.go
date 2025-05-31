@@ -18,7 +18,7 @@ func init() {
 		{
 			name:  "Disabled",
 			value: &testError{},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Error = nil
 			},
 			ignoreBenchmark: true,

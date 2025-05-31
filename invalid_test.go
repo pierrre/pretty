@@ -11,7 +11,7 @@ func init() {
 		{
 			name:  "Base",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{ValueWriterFunc(func(st *State, v reflect.Value) bool {
 					return vw.Kind.WriteValue(st, reflect.ValueOf(nil))
 				})}
@@ -20,7 +20,7 @@ func init() {
 		{
 			name:  "Nil",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{ValueWriterFunc(func(st *State, v reflect.Value) bool {
 					return vw.WriteValue(st, reflect.ValueOf(nil))
 				})}
@@ -29,7 +29,7 @@ func init() {
 		{
 			name:  "Not",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.BaseInvalid}
 			},
 			ignoreBenchmark: true,

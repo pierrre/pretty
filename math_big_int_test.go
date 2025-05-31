@@ -26,7 +26,7 @@ func init() {
 			value: testUnexported{
 				v: big.NewInt(123),
 			},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.CanInterface = nil
 			},
 			ignoreBenchmark: true,
@@ -38,7 +38,7 @@ func init() {
 		{
 			name:  "Disabled",
 			value: big.NewInt(123),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.MathBigInt = nil
 			},
 		},

@@ -99,7 +99,7 @@ func init() {
 		{
 			name:  "Nil",
 			value: [1]reflect.Type{},
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.UnwrapInterface = nil
 			},
 			ignoreBenchmark: true,
@@ -107,7 +107,7 @@ func init() {
 		{
 			name:  "Disabled",
 			value: reflect.TypeFor[string](),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ReflectType = nil
 			},
 			ignoreBenchmark: true,

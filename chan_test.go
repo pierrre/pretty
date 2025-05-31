@@ -26,7 +26,7 @@ func init() {
 				c <- 123
 				return c
 			}(),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseChan.ShowAddr = true
 			},
 			ignoreResult:    true,
@@ -41,7 +41,7 @@ func init() {
 				c <- "c"
 				return c
 			}(),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseChan.ShowElems = true
 			},
 		},
@@ -54,7 +54,7 @@ func init() {
 				c <- "c"
 				return c
 			}(),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseChan.ShowElems = true
 				vw.Kind.BaseChan.ShowIndexes = true
 			},
@@ -68,7 +68,7 @@ func init() {
 				c <- "c"
 				return c
 			}(),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseChan.ShowElems = true
 				vw.Kind.BaseChan.MaxLen = 2
 			},
@@ -82,7 +82,7 @@ func init() {
 				c <- "c"
 				return c
 			}(),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseChan.ShowElems = true
 			},
 		},
@@ -95,7 +95,7 @@ func init() {
 				c <- "c"
 				return c
 			}(),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseChan.ShowElems = true
 				vw.Kind.BaseChan.ShowIndexes = true
 			},
@@ -109,7 +109,7 @@ func init() {
 				c <- "c"
 				return c
 			}(),
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseChan.ShowElems = true
 				vw.Kind.BaseChan.ShowIndexes = true
 			},
@@ -117,7 +117,7 @@ func init() {
 		{
 			name:  "Not",
 			value: "test",
-			configure: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.BaseChan}
 			},
 			ignoreBenchmark: true,
