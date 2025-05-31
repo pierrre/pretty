@@ -12,10 +12,9 @@ import (
 )
 
 func newTestPrinter() (*Printer, *CommonValueWriter) {
-	c := NewConfig()
 	vw := NewCommonValueWriter()
 	vw.ConfigureTest(true)
-	p := NewPrinter(c, vw)
+	p := NewPrinter(vw)
 	p.PanicRecover = false
 	return p, vw
 }

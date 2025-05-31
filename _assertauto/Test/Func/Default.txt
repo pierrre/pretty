@@ -1,4 +1,4 @@
-[func() *pretty.Config] github.com/pierrre/pretty.NewConfig
+[func(interface {}) string] github.com/pierrre/pretty.String
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,

@@ -8,7 +8,7 @@ func init() {
 	addTestCasesPrefix("Func", []*testCase{
 		{
 			name:  "Default",
-			value: NewConfig,
+			value: String,
 		},
 		{
 			name:            "Nil",
@@ -17,7 +17,7 @@ func init() {
 		},
 		{
 			name:  "ShowAddr",
-			value: NewConfig,
+			value: String,
 			configureWriter: func(vw *CommonValueWriter) {
 				vw.Kind.BaseFunc.ShowAddr = true
 			},

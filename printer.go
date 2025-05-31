@@ -26,27 +26,28 @@ func Formatter(vi any) fmt.Formatter {
 }
 
 // DefaultPrinter is the default [Printer].
-var DefaultPrinter = NewPrinter(DefaultConfig, DefaultCommonValueWriter)
+var DefaultPrinter = NewPrinter(DefaultCommonValueWriter)
 
 // Printer pretty-prints values.
 //
 // It should be created with [NewPrinter].
 type Printer struct {
-	// Config is the configuration for the printer.
-	Config *Config
 	// ValueWriter is the [ValueWriter] used to write values.
 	ValueWriter ValueWriter
 	// PanicRecover indicates whether to recover from panics.
 	// Default: true.
 	PanicRecover bool
+	// Indent is the string used to indent.
+	// Default: "\t".
+	Indent string
 }
 
 // NewPrinter creates a new [Printer].
-func NewPrinter(c *Config, vw ValueWriter) *Printer {
+func NewPrinter(vw ValueWriter) *Printer {
 	return &Printer{
-		Config:       c,
 		ValueWriter:  vw,
 		PanicRecover: true,
+		Indent:       "\t",
 	}
 }
 
@@ -65,7 +66,7 @@ func (p *Printer) Write(w io.Writer, vi any) {
 	if checkInvalidNil(w, v) {
 		return
 	}
-	st := newState(w, p.Config.Indent)
+	st := newState(w, p.Indent)
 	defer st.release()
 	must.Handle(p.ValueWriter.WriteValue(st, v))
 }
