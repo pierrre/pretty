@@ -3,7 +3,7 @@ package pretty
 import (
 	"reflect"
 
-	"github.com/pierrre/go-libs/syncutil"
+	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/pretty/internal/must"
 	"github.com/pierrre/pretty/internal/write"
 )
@@ -32,10 +32,10 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	write.MustString(st.Writer, "{")
-	fields := getStructFields(v.Type())
+	fields := reflectutil.GetStructFields(v.Type())
 	hasFields := false
 	st.IndentLevel++
-	for i, field := range fields {
+	for i, field := range fields.Range {
 		if vw.FieldFilter != nil && !vw.FieldFilter(v, field) {
 			continue
 		}
@@ -56,21 +56,6 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	}
 	write.MustString(st.Writer, "}")
 	return true
-}
-
-var structFieldsCache syncutil.Map[reflect.Type, []reflect.StructField]
-
-func getStructFields(typ reflect.Type) []reflect.StructField {
-	fields, ok := structFieldsCache.Load(typ)
-	if ok {
-		return fields
-	}
-	for i := range typ.NumField() {
-		field := typ.Field(i)
-		fields = append(fields, field)
-	}
-	fields, _ = structFieldsCache.LoadOrStore(typ, fields)
-	return fields
 }
 
 // StructFieldFilter is a function that filters struct fields.
