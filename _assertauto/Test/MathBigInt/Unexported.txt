@@ -1,0 +1,13 @@
+[github.com/pierrre/pretty_test.testUnexported] {
+	v: [*math/big.Int] => {
+		neg: [bool] false,
+		abs: [math/big.nat]([]math/big.Word) (len=1) {
+			123,
+		},
+	},
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

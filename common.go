@@ -33,6 +33,7 @@ type CommonValueWriter struct {
 	ReflectType        *ReflectTypeWriter
 	Time               *TimeValueWriter
 	Error              *ErrorValueWriter
+	MathBigInt         *MathBigIntWriter
 	BytesHexDump       *BytesHexDumpValueWriter
 	BytesableHexDump   *BytesableHexDumpValueWriter
 	Stringer           *StringerValueWriter
@@ -53,12 +54,12 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.ReflectType = NewReflectTypeWriter()
 	vw.Time = NewTimeValueWriter()
 	vw.Error = NewErrorValueWriter()
+	vw.MathBigInt = NewMathBigIntWriter()
 	vw.BytesHexDump = NewBytesHexDumpValueWriter()
 	vw.BytesableHexDump = NewBytesableHexDumpValueWriter()
 	vw.Stringer = NewStringerValueWriter()
 	vw.Iter = NewIterValueWriter(vw)
 	vw.Kind = NewKindValueWriter(vw)
-	vw.ByTypeValueWriters["*math/big.Int"] = vw.Stringer
 	return vw
 }
 
@@ -192,6 +193,9 @@ func (vw *CommonValueWriter) internal(st *State, v reflect.Value) bool {
 		return true
 	}
 	if vw.Error != nil && vw.Error.WriteValue(st, v) {
+		return true
+	}
+	if vw.MathBigInt != nil && vw.MathBigInt.WriteValue(st, v) {
 		return true
 	}
 	if vw.BytesHexDump != nil && vw.BytesHexDump.WriteValue(st, v) {

@@ -1,0 +1,6 @@
+[*math/big.Int] 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 3,
+}
