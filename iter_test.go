@@ -68,6 +68,13 @@ func init() {
 			value: slices.All([]string(nil)),
 		},
 		{
+			name:  "Truncated",
+			value: slices.All([]string{"a", "b", "c"}),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Iter.MaxLen = 2
+			},
+		},
+		{
 			name:  "KeysStringShowInfos",
 			value: maps.All(map[string]int{"a": 1}),
 			configureWriter: func(vw *CommonValueWriter) {

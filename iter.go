@@ -76,19 +76,26 @@ func (vw *IterValueWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, refl
 	first := true
 	write.MustString(st.Writer, "{")
 	st.IndentLevel++
+	i := 0
 	for k, v := range it {
 		if first {
 			first = false
 			write.MustString(st.Writer, "\n")
 		}
+		st.WriteIndent()
+		if vw.MaxLen > 0 && i >= vw.MaxLen {
+			writeTruncated(st.Writer)
+			write.MustString(st.Writer, "\n")
+			break
+		}
 		showInfos := st.ShowInfos
 		st.ShowInfos = vw.ShowKeysInfos
-		st.WriteIndent()
 		must.Handle(vw.ValueWriter.WriteValue(st, k))
 		st.ShowInfos = showInfos
 		write.MustString(st.Writer, ": ")
 		must.Handle(vw.ValueWriter.WriteValue(st, v))
 		write.MustString(st.Writer, ",\n")
+		i++
 	}
 	st.IndentLevel--
 	write.MustString(st.Writer, "}")
