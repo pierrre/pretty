@@ -1,7 +1,7 @@
 [*github.com/pierrre/pretty_test.testBytesable] => {
 	b: [[]uint8] (len=4)
 		00000000  74 65 73 74                                       |test|
-,
+	,
 }
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {

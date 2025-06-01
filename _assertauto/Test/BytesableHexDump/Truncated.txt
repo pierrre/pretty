@@ -1,6 +1,7 @@
 [*github.com/pierrre/pretty_test.testBytesable] => .Bytes() => (len=4)
 	00000000  74 65                                             |te|
 	<truncated>
+
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,

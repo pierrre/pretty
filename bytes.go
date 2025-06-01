@@ -140,8 +140,10 @@ func writeBytesHexDumpCommon(st *State, v reflect.Value, b []byte, showLen bool,
 	if truncated {
 		st.WriteIndent()
 		writeTruncated(st.Writer)
+		write.MustString(st.Writer, "\n")
 	}
 	st.IndentLevel--
+	st.WriteIndent()
 }
 
 type hexDumperPoolEntry struct {
