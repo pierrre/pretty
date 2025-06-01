@@ -67,6 +67,9 @@ func (vw *IterValueWriter) writeSeq(st *State, it iter.Seq[reflect.Value]) {
 		i++
 	}
 	st.IndentLevel--
+	if i != 0 {
+		st.WriteIndent()
+	}
 	write.MustString(st.Writer, "}")
 }
 
@@ -94,5 +97,8 @@ func (vw *IterValueWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, refl
 		i++
 	}
 	st.IndentLevel--
+	if i != 0 {
+		st.WriteIndent()
+	}
 	write.MustString(st.Writer, "}")
 }
