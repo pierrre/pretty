@@ -1,5 +1,5 @@
 [[1]interface {}] {
-	123,
+	[int] 123,
 }
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
