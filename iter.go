@@ -49,13 +49,11 @@ func (vw *IterValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 func (vw *IterValueWriter) writeSeq(st *State, it iter.Seq[reflect.Value]) {
-	first := true
 	write.MustString(st.Writer, "{")
 	st.IndentLevel++
 	i := 0
 	for v := range it {
-		if first {
-			first = false
+		if i == 0 {
 			write.MustString(st.Writer, "\n")
 		}
 		st.WriteIndent()
@@ -73,13 +71,11 @@ func (vw *IterValueWriter) writeSeq(st *State, it iter.Seq[reflect.Value]) {
 }
 
 func (vw *IterValueWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, reflect.Value]) {
-	first := true
 	write.MustString(st.Writer, "{")
 	st.IndentLevel++
 	i := 0
 	for k, v := range it {
-		if first {
-			first = false
+		if i == 0 {
 			write.MustString(st.Writer, "\n")
 		}
 		st.WriteIndent()
