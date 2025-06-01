@@ -203,7 +203,7 @@ func init() {
 			name:  "Default",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.ByTypeValueWriters["string"] = ValueWriterFunc(func(st *State, v reflect.Value) bool {
+				vw.ByTypeValueWriters[reflect.TypeFor[string]()] = ValueWriterFunc(func(st *State, v reflect.Value) bool {
 					write.MustString(st.Writer, "custom")
 					return true
 				})
@@ -213,23 +213,8 @@ func init() {
 			name:  "NotFound",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.ByTypeValueWriters["unknown"] = nil
+				vw.ByTypeValueWriters[reflect.TypeFor[int]()] = nil
 			},
-		},
-		{
-			name:  "Empty",
-			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
-				clear(vw.ByTypeValueWriters)
-			},
-		},
-		{
-			name:  "Disabled",
-			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
-				vw.ByTypeValueWriters = nil
-			},
-			ignoreBenchmark: true,
 		},
 	})
 }

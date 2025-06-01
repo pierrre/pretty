@@ -69,10 +69,10 @@ func (vw *TypeValueWriter) writeBaseType(w io.Writer, v reflect.Value) {
 	write.MustString(w, ")")
 }
 
-// ByTypeValueWriters is a [ValueWriter] that selects a [ValueWriter] by type name.
+// ByTypeValueWriters is a [ValueWriter] that selects a [ValueWriter] by [reflect.Type].
 //
 // It should be created with [NewByTypeValueWriters].
-type ByTypeValueWriters map[string]ValueWriter
+type ByTypeValueWriters map[reflect.Type]ValueWriter
 
 // NewByTypeValueWriters creates a new [ByTypeValueWriters].
 func NewByTypeValueWriters() ByTypeValueWriters {
@@ -85,8 +85,7 @@ func (vw ByTypeValueWriters) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	typ := v.Type()
-	name := reflectutil.TypeFullName(typ)
-	w, ok := vw[name]
+	w, ok := vw[typ]
 	if !ok {
 		return false
 	}
