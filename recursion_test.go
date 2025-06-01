@@ -1,6 +1,8 @@
 package pretty_test
 
 import (
+	"reflect"
+
 	. "github.com/pierrre/pretty"
 )
 
@@ -47,7 +49,9 @@ func init() {
 			}(),
 			configureWriter: func(vw *CommonValueWriter) {
 				vw.RecursionCheck = false
-				vw.ValueWriters = ValueWriters{NewRecursionValueWriter(vw)}
+				vw.ValueWriters = ValueWriters{NewFilterValueWriter(NewRecursionValueWriter(vw), func(v reflect.Value) bool {
+					return v.Kind() == reflect.Pointer
+				})}
 			},
 		},
 	})
