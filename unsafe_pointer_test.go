@@ -27,7 +27,7 @@ func init() {
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.ValueWriters = ValueWriters{&vw.Kind.BaseUnsafePointer}
+				vw.ValueWriters = ValueWriters{&vw.Kind.UnsafePointer}
 			},
 			ignoreBenchmark: true,
 		},

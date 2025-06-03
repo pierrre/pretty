@@ -84,10 +84,10 @@ func NewCommonValueWriter() *CommonValueWriter {
 
 // SetShowLen sets ShowLen on all [ValueWriter] that supports it.
 func (vw *CommonValueWriter) SetShowLen(show bool) {
-	vw.Kind.BaseChan.ShowLen = show
-	vw.Kind.BaseMap.ShowLen = show
-	vw.Kind.BaseSlice.ShowLen = show
-	vw.Kind.BaseString.ShowLen = show
+	vw.Kind.Chan.ShowLen = show
+	vw.Kind.Map.ShowLen = show
+	vw.Kind.Slice.ShowLen = show
+	vw.Kind.String.ShowLen = show
 	vw.BytesHexDump.ShowLen = show
 	vw.BytesableHexDump.ShowLen = show
 	vw.Stringer.ShowLen = show
@@ -95,29 +95,29 @@ func (vw *CommonValueWriter) SetShowLen(show bool) {
 
 // SetShowCap sets ShowCap on all [ValueWriter] that supports it.
 func (vw *CommonValueWriter) SetShowCap(show bool) {
-	vw.Kind.BaseChan.ShowCap = show
-	vw.Kind.BaseSlice.ShowCap = show
+	vw.Kind.Chan.ShowCap = show
+	vw.Kind.Slice.ShowCap = show
 	vw.BytesHexDump.ShowCap = show
 	vw.BytesableHexDump.ShowCap = show
 }
 
 // SetShowAddr sets ShowAddr on all [ValueWriter] that supports it.
 func (vw *CommonValueWriter) SetShowAddr(show bool) {
-	vw.Kind.BaseChan.ShowAddr = show
-	vw.Kind.BaseFunc.ShowAddr = show
-	vw.Kind.BaseMap.ShowAddr = show
-	vw.Kind.BasePointer.ShowAddr = show
-	vw.Kind.BaseSlice.ShowAddr = show
-	vw.Kind.BaseString.ShowAddr = show
+	vw.Kind.Chan.ShowAddr = show
+	vw.Kind.Func.ShowAddr = show
+	vw.Kind.Map.ShowAddr = show
+	vw.Kind.Pointer.ShowAddr = show
+	vw.Kind.Slice.ShowAddr = show
+	vw.Kind.String.ShowAddr = show
 	vw.BytesHexDump.ShowAddr = show
 	vw.BytesableHexDump.ShowAddr = show
 }
 
 // SetShowIndexes sets ShowIndexes on all [ValueWriter] that supports it.
 func (vw *CommonValueWriter) SetShowIndexes(show bool) {
-	vw.Kind.BaseArray.ShowIndexes = show
-	vw.Kind.BaseSlice.ShowIndexes = show
-	vw.Kind.BaseChan.ShowIndexes = show
+	vw.Kind.Array.ShowIndexes = show
+	vw.Kind.Slice.ShowIndexes = show
+	vw.Kind.Chan.ShowIndexes = show
 }
 
 // ConfigureTest configures the [CommonValueWriter] for testing.
@@ -126,7 +126,7 @@ func (vw *CommonValueWriter) SetShowIndexes(show bool) {
 // It sorts the keys of maps and disables the address/capacity.
 // The enabled boolean is used to enable or disable the configuration.
 func (vw *CommonValueWriter) ConfigureTest(enabled bool) {
-	vw.Kind.BaseMap.SortKeys = enabled
+	vw.Kind.Map.SortKeys = enabled
 	vw.SetShowAddr(!enabled)
 	vw.SetShowCap(!enabled)
 }

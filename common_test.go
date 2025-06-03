@@ -10,10 +10,10 @@ import (
 func TestCommonValueWriterSetShowLen(t *testing.T) {
 	vw := NewCommonValueWriter()
 	vw.SetShowLen(true)
-	assert.True(t, vw.Kind.BaseChan.ShowLen)
-	assert.True(t, vw.Kind.BaseMap.ShowLen)
-	assert.True(t, vw.Kind.BaseSlice.ShowLen)
-	assert.True(t, vw.Kind.BaseString.ShowLen)
+	assert.True(t, vw.Kind.Chan.ShowLen)
+	assert.True(t, vw.Kind.Map.ShowLen)
+	assert.True(t, vw.Kind.Slice.ShowLen)
+	assert.True(t, vw.Kind.String.ShowLen)
 	assert.True(t, vw.BytesHexDump.ShowLen)
 	assert.True(t, vw.BytesableHexDump.ShowLen)
 	assert.True(t, vw.Stringer.ShowLen)
@@ -22,7 +22,7 @@ func TestCommonValueWriterSetShowLen(t *testing.T) {
 func TestCommonValueWriterSetShowIndexes(t *testing.T) {
 	vw := NewCommonValueWriter()
 	vw.SetShowIndexes(true)
-	assert.True(t, vw.Kind.BaseArray.ShowIndexes)
-	assert.True(t, vw.Kind.BaseSlice.ShowIndexes)
-	assert.True(t, vw.Kind.BaseChan.ShowIndexes)
+	assert.True(t, vw.Kind.Array.ShowIndexes)
+	assert.True(t, vw.Kind.Slice.ShowIndexes)
+	assert.True(t, vw.Kind.Chan.ShowIndexes)
 }

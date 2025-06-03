@@ -19,7 +19,7 @@ func init() {
 			name:  "ShowAddr",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.Kind.BaseString.ShowAddr = true
+				vw.Kind.String.ShowAddr = true
 			},
 			ignoreResult:    true,
 			ignoreBenchmark: true,
@@ -28,14 +28,14 @@ func init() {
 			name:  "Unquoted",
 			value: "aaa\nbbb",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.Kind.BaseString.Quote = false
+				vw.Kind.String.Quote = false
 			},
 		},
 		{
 			name:  "Truncated",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.Kind.BaseString.MaxLen = 2
+				vw.Kind.String.MaxLen = 2
 			},
 			ignoreBenchmark: true,
 		},
@@ -43,7 +43,7 @@ func init() {
 			name:  "Not",
 			value: 123,
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.ValueWriters = ValueWriters{&vw.Kind.BaseString}
+				vw.ValueWriters = ValueWriters{&vw.Kind.String}
 			},
 			ignoreBenchmark: true,
 		},

@@ -25,7 +25,7 @@ func init() {
 				return &i
 			}(),
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.Kind.BasePointer.ShowAddr = true
+				vw.Kind.Pointer.ShowAddr = true
 			},
 			ignoreResult:    true,
 			ignoreBenchmark: true,
@@ -53,7 +53,7 @@ func init() {
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.ValueWriters = ValueWriters{&vw.Kind.BasePointer}
+				vw.ValueWriters = ValueWriters{&vw.Kind.Pointer}
 			},
 			ignoreBenchmark: true,
 		},

@@ -14,7 +14,7 @@ func init() {
 			name:  "ShowIndexes",
 			value: [...]int{1, 2, 3},
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.Kind.BaseArray.ShowIndexes = true
+				vw.Kind.Array.ShowIndexes = true
 			},
 		},
 		{
@@ -26,7 +26,7 @@ func init() {
 			name:  "Truncated",
 			value: [...]int{1, 2, 3},
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.Kind.BaseArray.MaxLen = 2
+				vw.Kind.Array.MaxLen = 2
 			},
 			ignoreBenchmark: true,
 		},
@@ -47,7 +47,7 @@ func init() {
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.ValueWriters = ValueWriters{&vw.Kind.BaseArray}
+				vw.ValueWriters = ValueWriters{&vw.Kind.Array}
 			},
 			ignoreBenchmark: true,
 		},

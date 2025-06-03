@@ -27,14 +27,14 @@ func init() {
 				unexported: 123,
 			},
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.Kind.BaseStruct.FieldFilter = NewExportedStructFieldFilter()
+				vw.Kind.Struct.FieldFilter = NewExportedStructFieldFilter()
 			},
 		},
 		{
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.ValueWriters = ValueWriters{&vw.Kind.BaseStruct}
+				vw.ValueWriters = ValueWriters{&vw.Kind.Struct}
 			},
 			ignoreBenchmark: true,
 		},
