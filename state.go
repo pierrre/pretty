@@ -2,6 +2,7 @@ package pretty
 
 import (
 	"io"
+	"reflect"
 
 	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/pretty/internal/indent"
@@ -15,7 +16,7 @@ type State struct {
 	Depth        int
 	IndentString string
 	IndentLevel  int
-	Visited      []uintptr
+	Visited      []VisitedEntry
 	KnownType    bool
 	ShowInfos    bool
 }
@@ -46,4 +47,10 @@ func (st *State) WriteIndent() {
 func (st *State) release() {
 	st.Writer = nil
 	statePool.Put(st)
+}
+
+// VisitedEntry represents a visited value.
+type VisitedEntry struct {
+	Type reflect.Type
+	Addr uintptr
 }
