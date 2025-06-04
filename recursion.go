@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"slices"
 
+	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/pretty/internal/write"
 )
 
@@ -12,18 +13,22 @@ import (
 // It should be created with [NewRecursionValueWriter].
 type RecursionValueWriter struct {
 	ValueWriter
+	// ShowInfos shows the infos (type and address).
+	// Default: true.
+	ShowInfos bool
 }
 
 // NewRecursionValueWriter creates a new [RecursionValueWriter].
 func NewRecursionValueWriter(vw ValueWriter) *RecursionValueWriter {
 	return &RecursionValueWriter{
 		ValueWriter: vw,
+		ShowInfos:   true,
 	}
 }
 
 // WriteValue implements [ValueWriter].
 func (vw *RecursionValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	visitedAdded, recursionDetected := checkRecursion(st, v)
+	visitedAdded, recursionDetected := checkRecursion(st, v, vw.ShowInfos)
 	if recursionDetected {
 		return true
 	}
@@ -34,7 +39,7 @@ func (vw *RecursionValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	return ok
 }
 
-func checkRecursion(st *State, v reflect.Value) (visitedAdded bool, recursionDetected bool) {
+func checkRecursion(st *State, v reflect.Value, showInfos bool) (visitedAdded bool, recursionDetected bool) {
 	switch v.Kind() { //nolint:exhaustive // Only handles pointer kinds.
 	case reflect.Pointer, reflect.Map, reflect.Slice:
 	default:
@@ -44,12 +49,18 @@ func checkRecursion(st *State, v reflect.Value) (visitedAdded bool, recursionDet
 		Type: v.Type(),
 		Addr: uintptr(v.UnsafePointer()),
 	}
-	if slices.Contains(st.Visited, e) {
-		write.MustString(st.Writer, "<recursion>")
-		return false, true
+	if !slices.Contains(st.Visited, e) {
+		st.Visited = append(st.Visited, e)
+		return true, false
 	}
-	st.Visited = append(st.Visited, e)
-	return true, false
+	write.MustString(st.Writer, "<recursion>")
+	if showInfos {
+		write.MustString(st.Writer, " ")
+		write.MustString(st.Writer, reflectutil.TypeFullName(e.Type))
+		write.MustString(st.Writer, " ")
+		writeUintptr(st.Writer, e.Addr)
+	}
+	return false, true
 }
 
 func postRecursion(st *State) {

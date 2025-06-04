@@ -33,6 +33,18 @@ func init() {
 			}(),
 		},
 		{
+			name: "ShowInfos",
+			value: func() any {
+				var v any
+				v = &v
+				return v
+			}(),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Kind.Pointer.ShowAddr = true
+			},
+			ignoreResult: true,
+		},
+		{
 			name:  "Disabled",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
@@ -48,8 +60,10 @@ func init() {
 				return v
 			}(),
 			configureWriter: func(vw *CommonValueWriter) {
+				rvw := NewRecursionValueWriter(vw)
+				rvw.ShowInfos = false
 				vw.RecursionCheck = false
-				vw.ValueWriters = ValueWriters{NewFilterValueWriter(NewRecursionValueWriter(vw), func(v reflect.Value) bool {
+				vw.ValueWriters = ValueWriters{NewFilterValueWriter(rvw, func(v reflect.Value) bool {
 					return v.Kind() == reflect.Pointer
 				})}
 			},

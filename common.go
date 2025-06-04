@@ -132,6 +132,8 @@ func (vw *CommonValueWriter) ConfigureTest(enabled bool) {
 }
 
 // WriteValue implements [ValueWriter].
+//
+//nolint:gocyclo // Yes it's complex.
 func (vw *CommonValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if vw.UnwrapInterface {
 		var isNil bool
@@ -141,7 +143,8 @@ func (vw *CommonValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		}
 	}
 	if vw.RecursionCheck {
-		visitedAdded, recursionDetected := checkRecursion(st, v)
+		showInfos := vw.Kind != nil && vw.Kind.Pointer.ShowAddr
+		visitedAdded, recursionDetected := checkRecursion(st, v, showInfos)
 		if recursionDetected {
 			return true
 		}
