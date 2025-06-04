@@ -14,9 +14,6 @@ import (
 // It should be created with [NewTypeValueWriter].
 type TypeValueWriter struct {
 	ValueWriter
-	// Stringer converts the [reflect.Type] to a string.
-	// Default: [reflectutil.TypeFullName].
-	Stringer func(reflect.Type) string
 	// ShowKnownTypes shows known types.
 	// Default: false.
 	ShowKnownTypes bool
@@ -29,7 +26,6 @@ type TypeValueWriter struct {
 func NewTypeValueWriter(vw ValueWriter) *TypeValueWriter {
 	return &TypeValueWriter{
 		ValueWriter:    vw,
-		Stringer:       reflectutil.TypeFullName,
 		ShowKnownTypes: false,
 		ShowBaseType:   true,
 	}
@@ -39,7 +35,7 @@ func NewTypeValueWriter(vw ValueWriter) *TypeValueWriter {
 func (vw *TypeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !st.KnownType || vw.ShowKnownTypes {
 		write.MustString(st.Writer, "[")
-		vw.writeType(st.Writer, v.Type())
+		writeType(st.Writer, v.Type())
 		write.MustString(st.Writer, "]")
 		vw.writeBaseType(st.Writer, v)
 		write.MustString(st.Writer, " ")
@@ -51,22 +47,21 @@ func (vw *TypeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	return true
 }
 
-func (vw *TypeValueWriter) writeType(w io.Writer, typ reflect.Type) {
-	write.MustString(w, vw.Stringer(typ))
-}
-
 func (vw *TypeValueWriter) writeBaseType(w io.Writer, v reflect.Value) {
 	if !vw.ShowBaseType {
 		return
 	}
 	typ := v.Type()
 	baseType := reflectutil.GetBaseType(typ)
-	if baseType == nil || baseType == typ {
-		return
+	if baseType != typ {
+		write.MustString(w, "(")
+		writeType(w, baseType)
+		write.MustString(w, ")")
 	}
-	write.MustString(w, "(")
-	vw.writeType(w, baseType)
-	write.MustString(w, ")")
+}
+
+func writeType(w io.Writer, typ reflect.Type) {
+	write.MustString(w, reflectutil.TypeFullName(typ))
 }
 
 // ByTypeValueWriters is a [ValueWriter] that selects a [ValueWriter] by [reflect.Type].

@@ -59,7 +59,7 @@ func (vw *ReflectTypeWriter) writeType(st *State, typ reflect.Type) {
 func (vw *ReflectTypeWriter) writeTypeFullName(st *State, typ reflect.Type) {
 	st.WriteIndent()
 	write.MustString(st.Writer, "FullName: ")
-	write.MustString(st.Writer, reflectutil.TypeFullName(typ))
+	writeType(st.Writer, typ)
 	write.MustString(st.Writer, ",\n")
 }
 
@@ -174,7 +174,7 @@ func (vw *ReflectTypeWriter) writeTypeStruct(st *State, typ reflect.Type) {
 		st.WriteIndent()
 		write.MustString(st.Writer, f.Name)
 		write.MustString(st.Writer, " ")
-		write.MustString(st.Writer, reflectutil.TypeFullName(f.Type))
+		writeType(st.Writer, f.Type)
 		write.MustString(st.Writer, ",\n")
 	}
 	st.IndentLevel--
@@ -204,7 +204,7 @@ func (vw *ReflectTypeWriter) writeTypeFuncParameters(st *State, name string, cou
 		}
 		typ := get(i)
 		st.WriteIndent()
-		write.MustString(st.Writer, reflectutil.TypeFullName(typ))
+		writeType(st.Writer, typ)
 		write.MustString(st.Writer, ",\n")
 	}
 	st.IndentLevel--

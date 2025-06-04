@@ -7,7 +7,6 @@
 		ShowType: [bool] true,
 		Type: [github.com/pierrre/pretty.TypeValueWriter] {
 			ValueWriter: [github.com/pierrre/pretty.ValueWriterFunc](func(*pretty.State, reflect.Value) bool) github.com/pierrre/pretty.(*CommonValueWriter).internal-fm,
-			Stringer: [func(reflect.Type) string] github.com/pierrre/go-libs/reflectutil.TypeFullName,
 			ShowKnownTypes: [bool] false,
 			ShowBaseType: [bool] true,
 		},
