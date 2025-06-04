@@ -53,6 +53,15 @@ func addTestCasesPrefix(prefix string, tcs []*testCase) {
 	addTestCases(tcs)
 }
 
+func init() {
+	addTestCasesPrefix("Printer", []*testCase{
+		{
+			name:  "Default",
+			value: DefaultPrinter,
+		},
+	})
+}
+
 func Test(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
