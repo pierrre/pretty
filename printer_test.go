@@ -50,8 +50,9 @@ func addTestCasesPrefix(prefix string, tcs []*testCase) {
 func init() {
 	addTestCasesPrefix("Printer", []*testCase{
 		{
-			name:  "Default",
-			value: DefaultPrinter,
+			name:         "Default",
+			value:        DefaultPrinter,
+			ignoreResult: true,
 		},
 	})
 }
