@@ -1,4 +1,4 @@
-[string] <panic>: not handled
+[string] custom
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,

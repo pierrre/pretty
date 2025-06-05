@@ -42,7 +42,7 @@ type CommonValueWriter struct {
 	// Type is the [ValueWriter] for types.
 	Type TypeValueWriter
 
-	// THe [ValueWriter]s below can be set to nil to disable them.
+	// The [ValueWriter]s below can be set to nil to disable them.
 	ByTypeValueWriters ByTypeValueWriters
 	ValueWriters       ValueWriters
 	ReflectValue       *ReflectValueWriter
@@ -55,7 +55,10 @@ type CommonValueWriter struct {
 	BytesableHexDump   *BytesableHexDumpValueWriter
 	Stringer           *StringerValueWriter
 	Iter               *IterValueWriter
-	Kind               *KindValueWriter
+
+	// Kind is the default [ValueWriter].
+	// It must not be set to nil.
+	Kind *KindValueWriter
 }
 
 // NewCommonValueWriter creates a new [CommonValueWriter] initialized with default values.
@@ -205,8 +208,5 @@ func (vw *CommonValueWriter) internal(st *State, v reflect.Value) bool {
 	if vw.Iter != nil && vw.Iter.WriteValue(st, v) {
 		return true
 	}
-	if vw.Kind != nil && vw.Kind.WriteValue(st, v) {
-		return true
-	}
-	return false
+	return vw.Kind.WriteValue(st, v)
 }
