@@ -224,7 +224,6 @@
 			},
 		},
 	},
-	PanicRecover: [bool] true,
 	Indent: [string] (len=1) "\t",
 }
 	========== assertauto ==========

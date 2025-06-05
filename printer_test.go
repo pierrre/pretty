@@ -11,14 +11,6 @@ import (
 	. "github.com/pierrre/pretty"
 )
 
-func newTestPrinter() (*Printer, *CommonValueWriter) {
-	vw := NewCommonValueWriter()
-	vw.ConfigureTest(true)
-	p := NewPrinter(vw)
-	p.PanicRecover = false
-	return p, vw
-}
-
 type testCase struct {
 	name             string
 	value            any
@@ -30,12 +22,14 @@ type testCase struct {
 }
 
 func (tc *testCase) newPrinter() *Printer {
-	p, vw := newTestPrinter()
-	if tc.configurePrinter != nil {
-		tc.configurePrinter(p)
-	}
+	vw := NewCommonValueWriter()
+	vw.ConfigureTest(true)
 	if tc.configureWriter != nil {
 		tc.configureWriter(vw)
+	}
+	p := NewPrinter(vw)
+	if tc.configurePrinter != nil {
+		tc.configurePrinter(p)
 	}
 	return p
 }
@@ -105,6 +99,34 @@ func TestWrite(t *testing.T) {
 		t.Helper()
 		Write(io.Discard, "test")
 	})
+}
+
+func TestWriteErr(t *testing.T) {
+	buf := new(bytes.Buffer)
+	err := WriteErr(buf, "test")
+	assert.NoError(t, err)
+	s := buf.String()
+	assertauto.Equal(t, s)
+	assertauto.AllocsPerRun(t, 100, func() {
+		t.Helper()
+		Write(io.Discard, "test")
+	})
+}
+
+func TestWriteErrError(t *testing.T) {
+	w := &testPanicWriter{}
+	err := WriteErr(w, "test")
+	assert.Error(t, err)
+	assertauto.AllocsPerRun(t, 100, func() {
+		t.Helper()
+		_ = WriteErr(w, "test")
+	})
+}
+
+type testPanicWriter struct{}
+
+func (w *testPanicWriter) Write(p []byte) (int, error) {
+	panic("test")
 }
 
 func TestString(t *testing.T) {

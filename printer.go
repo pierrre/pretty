@@ -7,12 +7,16 @@ import (
 
 	"github.com/pierrre/go-libs/bufpool"
 	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // Write writes the value to the [io.Writer] with [DefaultPrinter].
 func Write(w io.Writer, vi any) {
 	DefaultPrinter.Write(w, vi)
+}
+
+// WriteErr writes the value to the [io.Writer] with [DefaultPrinter], and returns an error if it occurs.
+func WriteErr(w io.Writer, vi any) error {
+	return DefaultPrinter.WriteErr(w, vi)
 }
 
 // String returns the value as a string with [DefaultPrinter].
@@ -34,9 +38,6 @@ var DefaultPrinter = NewPrinter(DefaultCommonValueWriter)
 type Printer struct {
 	// ValueWriter is the [ValueWriter] used to write values.
 	ValueWriter ValueWriter
-	// PanicRecover indicates whether to recover from panics.
-	// Default: true.
-	PanicRecover bool
 	// Indent is the string used to indent.
 	// Default: "\t".
 	Indent string
@@ -45,23 +46,16 @@ type Printer struct {
 // NewPrinter creates a new [Printer].
 func NewPrinter(vw ValueWriter) *Printer {
 	return &Printer{
-		ValueWriter:  vw,
-		PanicRecover: true,
-		Indent:       "\t",
+		ValueWriter: vw,
+		Indent:      "\t",
 	}
 }
 
 // Write writes the value to the [io.Writer].
+//
+// It panics if there is a write error.
+// For error handling, see [Printer.WriteErr].
 func (p *Printer) Write(w io.Writer, vi any) {
-	if p.PanicRecover {
-		defer func() {
-			r := recover()
-			if r == nil {
-				return
-			}
-			writePanic(w, r)
-		}()
-	}
 	v := reflect.ValueOf(vi)
 	if checkInvalidNil(w, v) {
 		return
@@ -71,9 +65,21 @@ func (p *Printer) Write(w io.Writer, vi any) {
 	must.Handle(p.ValueWriter.WriteValue(st, v))
 }
 
-func writePanic(w io.Writer, r any) {
-	_, _ = write.String(w, "<panic>: ")
-	_, _ = fmt.Fprint(w, r)
+// WriteErr writes the value to the [io.Writer] and returns an error if it occurs.
+func (p *Printer) WriteErr(w io.Writer, vi any) (err error) {
+	defer func() {
+		r := recover()
+		if r == nil {
+			return
+		}
+		var ok bool
+		err, ok = r.(error)
+		if !ok {
+			err = fmt.Errorf("panic: %v", r)
+		}
+	}()
+	p.Write(w, vi)
+	return nil
 }
 
 var bufPool = &bufpool.Pool{
@@ -102,5 +108,5 @@ type formatter struct {
 }
 
 func (ft *formatter) Format(f fmt.State, verb rune) {
-	ft.printer.Write(f, ft.value)
+	_ = ft.printer.WriteErr(f, ft.value)
 }
