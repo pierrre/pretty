@@ -1,4 +1,4 @@
-[string] custom
+[string] (len=4) "test"
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,

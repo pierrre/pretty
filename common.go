@@ -43,18 +43,18 @@ type CommonValueWriter struct {
 	Type TypeValueWriter
 
 	// The [ValueWriter]s below can be set to nil to disable them.
-	ByTypeValueWriters ByTypeValueWriters
-	ValueWriters       ValueWriters
-	ReflectValue       *ReflectValueWriter
-	ReflectType        *ReflectTypeWriter
-	Time               *TimeValueWriter
-	Error              *ErrorValueWriter
-	MathBigInt         *MathBigIntWriter
-	WeakPointer        *WeakPointerWriter
-	BytesHexDump       *BytesHexDumpValueWriter
-	BytesableHexDump   *BytesableHexDumpValueWriter
-	Stringer           *StringerValueWriter
-	Iter               *IterValueWriter
+	ByType           *ByTypeValueWriter
+	ValueWriters     ValueWriters
+	ReflectValue     *ReflectValueWriter
+	ReflectType      *ReflectTypeWriter
+	Time             *TimeValueWriter
+	Error            *ErrorValueWriter
+	MathBigInt       *MathBigIntWriter
+	WeakPointer      *WeakPointerWriter
+	BytesHexDump     *BytesHexDumpValueWriter
+	BytesableHexDump *BytesableHexDumpValueWriter
+	Stringer         *StringerValueWriter
+	Iter             *IterValueWriter
 
 	// Kind is the default [ValueWriter].
 	// It must not be set to nil.
@@ -70,7 +70,7 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.CanInterface = true
 	vw.ShowType = true
 	vw.Type = *NewTypeValueWriter(ValueWriterFunc(vw.internal))
-	vw.ByTypeValueWriters = NewByTypeValueWriters()
+	vw.ByType = NewByTypeValueWriter()
 	vw.ReflectValue = NewReflectValueWriter(vw)
 	vw.ReflectType = NewReflectTypeWriter()
 	vw.Time = NewTimeValueWriter()
@@ -82,6 +82,10 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.Stringer = NewStringerValueWriter()
 	vw.Iter = NewIterValueWriter(vw)
 	vw.Kind = NewKindValueWriter(vw)
+	vw.ByType.SupportCheckers = []TypeSupportChecker{
+		&vw.Kind.String,
+		&vw.Kind.Int,
+	}
 	return vw
 }
 
@@ -172,10 +176,10 @@ func (vw *CommonValueWriter) WriteValue(st *State, v reflect.Value) bool {
 
 //nolint:gocyclo // We need to call all [ValueWriter].
 func (vw *CommonValueWriter) internal(st *State, v reflect.Value) bool {
-	if vw.ByTypeValueWriters != nil && vw.ByTypeValueWriters.WriteValue(st, v) {
+	if vw.ValueWriters.WriteValue(st, v) {
 		return true
 	}
-	if vw.ValueWriters.WriteValue(st, v) {
+	if vw.ByType != nil && vw.ByType.WriteValue(st, v) {
 		return true
 	}
 	if vw.ReflectValue != nil && vw.ReflectValue.WriteValue(st, v) {

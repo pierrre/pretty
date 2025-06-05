@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/reflectutil"
+	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/pretty/internal/must"
 	"github.com/pierrre/pretty/internal/write"
 )
@@ -64,25 +65,46 @@ func writeType(w io.Writer, typ reflect.Type) {
 	write.MustString(w, reflectutil.TypeFullName(typ))
 }
 
-// ByTypeValueWriters is a [ValueWriter] that selects a [ValueWriter] by [reflect.Type].
-//
-// It should be created with [NewByTypeValueWriters].
-type ByTypeValueWriters map[reflect.Type]ValueWriter
+type ByTypeValueWriter struct {
+	cache           syncutil.Map[reflect.Type, ValueWriterFunc]
+	ValueWriters    map[reflect.Type]ValueWriter
+	SupportCheckers []TypeSupportChecker
+}
 
-// NewByTypeValueWriters creates a new [ByTypeValueWriters].
-func NewByTypeValueWriters() ByTypeValueWriters {
-	return make(ByTypeValueWriters)
+func NewByTypeValueWriter() *ByTypeValueWriter {
+	return &ByTypeValueWriter{
+		ValueWriters: make(map[reflect.Type]ValueWriter),
+	}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw ByTypeValueWriters) WriteValue(st *State, v reflect.Value) bool {
-	if len(vw) == 0 {
-		return false
-	}
+func (vw *ByTypeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	typ := v.Type()
-	w, ok := vw[typ]
+	f, ok := vw.cache.Load(typ)
 	if !ok {
+		f = vw.getValueWriterFunc(typ)
+		vw.cache.Store(typ, f)
+	}
+	if f == nil {
 		return false
 	}
-	return w.WriteValue(st, v)
+	return f(st, v)
+}
+
+func (vw *ByTypeValueWriter) getValueWriterFunc(typ reflect.Type) ValueWriterFunc {
+	w, ok := vw.ValueWriters[typ]
+	if ok {
+		return w.WriteValue
+	}
+	for _, sc := range vw.SupportCheckers {
+		f := sc.SupportsType(typ)
+		if f != nil {
+			return f
+		}
+	}
+	return nil
+}
+
+type TypeSupportChecker interface {
+	SupportsType(typ reflect.Type) ValueWriterFunc
 }

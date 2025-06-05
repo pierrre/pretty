@@ -25,9 +25,28 @@ func NewIntValueWriter() *IntValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *IntValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	switch v.Kind() { //nolint:exhaustive // Only handles int.
+	if !vw.supportsType(v.Type()) {
+		return false
+	}
+	return vw.writeValue(st, v)
+}
+
+func (vw *IntValueWriter) writeValue(st *State, v reflect.Value) bool {
+	write.Must(strconvio.WriteInt(st.Writer, v.Int(), vw.Base))
+	return true
+}
+
+// SupportsType implements [TypeSupportChecker].
+func (vw *IntValueWriter) SupportsType(typ reflect.Type) ValueWriterFunc {
+	if vw.supportsType(typ) {
+		return vw.writeValue
+	}
+	return nil
+}
+
+func (vw *IntValueWriter) supportsType(typ reflect.Type) bool {
+	switch typ.Kind() { //nolint:exhaustive // Only handles int.
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		write.Must(strconvio.WriteInt(st.Writer, v.Int(), vw.Base))
 		return true
 	}
 	return false

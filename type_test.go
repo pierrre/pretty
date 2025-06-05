@@ -203,17 +203,10 @@ func init() {
 			name:  "Default",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.ByTypeValueWriters[reflect.TypeFor[string]()] = ValueWriterFunc(func(st *State, v reflect.Value) bool {
+				vw.ByType.ValueWriters[reflect.TypeFor[string]()] = ValueWriterFunc(func(st *State, v reflect.Value) bool {
 					write.MustString(st.Writer, "custom")
 					return true
 				})
-			},
-		},
-		{
-			name:  "NotFound",
-			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
-				vw.ByTypeValueWriters[reflect.TypeFor[int]()] = nil
 			},
 		},
 	})

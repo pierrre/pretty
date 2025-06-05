@@ -37,12 +37,28 @@ func NewStringValueWriter() *StringValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *StringValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	if v.Kind() != reflect.String {
+	if !vw.supportsType(v.Type()) {
 		return false
 	}
+	return vw.writeValue(st, v)
+}
+
+func (vw *StringValueWriter) writeValue(st *State, v reflect.Value) bool {
 	s := v.String()
 	writeStringValue(st, s, vw.ShowLen, vw.ShowAddr, uintptr(v.UnsafePointer()), vw.Quote, vw.MaxLen)
 	return true
+}
+
+// SupportsType implements [TypeSupportChecker].
+func (vw *StringValueWriter) SupportsType(typ reflect.Type) ValueWriterFunc {
+	if vw.supportsType(typ) {
+		return vw.writeValue
+	}
+	return nil
+}
+
+func (vw *StringValueWriter) supportsType(typ reflect.Type) bool {
+	return typ.Kind() == reflect.String
 }
 
 func writeStringValue(st *State, s string, showLen bool, showAddr bool, addr uintptr, quote bool, maxLen int) {
