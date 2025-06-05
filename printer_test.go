@@ -152,3 +152,7 @@ func TestFormatter(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
+
+type testUnexported struct {
+	v any
+}

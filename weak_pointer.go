@@ -25,7 +25,11 @@ func NewWeakPointerWriter(vw ValueWriter) *WeakPointerWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *WeakPointerWriter) WriteValue(st *State, v reflect.Value) bool {
-	if !vw.match(v) {
+	if v.Kind() != reflect.Struct {
+		return false
+	}
+	typ := v.Type()
+	if typ.PkgPath() != "weak" || !strings.HasPrefix(typ.Name(), "Pointer[") {
 		return false
 	}
 	if !v.CanInterface() {
@@ -35,7 +39,7 @@ func (vw *WeakPointerWriter) WriteValue(st *State, v reflect.Value) bool {
 		writeNil(st.Writer)
 		return true
 	}
-	m, _ := reflectutil.GetMethods(v.Type()).GetByName("Value")
+	m, _ := reflectutil.GetMethods(typ).GetByName("Value")
 	p := m.Func.Call([]reflect.Value{v})[0]
 	if p.IsNil() {
 		write.MustString(st.Writer, "<garbage collected>")
@@ -47,11 +51,11 @@ func (vw *WeakPointerWriter) WriteValue(st *State, v reflect.Value) bool {
 	return true
 }
 
-func (vw *WeakPointerWriter) match(v reflect.Value) bool {
-	kind := v.Kind()
-	if kind != reflect.Struct {
-		return false
+// Supports implements [SupportChecker].
+func (vw *WeakPointerWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Struct && typ.PkgPath() == "weak" && strings.HasPrefix(typ.Name(), "Pointer[") {
+		res = vw
 	}
-	typ := v.Type()
-	return typ.PkgPath() == "weak" && strings.HasPrefix(typ.Name(), "Pointer[")
+	return res
 }

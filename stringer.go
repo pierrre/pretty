@@ -37,10 +37,10 @@ func NewStringerValueWriter() *StringerValueWriter {
 // WriteValue implements [ValueWriter].
 func (vw *StringerValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	typ := v.Type()
-	if !stringerImplementsCache.ImplementedBy(typ) {
+	if typ == reflectValueType {
 		return false
 	}
-	if typ == reflectValueType {
+	if !stringerImplementsCache.ImplementedBy(typ) {
 		return false
 	}
 	sr, ok := itfassert.Assert[fmt.Stringer](v)
@@ -51,4 +51,13 @@ func (vw *StringerValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	writeArrowWrappedString(st.Writer, ".String() ")
 	writeStringValue(st, s, vw.ShowLen, false, 0, vw.Quote, vw.MaxLen)
 	return true
+}
+
+// Supports implements [SupportChecker].
+func (vw *StringerValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ != reflectValueType && stringerImplementsCache.ImplementedBy(typ) {
+		res = vw
+	}
+	return res
 }

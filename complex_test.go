@@ -15,6 +15,13 @@ func init() {
 			value: complex128(123.456 + 789.123i),
 		},
 		{
+			name:  "SupportDisabled",
+			value: complex128(123.456 + 789.123i),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {

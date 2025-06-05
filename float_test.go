@@ -15,6 +15,13 @@ func init() {
 			value: float64(123.456),
 		},
 		{
+			name:  "SupportDisabled",
+			value: float64(123.456),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {

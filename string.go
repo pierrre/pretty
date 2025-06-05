@@ -40,9 +40,17 @@ func (vw *StringValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.String {
 		return false
 	}
-	s := v.String()
-	writeStringValue(st, s, vw.ShowLen, vw.ShowAddr, uintptr(v.UnsafePointer()), vw.Quote, vw.MaxLen)
+	writeStringValue(st, v.String(), vw.ShowLen, vw.ShowAddr, uintptr(v.UnsafePointer()), vw.Quote, vw.MaxLen)
 	return true
+}
+
+// Supports implements [SupportChecker].
+func (vw *StringValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.String {
+		res = vw
+	}
+	return res
 }
 
 func writeStringValue(st *State, s string, showLen bool, showAddr bool, addr uintptr, quote bool, maxLen int) {

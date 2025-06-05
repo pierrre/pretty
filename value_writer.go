@@ -16,7 +16,7 @@ type ValueWriter interface {
 	WriteValue(st *State, v reflect.Value) bool
 }
 
-// ValueWriterFunc is a function that implements [ValueWriter].
+// ValueWriterFunc is a [ValueWriter] function.
 type ValueWriterFunc func(st *State, v reflect.Value) bool
 
 // WriteValue implements [ValueWriter].
@@ -38,4 +38,15 @@ func (vws ValueWriters) WriteValue(st *State, v reflect.Value) bool {
 		}
 	}
 	return false
+}
+
+// Supports implements [SupportChecker].
+func (vws ValueWriters) Supports(typ reflect.Type) ValueWriter {
+	for _, vw := range vws {
+		f := supportsValueWriter(typ, vw)
+		if f != nil {
+			return f
+		}
+	}
+	return nil
 }

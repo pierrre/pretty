@@ -45,7 +45,7 @@ func NewBytesHexDumpValueWriter() *BytesHexDumpValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *BytesHexDumpValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	if v.Type() != bytesType {
+	if v.Kind() != reflect.Slice || v.Type() != bytesType {
 		return false
 	}
 	if checkNil(st.Writer, v) {
@@ -54,6 +54,15 @@ func (vw *BytesHexDumpValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	b := v.Bytes()
 	writeBytesHexDumpCommon(st, v, b, vw.ShowLen, vw.ShowCap, vw.ShowAddr, vw.MaxLen)
 	return true
+}
+
+// Supports implements [SupportChecker].
+func (vw *BytesHexDumpValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Slice && typ == bytesType {
+		res = vw
+	}
+	return res
 }
 
 // Bytesable is an interface that can return a []byte.
@@ -94,10 +103,10 @@ func NewBytesableHexDumpValueWriter() *BytesableHexDumpValueWriter {
 // WriteValue implements [ValueWriter].
 func (vw *BytesableHexDumpValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	typ := v.Type()
-	if !bytesableImplementsCache.ImplementedBy(typ) {
+	if typ == reflectValueType {
 		return false
 	}
-	if typ == reflectValueType {
+	if !bytesableImplementsCache.ImplementedBy(typ) {
 		return false
 	}
 	br, ok := itfassert.Assert[Bytesable](v)
@@ -112,6 +121,15 @@ func (vw *BytesableHexDumpValueWriter) WriteValue(st *State, v reflect.Value) bo
 	}
 	writeBytesHexDumpCommon(st, reflect.ValueOf(b), b, vw.ShowLen, vw.ShowCap, vw.ShowAddr, vw.MaxLen)
 	return true
+}
+
+// Supports implements [SupportChecker].
+func (vw *BytesableHexDumpValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ != reflectValueType && bytesableImplementsCache.ImplementedBy(typ) {
+		res = vw
+	}
+	return res
 }
 
 func writeBytesHexDumpCommon(st *State, v reflect.Value, b []byte, showLen bool, showCap bool, showAddr bool, maxLen int) {

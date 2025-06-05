@@ -30,20 +30,29 @@ func NewTimeValueWriter() *TimeValueWriter {
 var timeType = reflect.TypeFor[time.Time]()
 
 // WriteValue implements [ValueWriter].
-func (wv *TimeValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	if v.Type() != timeType {
+func (vw *TimeValueWriter) WriteValue(st *State, v reflect.Value) bool {
+	if v.Kind() != reflect.Struct || v.Type() != timeType {
 		return false
 	}
 	if !v.CanInterface() {
 		return false
 	}
 	tm := v.Interface().(time.Time) //nolint:forcetypeassert // Check above.
-	if wv.Location != nil {
-		tm = tm.In(wv.Location)
+	if vw.Location != nil {
+		tm = tm.In(vw.Location)
 	}
 	bp := bytesPool.Get()
-	*bp = tm.AppendFormat((*bp)[:0], wv.Format)
+	*bp = tm.AppendFormat((*bp)[:0], vw.Format)
 	write.Must(st.Writer.Write(*bp))
 	bytesPool.Put(bp)
 	return true
+}
+
+// Supports implements [SupportChecker].
+func (vw *TimeValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ == timeType {
+		res = vw
+	}
+	return res
 }

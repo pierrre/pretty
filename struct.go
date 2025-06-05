@@ -58,6 +58,15 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	return true
 }
 
+// Supports implements [SupportChecker].
+func (vw *StructValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Struct {
+		res = vw
+	}
+	return res
+}
+
 // StructFieldFilter is a function that filters struct fields.
 //
 // It's used by [StructValueWriter].

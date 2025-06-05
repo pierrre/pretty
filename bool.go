@@ -25,3 +25,12 @@ func (vw *BoolValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	write.Must(strconvio.WriteBool(st.Writer, v.Bool()))
 	return true
 }
+
+// Supports implements [SupportChecker].
+func (vw *BoolValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Bool {
+		res = vw
+	}
+	return res
+}

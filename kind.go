@@ -90,3 +90,8 @@ func NewKindValueWriter(vw ValueWriter) *KindValueWriter {
 func (vw *KindValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	return vw.ValueWriters[v.Kind()].WriteValue(st, v)
 }
+
+// Supports implements [SupportChecker].
+func (vw *KindValueWriter) Supports(typ reflect.Type) ValueWriter {
+	return supportsValueWriter(typ, vw.ValueWriters[typ.Kind()])
+}

@@ -57,3 +57,12 @@ func (vw *SliceValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	writeArray(st, v, vw.ShowIndexes, vw.MaxLen, vw.ValueWriter)
 	return true
 }
+
+// Supports implements [SupportChecker].
+func (vw *SliceValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Slice {
+		res = vw
+	}
+	return res
+}

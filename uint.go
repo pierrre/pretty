@@ -27,8 +27,19 @@ func NewUintValueWriter() *UintValueWriter {
 func (vw *UintValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles uint.
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		write.Must(strconvio.WriteUint(st.Writer, v.Uint(), vw.Base))
-		return true
+	default:
+		return false
 	}
-	return false
+	write.Must(strconvio.WriteUint(st.Writer, v.Uint(), vw.Base))
+	return true
+}
+
+// Supports implements [SupportChecker].
+func (vw *UintValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	switch typ.Kind() { //nolint:exhaustive // Only handles uint.
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		res = vw
+	}
+	return res
 }

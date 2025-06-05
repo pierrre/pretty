@@ -33,3 +33,12 @@ func (vw *InterfaceValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	must.Handle(vw.ValueWriter.WriteValue(st, v.Elem()))
 	return true
 }
+
+// Supports implements [SupportChecker].
+func (vw *InterfaceValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Interface {
+		res = vw
+	}
+	return res
+}

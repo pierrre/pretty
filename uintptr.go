@@ -27,6 +27,15 @@ func (vw *UintptrValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	return true
 }
 
+// Supports implements [SupportChecker].
+func (vw *UintptrValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Uintptr {
+		res = vw
+	}
+	return res
+}
+
 func writeUintptr(w io.Writer, p uintptr) {
 	write.MustString(w, "0x")
 	write.Must(strconvio.WriteUint(w, uint64(p), 16))

@@ -40,3 +40,12 @@ func (vw *FuncValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	write.MustString(st.Writer, name)
 	return true
 }
+
+// Supports implements [SupportChecker].
+func (vw *FuncValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Func {
+		res = vw
+	}
+	return res
+}

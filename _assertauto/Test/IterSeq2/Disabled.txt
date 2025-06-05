@@ -1,4 +1,4 @@
-[iter.Seq2[int,string]](func(func(int, string) bool)) github.com/pierrre/pretty_test.init.13.All[...].func18
+[iter.Seq2[int,string]](func(func(int, string) bool)) github.com/pierrre/pretty_test.init.13.All[...].func22
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,

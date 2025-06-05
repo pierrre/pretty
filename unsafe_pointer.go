@@ -25,3 +25,12 @@ func (vw *UnsafePointerValueWriter) WriteValue(st *State, v reflect.Value) bool 
 	writeUintptr(st.Writer, uintptr(v.UnsafePointer()))
 	return true
 }
+
+// Supports implements [SupportChecker].
+func (vw *UnsafePointerValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.UnsafePointer {
+		res = vw
+	}
+	return res
+}

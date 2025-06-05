@@ -1,8 +1,10 @@
 package protobuf
 
 import (
+	"reflect"
 	"testing"
 
+	"github.com/pierrre/assert"
 	"github.com/pierrre/assert/assertauto"
 	"github.com/pierrre/pretty"
 	"google.golang.org/protobuf/types/known/apipb"
@@ -74,4 +76,11 @@ func Test(t *testing.T) {
 			assertauto.Equal(t, tc.value)
 		})
 	}
+}
+
+func TestSupports(t *testing.T) {
+	// TODO improve tests of this package.
+	vw := NewValueWriter(nil)
+	assert.Equal(t, vw.Supports(reflect.TypeFor[*wrapperspb.StringValue]()), pretty.ValueWriter(vw))
+	assert.Zero(t, vw.Supports(reflect.TypeFor[string]()))
 }

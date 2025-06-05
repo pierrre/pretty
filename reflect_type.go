@@ -21,8 +21,7 @@ func NewReflectTypeWriter() *ReflectTypeWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *ReflectTypeWriter) WriteValue(st *State, v reflect.Value) bool {
-	typ := v.Type()
-	if !reflectTypeImplementsCache.ImplementedBy(typ) {
+	if !reflectTypeImplementsCache.ImplementedBy(v.Type()) {
 		return false
 	}
 	typ, ok := itfassert.Assert[reflect.Type](v)
@@ -234,4 +233,13 @@ func (vw *ReflectTypeWriter) writeTypeMethods(st *State, typ reflect.Type) {
 	st.IndentLevel--
 	st.WriteIndent()
 	write.MustString(st.Writer, "},\n")
+}
+
+// Supports implements [SupportChecker].
+func (vw *ReflectTypeWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if reflectTypeImplementsCache.ImplementedBy(typ) {
+		res = vw
+	}
+	return res
 }

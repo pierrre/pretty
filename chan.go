@@ -112,3 +112,12 @@ func (vw *ChanValueWriter) writeElem(st *State, v reflect.Value, i int) {
 	}()
 	write.MustString(st.Writer, ",\n")
 }
+
+// Supports implements [SupportChecker].
+func (vw *ChanValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Chan {
+		res = vw
+	}
+	return res
+}

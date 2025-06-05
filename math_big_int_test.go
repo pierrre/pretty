@@ -36,6 +36,13 @@ func init() {
 			value: (*big.Int)(nil),
 		},
 		{
+			name:  "SupportDisabled",
+			value: big.NewInt(123),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Disabled",
 			value: big.NewInt(123),
 			configureWriter: func(vw *CommonValueWriter) {

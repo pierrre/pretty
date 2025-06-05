@@ -216,5 +216,25 @@ func init() {
 				vw.ByTypeValueWriters[reflect.TypeFor[int]()] = nil
 			},
 		},
+		{
+			name:  "Support",
+			value: "test",
+			configureWriter: func(vw *CommonValueWriter) {
+				cvw := ValueWriterFunc(func(st *State, v reflect.Value) bool {
+					write.MustString(st.Writer, "custom")
+					return true
+				})
+				btvw := NewByTypeValueWriters()
+				btvw[reflect.TypeFor[string]()] = &SupportCheckerValueWriter{
+					ValueWriter: cvw,
+					SupportChecker: SupportCheckerFunc(func(typ reflect.Type) ValueWriter {
+						return cvw
+					}),
+				}
+				vw.Support.Checkers = []SupportChecker{
+					btvw,
+				}
+			},
+		},
 	})
 }

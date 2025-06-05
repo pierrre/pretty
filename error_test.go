@@ -16,6 +16,13 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name:  "SupportDisabled",
+			value: &testError{},
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Disabled",
 			value: &testError{},
 			configureWriter: func(vw *CommonValueWriter) {

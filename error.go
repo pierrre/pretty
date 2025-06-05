@@ -29,8 +29,7 @@ func NewErrorValueWriter() *ErrorValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *ErrorValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	typ := v.Type()
-	if !errorImplementsCache.ImplementedBy(typ) {
+	if !errorImplementsCache.ImplementedBy(v.Type()) {
 		return false
 	}
 	err, ok := itfassert.Assert[error](v)
@@ -40,6 +39,15 @@ func (vw *ErrorValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	writeArrowWrappedString(st.Writer, ".Error() ")
 	vw.Write(st, err)
 	return true
+}
+
+// Supports implements [SupportChecker].
+func (vw *ErrorValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if errorImplementsCache.ImplementedBy(typ) {
+		res = vw
+	}
+	return res
 }
 
 // WriteError writes the error with error.Error.

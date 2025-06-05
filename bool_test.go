@@ -15,6 +15,13 @@ func init() {
 			value: false,
 		},
 		{
+			name:  "SupportDisabled",
+			value: true,
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {

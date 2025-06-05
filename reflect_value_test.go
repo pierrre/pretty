@@ -25,6 +25,13 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name:  "SupportDisabled",
+			value: reflect.ValueOf(123),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Disabled",
 			value: reflect.ValueOf(123),
 			configureWriter: func(vw *CommonValueWriter) {

@@ -12,11 +12,6 @@ func init() {
 		{
 			name: "Default",
 			value: func() any {
-				type testWeakPointer struct {
-					Pointer weak.Pointer[string]
-					Value   *string
-				}
-
 				v := testWeakPointer{}
 				s := "test"
 				v.Value = &s
@@ -48,6 +43,19 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name: "SupportDisabled",
+			value: func() any {
+				v := testWeakPointer{}
+				s := "test"
+				v.Value = &s
+				v.Pointer = weak.Make(&s)
+				return v
+			}(),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name: "Disabled",
 			value: func() weak.Pointer[string] {
 				return weak.Make[string](nil)
@@ -58,4 +66,9 @@ func init() {
 			ignoreBenchmark: true,
 		},
 	})
+}
+
+type testWeakPointer struct {
+	Pointer weak.Pointer[string]
+	Value   *string
 }

@@ -47,6 +47,13 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name:  "SupportDisabled",
+			value: testTime,
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Disabled",
 			value: testTime,
 			configureWriter: func(vw *CommonValueWriter) {

@@ -102,3 +102,12 @@ func (vw *IterValueWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, refl
 	}
 	write.MustString(st.Writer, "}")
 }
+
+// Supports implements [SupportChecker].
+func (vw *IterValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Func && (typ.CanSeq() || typ.CanSeq2()) {
+		res = vw
+	}
+	return res
+}

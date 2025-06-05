@@ -45,6 +45,13 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name:  "SupportDisabled",
+			value: []byte("test"),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Disabled",
 			value: []byte("test"),
 			configureWriter: func(vw *CommonValueWriter) {
@@ -112,6 +119,13 @@ func init() {
 			},
 			ignoreResult:    true,
 			ignoreBenchmark: true,
+		},
+		{
+			name:  "SupportDisabled",
+			value: &testBytesable{b: []byte("test")},
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
 		},
 		{
 			name:  "Disabled",

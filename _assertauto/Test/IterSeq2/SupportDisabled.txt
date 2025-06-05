@@ -1,0 +1,10 @@
+[iter.Seq2[int,string]](func(func(int, string) bool)) {
+	0: (len=1) "a",
+	1: (len=1) "b",
+	2: (len=1) "c",
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 19,
+}

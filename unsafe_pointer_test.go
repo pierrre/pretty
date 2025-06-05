@@ -24,6 +24,17 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name: "SupportDisabled",
+			value: func() unsafe.Pointer {
+				i := 123
+				return unsafe.Pointer(&i) //nolint:gosec // It's OK.
+			}(),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+			ignoreResult: true,
+		},
+		{
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {

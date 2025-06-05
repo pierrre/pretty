@@ -22,6 +22,14 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name:  "SupportDisabled",
+			value: [1]any{123},
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.UnwrapInterface = false
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {

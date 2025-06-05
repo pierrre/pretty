@@ -75,14 +75,19 @@ func NewByTypeValueWriters() ByTypeValueWriters {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw ByTypeValueWriters) WriteValue(st *State, v reflect.Value) bool {
-	if len(vw) == 0 {
+func (vws ByTypeValueWriters) WriteValue(st *State, v reflect.Value) bool {
+	if len(vws) == 0 {
 		return false
 	}
 	typ := v.Type()
-	w, ok := vw[typ]
+	vw, ok := vws[typ]
 	if !ok {
 		return false
 	}
-	return w.WriteValue(st, v)
+	return vw.WriteValue(st, v)
+}
+
+// Supports implements [SupportChecker].
+func (vws ByTypeValueWriters) Supports(typ reflect.Type) ValueWriter {
+	return supportsValueWriter(typ, vws[typ])
 }

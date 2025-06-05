@@ -31,6 +31,17 @@ func init() {
 			},
 		},
 		{
+			name: "SupportDisabled",
+			value: testStruct{
+				Foo:        123,
+				Bar:        123.456,
+				unexported: 123,
+			},
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {

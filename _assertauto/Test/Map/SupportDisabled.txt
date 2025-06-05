@@ -1,0 +1,8 @@
+[map[int]int] (len=1) {
+	1: 2,
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

@@ -47,6 +47,13 @@ func init() {
 			}(),
 		},
 		{
+			name:  "SupportDisabled",
+			value: slices.Values([]string{"a", "b", "c"}),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Disabled",
 			value: slices.Values([]string{"a", "b", "c"}),
 			configureWriter: func(vw *CommonValueWriter) {
@@ -97,6 +104,13 @@ func init() {
 					}
 				}
 			}(),
+		},
+		{
+			name:  "SupportDisabled",
+			value: slices.All([]string{"a", "b", "c"}),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
 		},
 		{
 			name:  "Disabled",

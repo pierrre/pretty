@@ -160,3 +160,12 @@ func (vw *MapValueWriter) writeEntry(st *State, key reflect.Value, value reflect
 	write.MustString(st.Writer, ",\n")
 	return true
 }
+
+// Supports implements [SupportChecker].
+func (vw *MapValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Map {
+		res = vw
+	}
+	return res
+}

@@ -39,6 +39,15 @@ func (vw *ArrayValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	return true
 }
 
+// Supports implements [SupportChecker].
+func (vw *ArrayValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Array {
+		res = vw
+	}
+	return res
+}
+
 func writeArray(st *State, v reflect.Value, showIndexes bool, maxLen int, vw ValueWriter) {
 	l := v.Len()
 	truncated := false

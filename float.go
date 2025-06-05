@@ -29,10 +29,25 @@ func NewFloatValueWriter() *FloatValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *FloatValueWriter) WriteValue(st *State, v reflect.Value) bool {
+	var bitSize int
 	switch v.Kind() { //nolint:exhaustive // Only handles float.
-	case reflect.Float32, reflect.Float64:
-		write.Must(strconvio.WriteFloat(st.Writer, v.Float(), vw.Format, vw.Precision, v.Type().Bits()))
-		return true
+	case reflect.Float32:
+		bitSize = 32
+	case reflect.Float64:
+		bitSize = 64
+	default:
+		return false
 	}
-	return false
+	write.Must(strconvio.WriteFloat(st.Writer, v.Float(), vw.Format, vw.Precision, bitSize))
+	return true
+}
+
+// Supports implements [SupportChecker].
+func (vw *FloatValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	switch typ.Kind() { //nolint:exhaustive // Only handles float.
+	case reflect.Float32, reflect.Float64:
+		res = vw
+	}
+	return res
 }

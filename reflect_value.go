@@ -25,7 +25,7 @@ func NewReflectValueWriter(vw ValueWriter) *ReflectValueWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *ReflectValueWriter) WriteValue(st *State, v reflect.Value) bool {
-	if v.Type() != reflectValueType {
+	if v.Kind() != reflect.Struct || v.Type() != reflectValueType {
 		return false
 	}
 	if !v.CanInterface() {
@@ -40,4 +40,13 @@ func (vw *ReflectValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	st.KnownType = false // We want to show the type of the value.
 	must.Handle(vw.ValueWriter.WriteValue(st, rv))
 	return true
+}
+
+// Supports implements [SupportChecker].
+func (vw *ReflectValueWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ == reflectValueType {
+		res = vw
+	}
+	return res
 }

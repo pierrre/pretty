@@ -40,8 +40,7 @@ func NewValueWriter(vw pretty.ValueWriter) *ValueWriter {
 
 // WriteValue implements [pretty.ValueWriter].
 func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
-	typ := v.Type()
-	if !messageImplementsCache.ImplementedBy(typ) {
+	if !messageImplementsCache.ImplementedBy(v.Type()) {
 		return false
 	}
 	pm, ok := itfassert.Assert[protoreflect.ProtoMessage](v)
@@ -122,6 +121,15 @@ func (vw *ValueWriter) getEnum(e protoreflect.EnumNumber, fd protoreflect.FieldD
 	ed := fd.Enum().Values().ByNumber(e)
 	if ed != nil {
 		res.Name = string(ed.Name())
+	}
+	return res
+}
+
+// Supports implements [pretty.SupportChecker].
+func (vw *ValueWriter) Supports(typ reflect.Type) pretty.ValueWriter {
+	var res pretty.ValueWriter
+	if messageImplementsCache.ImplementedBy(typ) {
+		res = vw
 	}
 	return res
 }

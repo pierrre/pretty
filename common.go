@@ -45,16 +45,17 @@ type CommonValueWriter struct {
 	// The [ValueWriter]s below can be set to nil to disable them.
 	ByTypeValueWriters ByTypeValueWriters
 	ValueWriters       ValueWriters
+	Support            *SupportWriter
+	Time               *TimeValueWriter
+	BytesHexDump       *BytesHexDumpValueWriter
+	MathBigInt         *MathBigIntWriter
+	Iter               *IterValueWriter
+	WeakPointer        *WeakPointerWriter
 	ReflectValue       *ReflectValueWriter
 	ReflectType        *ReflectTypeWriter
-	Time               *TimeValueWriter
 	Error              *ErrorValueWriter
-	MathBigInt         *MathBigIntWriter
-	WeakPointer        *WeakPointerWriter
-	BytesHexDump       *BytesHexDumpValueWriter
 	BytesableHexDump   *BytesableHexDumpValueWriter
 	Stringer           *StringerValueWriter
-	Iter               *IterValueWriter
 
 	// Kind is the default [ValueWriter].
 	// It must not be set to nil.
@@ -69,18 +70,22 @@ func NewCommonValueWriter() *CommonValueWriter {
 	vw.MaxDepth = 0
 	vw.CanInterface = true
 	vw.ShowType = true
-	vw.Type = *NewTypeValueWriter(ValueWriterFunc(vw.internal))
+	vw.Type = *NewTypeValueWriter(ValueWriterFunc(vw.writeValue))
 	vw.ByTypeValueWriters = NewByTypeValueWriters()
+	vw.Support = NewSupportWriter()
+	vw.Support.Checkers = []SupportChecker{
+		SupportCheckerFunc(vw.supports),
+	}
+	vw.Time = NewTimeValueWriter()
+	vw.BytesHexDump = NewBytesHexDumpValueWriter()
+	vw.MathBigInt = NewMathBigIntWriter()
+	vw.Iter = NewIterValueWriter(vw)
+	vw.WeakPointer = NewWeakPointerWriter(vw)
 	vw.ReflectValue = NewReflectValueWriter(vw)
 	vw.ReflectType = NewReflectTypeWriter()
-	vw.Time = NewTimeValueWriter()
 	vw.Error = NewErrorValueWriter()
-	vw.MathBigInt = NewMathBigIntWriter()
-	vw.WeakPointer = NewWeakPointerWriter(vw)
-	vw.BytesHexDump = NewBytesHexDumpValueWriter()
 	vw.BytesableHexDump = NewBytesableHexDumpValueWriter()
 	vw.Stringer = NewStringerValueWriter()
-	vw.Iter = NewIterValueWriter(vw)
 	vw.Kind = NewKindValueWriter(vw)
 	return vw
 }
@@ -167,15 +172,33 @@ func (vw *CommonValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	if vw.ShowType {
 		return vw.Type.WriteValue(st, v)
 	}
-	return vw.internal(st, v)
+	return vw.writeValue(st, v)
 }
 
 //nolint:gocyclo // We need to call all [ValueWriter].
-func (vw *CommonValueWriter) internal(st *State, v reflect.Value) bool {
+func (vw *CommonValueWriter) writeValue(st *State, v reflect.Value) bool {
 	if vw.ByTypeValueWriters != nil && vw.ByTypeValueWriters.WriteValue(st, v) {
 		return true
 	}
-	if vw.ValueWriters.WriteValue(st, v) {
+	if vw.ValueWriters != nil && vw.ValueWriters.WriteValue(st, v) {
+		return true
+	}
+	if vw.Support != nil && vw.Support.WriteValue(st, v) {
+		return true
+	}
+	if vw.Time != nil && vw.Time.WriteValue(st, v) {
+		return true
+	}
+	if vw.BytesHexDump != nil && vw.BytesHexDump.WriteValue(st, v) {
+		return true
+	}
+	if vw.MathBigInt != nil && vw.MathBigInt.WriteValue(st, v) {
+		return true
+	}
+	if vw.Iter != nil && vw.Iter.WriteValue(st, v) {
+		return true
+	}
+	if vw.WeakPointer != nil && vw.WeakPointer.WriteValue(st, v) {
 		return true
 	}
 	if vw.ReflectValue != nil && vw.ReflectValue.WriteValue(st, v) {
@@ -184,19 +207,7 @@ func (vw *CommonValueWriter) internal(st *State, v reflect.Value) bool {
 	if vw.ReflectType != nil && vw.ReflectType.WriteValue(st, v) {
 		return true
 	}
-	if vw.Time != nil && vw.Time.WriteValue(st, v) {
-		return true
-	}
 	if vw.Error != nil && vw.Error.WriteValue(st, v) {
-		return true
-	}
-	if vw.MathBigInt != nil && vw.MathBigInt.WriteValue(st, v) {
-		return true
-	}
-	if vw.WeakPointer != nil && vw.WeakPointer.WriteValue(st, v) {
-		return true
-	}
-	if vw.BytesHexDump != nil && vw.BytesHexDump.WriteValue(st, v) {
 		return true
 	}
 	if vw.BytesableHexDump != nil && vw.BytesableHexDump.WriteValue(st, v) {
@@ -205,8 +216,50 @@ func (vw *CommonValueWriter) internal(st *State, v reflect.Value) bool {
 	if vw.Stringer != nil && vw.Stringer.WriteValue(st, v) {
 		return true
 	}
-	if vw.Iter != nil && vw.Iter.WriteValue(st, v) {
-		return true
-	}
 	return vw.Kind.WriteValue(st, v)
+}
+
+//nolint:gocyclo // We need to call all [SupportChecker].
+func (vw *CommonValueWriter) supports(typ reflect.Type) ValueWriter {
+	if f := callSupportCheckerPointer(vw.Time, typ); f != nil {
+		return f
+	}
+	if f := callSupportCheckerPointer(vw.BytesHexDump, typ); f != nil {
+		return f
+	}
+	if f := callSupportCheckerPointer(vw.MathBigInt, typ); f != nil {
+		return f
+	}
+	if f := callSupportCheckerPointer(vw.Iter, typ); f != nil {
+		return f
+	}
+	if f := callSupportCheckerPointer(vw.WeakPointer, typ); f != nil {
+		return f
+	}
+	if f := callSupportCheckerPointer(vw.ReflectValue, typ); f != nil {
+		return f
+	}
+	if f := callSupportCheckerPointer(vw.ReflectType, typ); f != nil {
+		return f
+	}
+	if f := callSupportCheckerPointer(vw.Error, typ); f != nil {
+		return f
+	}
+	if f := callSupportCheckerPointer(vw.BytesableHexDump, typ); f != nil {
+		return f
+	}
+	if f := callSupportCheckerPointer(vw.Stringer, typ); f != nil {
+		return f
+	}
+	return vw.Kind.Supports(typ)
+}
+
+func callSupportCheckerPointer[P interface {
+	*T
+	SupportChecker
+}, T any](p P, typ reflect.Type) ValueWriter {
+	if p != nil {
+		return p.Supports(typ)
+	}
+	return nil
 }

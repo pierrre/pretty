@@ -37,6 +37,13 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name:  "SupportDisabled",
+			value: &testStringer{s: "test"},
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Disabled",
 			value: &testStringer{s: "test"},
 			configureWriter: func(vw *CommonValueWriter) {

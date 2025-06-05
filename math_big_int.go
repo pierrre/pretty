@@ -24,7 +24,11 @@ func NewMathBigIntWriter() *MathBigIntWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *MathBigIntWriter) WriteValue(st *State, v reflect.Value) bool {
-	if !vw.match(v) {
+	if v.Kind() != reflect.Pointer {
+		return false
+	}
+	elemTyp := v.Type().Elem()
+	if elemTyp.Kind() != reflect.Struct || elemTyp.PkgPath() != "math/big" || elemTyp.Name() != "Int" {
 		return false
 	}
 	if !v.CanInterface() {
@@ -36,16 +40,14 @@ func (vw *MathBigIntWriter) WriteValue(st *State, v reflect.Value) bool {
 	return true
 }
 
-func (vw *MathBigIntWriter) match(v reflect.Value) bool {
-	kind := v.Kind()
-	if kind != reflect.Pointer {
-		return false
+// Supports implements [SupportChecker].
+func (vw *MathBigIntWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Pointer {
+		elemTyp := typ.Elem()
+		if elemTyp.Kind() == reflect.Struct && elemTyp.PkgPath() == "math/big" && elemTyp.Name() == "Int" {
+			res = vw
+		}
 	}
-	elemV := v.Elem()
-	elemKind := elemV.Kind()
-	if elemKind != reflect.Struct {
-		return false
-	}
-	elemTyp := elemV.Type()
-	return elemTyp.PkgPath() == "math/big" && elemTyp.Name() == "Int"
+	return res
 }

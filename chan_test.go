@@ -115,6 +115,17 @@ func init() {
 			},
 		},
 		{
+			name: "SupportDisabled",
+			value: func() chan int {
+				c := make(chan int, 5)
+				c <- 123
+				return c
+			}(),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {

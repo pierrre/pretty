@@ -105,6 +105,13 @@ func init() {
 			ignoreBenchmark: true,
 		},
 		{
+			name:  "SupportDisabled",
+			value: reflect.TypeFor[string](),
+			configureWriter: func(vw *CommonValueWriter) {
+				vw.Support = nil
+			},
+		},
+		{
 			name:  "Disabled",
 			value: reflect.TypeFor[string](),
 			configureWriter: func(vw *CommonValueWriter) {
