@@ -5,7 +5,7 @@
 	String: pretty_test.CustomSlice,
 	Kind: slice,
 	Size: 24,
-	Base: {
+	Underlying: {
 		FullName: []string,
 		String: []string,
 		Kind: slice,

@@ -17,17 +17,17 @@ type TypeValueWriter struct {
 	// ShowKnownTypes shows known types.
 	// Default: false.
 	ShowKnownTypes bool
-	// ShowBaseType shows the base type.
+	// ShowUnderlyingType shows the underlying type.
 	// Default: true.
-	ShowBaseType bool
+	ShowUnderlyingType bool
 }
 
 // NewTypeValueWriter creates a new [TypeValueWriter] with default values.
 func NewTypeValueWriter(vw ValueWriter) *TypeValueWriter {
 	return &TypeValueWriter{
-		ValueWriter:    vw,
-		ShowKnownTypes: false,
-		ShowBaseType:   true,
+		ValueWriter:        vw,
+		ShowKnownTypes:     false,
+		ShowUnderlyingType: true,
 	}
 }
 
@@ -37,7 +37,7 @@ func (vw *TypeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		write.MustString(st.Writer, "[")
 		writeType(st.Writer, v.Type())
 		write.MustString(st.Writer, "]")
-		vw.writeBaseType(st.Writer, v)
+		vw.writeUnderlyingType(st.Writer, v)
 		write.MustString(st.Writer, " ")
 	}
 	knownType := st.KnownType
@@ -47,15 +47,15 @@ func (vw *TypeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	return true
 }
 
-func (vw *TypeValueWriter) writeBaseType(w io.Writer, v reflect.Value) {
-	if !vw.ShowBaseType {
+func (vw *TypeValueWriter) writeUnderlyingType(w io.Writer, v reflect.Value) {
+	if !vw.ShowUnderlyingType {
 		return
 	}
 	typ := v.Type()
-	baseType := reflectutil.GetBaseType(typ)
-	if baseType != typ {
+	uTyp := reflectutil.GetUnderlyingType(typ)
+	if uTyp != typ {
 		write.MustString(w, "(")
-		writeType(w, baseType)
+		writeType(w, uTyp)
 		write.MustString(w, ")")
 	}
 }

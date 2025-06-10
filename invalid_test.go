@@ -9,7 +9,7 @@ import (
 func init() {
 	addTestCasesPrefix("Invalid", []*testCase{
 		{
-			name:  "Base",
+			name:  "Default",
 			value: "test",
 			configureWriter: func(vw *CommonValueWriter) {
 				vw.ValueWriters = ValueWriters{ValueWriterFunc(func(st *State, v reflect.Value) bool {

@@ -5,7 +5,7 @@
 	String: pretty_test.CustomPointer,
 	Kind: ptr,
 	Size: 8,
-	Base: {
+	Underlying: {
 		FullName: *string,
 		String: *string,
 		Kind: ptr,

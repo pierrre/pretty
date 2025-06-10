@@ -179,13 +179,13 @@ func init() {
 			}(),
 		},
 		{
-			name: "ShowBaseTypeDisabled",
+			name: "ShowUnderlyingTypeDisabled",
 			value: func() any {
 				type myBool bool
 				return myBool(false)
 			}(),
 			configureWriter: func(vw *CommonValueWriter) {
-				vw.Type.ShowBaseType = false
+				vw.Type.ShowUnderlyingType = false
 			},
 			ignoreBenchmark: true,
 		},

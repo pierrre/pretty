@@ -43,7 +43,7 @@ func (vw *ReflectTypeWriter) writeType(st *State, typ reflect.Type) {
 	vw.writeTypeString(st, typ)
 	vw.writeTypeKind(st, typ)
 	vw.writeTypeSize(st, typ)
-	vw.writeTypeBase(st, typ)
+	vw.writeTypeUnderlying(st, typ)
 	vw.writeTypeLen(st, typ)
 	vw.writeTypeKey(st, typ)
 	vw.writeTypeElem(st, typ)
@@ -106,14 +106,14 @@ func (vw *ReflectTypeWriter) writeTypeSize(st *State, typ reflect.Type) {
 	write.MustString(st.Writer, ",\n")
 }
 
-func (vw *ReflectTypeWriter) writeTypeBase(st *State, typ reflect.Type) {
-	base := reflectutil.GetBaseType(typ)
-	if base == nil || base == typ {
+func (vw *ReflectTypeWriter) writeTypeUnderlying(st *State, typ reflect.Type) {
+	uTyp := reflectutil.GetUnderlyingType(typ)
+	if uTyp == typ {
 		return
 	}
 	st.WriteIndent()
-	write.MustString(st.Writer, "Base: ")
-	vw.writeType(st, base)
+	write.MustString(st.Writer, "Underlying: ")
+	vw.writeType(st, uTyp)
 	write.MustString(st.Writer, ",\n")
 }
 
