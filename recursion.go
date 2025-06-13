@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"slices"
 
+	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/pretty/internal/write"
 )
 
@@ -55,7 +56,7 @@ func checkRecursion(st *State, v reflect.Value, showInfos bool) (visitedAdded bo
 	write.MustString(st.Writer, "<recursion>")
 	if showInfos {
 		write.MustString(st.Writer, " ")
-		writeType(st.Writer, e.Type)
+		write.MustString(st.Writer, reflectutil.TypeFullName(e.Type))
 		write.MustString(st.Writer, " ")
 		writeUintptr(st.Writer, e.Addr)
 	}

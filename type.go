@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 
 	"github.com/pierrre/go-libs/reflectutil"
@@ -34,10 +33,18 @@ func NewTypeWriter(vw ValueWriter) *TypeWriter {
 // WriteValue implements [ValueWriter].
 func (vw *TypeWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !st.KnownType || vw.ShowKnownTypes {
+		typ := v.Type()
 		write.MustString(st.Writer, "[")
-		writeType(st.Writer, v.Type())
+		write.MustString(st.Writer, reflectutil.TypeFullName(typ))
 		write.MustString(st.Writer, "]")
-		vw.writeUnderlyingType(st.Writer, v)
+		if vw.ShowUnderlyingType {
+			uTyp := reflectutil.GetUnderlyingType(typ)
+			if uTyp != typ {
+				write.MustString(st.Writer, "(")
+				write.MustString(st.Writer, reflectutil.TypeFullName(uTyp))
+				write.MustString(st.Writer, ")")
+			}
+		}
 		write.MustString(st.Writer, " ")
 	}
 	knownType := st.KnownType
@@ -45,23 +52,6 @@ func (vw *TypeWriter) WriteValue(st *State, v reflect.Value) bool {
 	must.Handle(vw.ValueWriter.WriteValue(st, v))
 	st.KnownType = knownType
 	return true
-}
-
-func (vw *TypeWriter) writeUnderlyingType(w io.Writer, v reflect.Value) {
-	if !vw.ShowUnderlyingType {
-		return
-	}
-	typ := v.Type()
-	uTyp := reflectutil.GetUnderlyingType(typ)
-	if uTyp != typ {
-		write.MustString(w, "(")
-		writeType(w, uTyp)
-		write.MustString(w, ")")
-	}
-}
-
-func writeType(w io.Writer, typ reflect.Type) {
-	write.MustString(w, reflectutil.TypeFullName(typ))
 }
 
 // ByTypeWriters is a [ValueWriter] that selects a [ValueWriter] by [reflect.Type].
