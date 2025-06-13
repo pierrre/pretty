@@ -32,7 +32,7 @@ func init() {
 			name:  "WriterDisabled",
 			value: 123,
 			configureWriter: func(vw *CommonWriter) {
-				vw.ValueWriters = ValueWriters{NewMaxDepthWriter(&vw.Kind.Int)}
+				vw.ValueWriters = ValueWriters{NewMaxDepthWriter(vw.Kind.Int)}
 			},
 		},
 	})

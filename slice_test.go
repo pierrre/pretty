@@ -77,7 +77,7 @@ func init() {
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonWriter) {
-				vw.ValueWriters = ValueWriters{&vw.Kind.Slice}
+				vw.ValueWriters = ValueWriters{vw.Kind.Slice}
 			},
 			ignoreBenchmark: true,
 		},

@@ -12,7 +12,7 @@ func init() {
 			configureWriter: func(vw *CommonWriter) {
 				vw.Support.Checkers = []SupportChecker{
 					ValueWriters{
-						&vw.Kind.Int,
+						vw.Kind.Int,
 					},
 				}
 			},
@@ -23,7 +23,7 @@ func init() {
 			configureWriter: func(vw *CommonWriter) {
 				vw.Support.Checkers = []SupportChecker{
 					ValueWriters{
-						&vw.Kind.String,
+						vw.Kind.String,
 					},
 				}
 			},

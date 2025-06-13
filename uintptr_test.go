@@ -21,7 +21,7 @@ func init() {
 			name:  "Not",
 			value: "test",
 			configureWriter: func(vw *CommonWriter) {
-				vw.ValueWriters = ValueWriters{&vw.Kind.Uintptr}
+				vw.ValueWriters = ValueWriters{vw.Kind.Uintptr}
 			},
 			ignoreBenchmark: true,
 		},
