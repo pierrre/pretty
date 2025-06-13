@@ -26,7 +26,7 @@ func init() {
 			name:  "Truncated",
 			value: slices.Values([]string{"a", "b", "c"}),
 			configureWriter: func(vw *CommonWriter) {
-				vw.Iter.MaxLen = 2
+				vw.IterSeq.MaxLen = 2
 			},
 		},
 		{
@@ -57,7 +57,7 @@ func init() {
 			name:  "Disabled",
 			value: slices.Values([]string{"a", "b", "c"}),
 			configureWriter: func(vw *CommonWriter) {
-				vw.Iter = nil
+				vw.IterSeq = nil
 			},
 		},
 	})
@@ -78,14 +78,14 @@ func init() {
 			name:  "Truncated",
 			value: slices.All([]string{"a", "b", "c"}),
 			configureWriter: func(vw *CommonWriter) {
-				vw.Iter.MaxLen = 2
+				vw.IterSeq2.MaxLen = 2
 			},
 		},
 		{
 			name:  "KeysStringShowInfos",
 			value: maps.All(map[string]int{"a": 1}),
 			configureWriter: func(vw *CommonWriter) {
-				vw.Iter.ShowKeysInfos = true
+				vw.IterSeq2.ShowKeysInfos = true
 			},
 		},
 		{
@@ -116,7 +116,7 @@ func init() {
 			name:  "Disabled",
 			value: slices.All([]string{"a", "b", "c"}),
 			configureWriter: func(vw *CommonWriter) {
-				vw.Iter = nil
+				vw.IterSeq2 = nil
 			},
 		},
 	})

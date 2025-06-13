@@ -1,58 +1,45 @@
 package pretty
 
 import (
-	"iter"
 	"reflect"
 
 	"github.com/pierrre/pretty/internal/must"
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// IterWriter is a [ValueWriter] that handles iterators ([iter.Seq] or [iter.Seq2]).
-type IterWriter struct {
+// IterSeqWriter is a [ValueWriter] that handles [iter.Seq].
+//
+// It should be created with [NewIterSeqWriter].
+type IterSeqWriter struct {
 	ValueWriter
-	// ShowKeysInfos shows keys infos (for [iter.Seq2]).
-	// Default: false.
-	ShowKeysInfos bool
 	// MaxLen is the maximum length of the iterator.
 	// Default: 0 (no limit).
 	MaxLen int
 }
 
-// NewIterWriter creates a new [IterWriter] with default values.
-func NewIterWriter(vw ValueWriter) *IterWriter {
-	return &IterWriter{
-		ValueWriter:   vw,
-		ShowKeysInfos: false,
-		MaxLen:        0,
+// NewIterSeqWriter creates a new [IterSeq2Writer] with default values.
+func NewIterSeqWriter(vw ValueWriter) *IterSeqWriter {
+	return &IterSeqWriter{
+		ValueWriter: vw,
+		MaxLen:      0,
 	}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *IterWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *IterSeqWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Func {
 		return false
 	}
-	if v.IsNil() {
+	if !v.Type().CanSeq() {
 		return false
 	}
-	typ := v.Type()
-	switch {
-	case typ.CanSeq():
-		vw.writeSeq(st, v.Seq())
-		return true
-	case typ.CanSeq2():
-		vw.writeSeq2(st, v.Seq2())
+	if checkNil(st.Writer, v) {
 		return true
 	}
-	return false
-}
-
-func (vw *IterWriter) writeSeq(st *State, it iter.Seq[reflect.Value]) {
 	write.MustString(st.Writer, "{")
 	st.IndentLevel++
 	i := 0
-	for v := range it {
+	for v := range v.Seq() {
 		if i == 0 {
 			write.MustString(st.Writer, "\n")
 		}
@@ -71,13 +58,55 @@ func (vw *IterWriter) writeSeq(st *State, it iter.Seq[reflect.Value]) {
 		st.WriteIndent()
 	}
 	write.MustString(st.Writer, "}")
+	return true
 }
 
-func (vw *IterWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, reflect.Value]) {
+// Supports implements [SupportChecker].
+func (vw *IterSeqWriter) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if typ.Kind() == reflect.Func && typ.CanSeq() {
+		res = vw
+	}
+	return res
+}
+
+// IterSeq2Writer is a [ValueWriter] that handles [iter.Seq2].
+//
+// It should be created with [NewIterSeq2Writer].
+type IterSeq2Writer struct {
+	ValueWriter
+	// ShowKeysInfos shows keys infos.
+	// Default: false.
+	ShowKeysInfos bool
+	// MaxLen is the maximum length of the iterator.
+	// Default: 0 (no limit).
+	MaxLen int
+}
+
+// NewIterSeq2Writer creates a new [IterSeq2Writer] with default values.
+func NewIterSeq2Writer(vw ValueWriter) *IterSeq2Writer {
+	return &IterSeq2Writer{
+		ValueWriter:   vw,
+		ShowKeysInfos: false,
+		MaxLen:        0,
+	}
+}
+
+// WriteValue implements [ValueWriter].
+func (vw *IterSeq2Writer) WriteValue(st *State, v reflect.Value) bool {
+	if v.Kind() != reflect.Func {
+		return false
+	}
+	if !v.Type().CanSeq2() {
+		return false
+	}
+	if checkNil(st.Writer, v) {
+		return true
+	}
 	write.MustString(st.Writer, "{")
 	st.IndentLevel++
 	i := 0
-	for k, v := range it {
+	for k, v := range v.Seq2() {
 		if i == 0 {
 			write.MustString(st.Writer, "\n")
 		}
@@ -101,12 +130,13 @@ func (vw *IterWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, reflect.V
 		st.WriteIndent()
 	}
 	write.MustString(st.Writer, "}")
+	return true
 }
 
 // Supports implements [SupportChecker].
-func (vw *IterWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *IterSeq2Writer) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
-	if typ.Kind() == reflect.Func && (typ.CanSeq() || typ.CanSeq2()) {
+	if typ.Kind() == reflect.Func && typ.CanSeq2() {
 		res = vw
 	}
 	return res
