@@ -72,41 +72,65 @@ func NewCommonWriter() *CommonWriter {
 
 // SetShowLen sets ShowLen on all [ValueWriter] that supports it.
 func (vw *CommonWriter) SetShowLen(show bool) {
-	vw.Kind.Chan.ShowLen = show
-	vw.Kind.Map.ShowLen = show
-	vw.Kind.Slice.ShowLen = show
-	vw.Kind.String.ShowLen = show
-	vw.BytesHexDump.ShowLen = show
-	vw.BytesableHexDump.ShowLen = show
-	vw.Stringer.ShowLen = show
+	if vw.Kind != nil {
+		vw.Kind.Chan.ShowLen = show
+		vw.Kind.Map.ShowLen = show
+		vw.Kind.Slice.ShowLen = show
+		vw.Kind.String.ShowLen = show
+	}
+	if vw.BytesHexDump != nil {
+		vw.BytesHexDump.ShowLen = show
+	}
+	if vw.BytesableHexDump != nil {
+		vw.BytesableHexDump.ShowLen = show
+	}
+	if vw.Stringer != nil {
+		vw.Stringer.ShowLen = show
+	}
 }
 
 // SetShowCap sets ShowCap on all [ValueWriter] that supports it.
 func (vw *CommonWriter) SetShowCap(show bool) {
-	vw.Kind.Chan.ShowCap = show
-	vw.Kind.Slice.ShowCap = show
-	vw.BytesHexDump.ShowCap = show
-	vw.BytesableHexDump.ShowCap = show
+	if vw.Kind != nil {
+		vw.Kind.Chan.ShowCap = show
+		vw.Kind.Slice.ShowCap = show
+	}
+	if vw.BytesHexDump != nil {
+		vw.BytesHexDump.ShowCap = show
+	}
+	if vw.BytesableHexDump != nil {
+		vw.BytesableHexDump.ShowCap = show
+	}
 }
 
 // SetShowAddr sets ShowAddr on all [ValueWriter] that supports it.
 func (vw *CommonWriter) SetShowAddr(show bool) {
-	vw.Recursion.ShowAddr = show
-	vw.Kind.Chan.ShowAddr = show
-	vw.Kind.Func.ShowAddr = show
-	vw.Kind.Map.ShowAddr = show
-	vw.Kind.Pointer.ShowAddr = show
-	vw.Kind.Slice.ShowAddr = show
-	vw.Kind.String.ShowAddr = show
-	vw.BytesHexDump.ShowAddr = show
-	vw.BytesableHexDump.ShowAddr = show
+	if vw.Recursion != nil {
+		vw.Recursion.ShowAddr = show
+	}
+	if vw.Kind != nil {
+		vw.Kind.Chan.ShowAddr = show
+		vw.Kind.Func.ShowAddr = show
+		vw.Kind.Map.ShowAddr = show
+		vw.Kind.Pointer.ShowAddr = show
+		vw.Kind.Slice.ShowAddr = show
+		vw.Kind.String.ShowAddr = show
+	}
+	if vw.BytesHexDump != nil {
+		vw.BytesHexDump.ShowAddr = show
+	}
+	if vw.BytesableHexDump != nil {
+		vw.BytesableHexDump.ShowAddr = show
+	}
 }
 
 // SetShowIndexes sets ShowIndexes on all [ValueWriter] that supports it.
 func (vw *CommonWriter) SetShowIndexes(show bool) {
-	vw.Kind.Array.ShowIndexes = show
-	vw.Kind.Slice.ShowIndexes = show
-	vw.Kind.Chan.ShowIndexes = show
+	if vw.Kind != nil {
+		vw.Kind.Array.ShowIndexes = show
+		vw.Kind.Slice.ShowIndexes = show
+		vw.Kind.Chan.ShowIndexes = show
+	}
 }
 
 // ConfigureTest configures the [CommonWriter] for testing.
@@ -115,7 +139,9 @@ func (vw *CommonWriter) SetShowIndexes(show bool) {
 // It sorts the keys of maps and disables the address/capacity.
 // The enabled boolean is used to enable or disable the configuration.
 func (vw *CommonWriter) ConfigureTest(enabled bool) {
-	vw.Kind.Map.SortKeys = enabled
+	if vw.Kind != nil {
+		vw.Kind.Map.SortKeys = enabled
+	}
 	vw.SetShowAddr(!enabled)
 	vw.SetShowCap(!enabled)
 }
