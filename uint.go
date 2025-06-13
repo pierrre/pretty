@@ -7,24 +7,24 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// UintValueWriter is a [ValueWriter] that handles uint values.
+// UintWriter is a [ValueWriter] that handles uint values.
 //
-// It should be created with [NewUintValueWriter].
-type UintValueWriter struct {
+// It should be created with [NewUintWriter].
+type UintWriter struct {
 	// Base is the base used to format the integer.
 	// Default: 10.
 	Base int
 }
 
-// NewUintValueWriter creates a new [UintValueWriter] with default values.
-func NewUintValueWriter() *UintValueWriter {
-	return &UintValueWriter{
+// NewUintWriter creates a new [UintWriter] with default values.
+func NewUintWriter() *UintWriter {
+	return &UintWriter{
 		Base: 10,
 	}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *UintValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *UintWriter) WriteValue(st *State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles uint.
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 	default:
@@ -35,7 +35,7 @@ func (vw *UintValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *UintValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *UintWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	switch typ.Kind() { //nolint:exhaustive // Only handles uint.
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:

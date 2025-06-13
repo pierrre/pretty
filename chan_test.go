@@ -26,7 +26,7 @@ func init() {
 				c <- 123
 				return c
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Chan.ShowAddr = true
 			},
 			ignoreResult:    true,
@@ -41,7 +41,7 @@ func init() {
 				c <- "c"
 				return c
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Chan.ShowElems = true
 			},
 		},
@@ -54,7 +54,7 @@ func init() {
 				c <- "c"
 				return c
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Chan.ShowElems = true
 				vw.Kind.Chan.ShowIndexes = true
 			},
@@ -68,7 +68,7 @@ func init() {
 				c <- "c"
 				return c
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Chan.ShowElems = true
 				vw.Kind.Chan.MaxLen = 2
 			},
@@ -82,7 +82,7 @@ func init() {
 				c <- "c"
 				return c
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Chan.ShowElems = true
 			},
 		},
@@ -95,7 +95,7 @@ func init() {
 				c <- "c"
 				return c
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Chan.ShowElems = true
 				vw.Kind.Chan.ShowIndexes = true
 			},
@@ -109,7 +109,7 @@ func init() {
 				c <- "c"
 				return c
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Chan.ShowElems = true
 				vw.Kind.Chan.ShowIndexes = true
 			},
@@ -121,14 +121,14 @@ func init() {
 				c <- 123
 				return c
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
 			name:  "Not",
 			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{&vw.Kind.Chan}
 			},
 			ignoreBenchmark: true,

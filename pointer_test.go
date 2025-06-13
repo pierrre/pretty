@@ -24,7 +24,7 @@ func init() {
 				i := 123
 				return &i
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Pointer.ShowAddr = true
 			},
 			ignoreResult:    true,
@@ -44,7 +44,7 @@ func init() {
 				i := 123
 				return &i
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Type.ShowKnownTypes = true
 			},
 			ignoreBenchmark: true,
@@ -55,14 +55,14 @@ func init() {
 				i := 123
 				return &i
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
 			name:  "Not",
 			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{&vw.Kind.Pointer}
 			},
 			ignoreBenchmark: true,

@@ -7,26 +7,26 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// RecursionValueWriter is a [ValueWriter] that prevents recursion.
+// RecursionWriter is a [ValueWriter] that prevents recursion.
 //
-// It should be created with [NewRecursionValueWriter].
-type RecursionValueWriter struct {
+// It should be created with [NewRecursionWriter].
+type RecursionWriter struct {
 	ValueWriter
 	// ShowInfos shows the infos (type and address).
 	// Default: true.
 	ShowInfos bool
 }
 
-// NewRecursionValueWriter creates a new [RecursionValueWriter].
-func NewRecursionValueWriter(vw ValueWriter) *RecursionValueWriter {
-	return &RecursionValueWriter{
+// NewRecursionWriter creates a new [RecursionWriter].
+func NewRecursionWriter(vw ValueWriter) *RecursionWriter {
+	return &RecursionWriter{
 		ValueWriter: vw,
 		ShowInfos:   true,
 	}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *RecursionValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *RecursionWriter) WriteValue(st *State, v reflect.Value) bool {
 	visitedAdded, recursionDetected := checkRecursion(st, v, vw.ShowInfos)
 	if recursionDetected {
 		return true

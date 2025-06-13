@@ -13,14 +13,14 @@ func init() {
 		{
 			name:  "SupportDisabled",
 			value: uintptr(123),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
 			name:  "Not",
 			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{&vw.Kind.Uintptr}
 			},
 			ignoreBenchmark: true,

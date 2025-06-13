@@ -14,9 +14,9 @@ func init() {
 				i := 123
 				return testUnexported{v: &i}
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.CanInterface = false
-				vw.ValueWriters = ValueWriters{NewFilterValueWriter(NewCanInterfaceValueWriter(vw), func(v reflect.Value) bool {
+				vw.ValueWriters = ValueWriters{NewFilterWriter(NewCanInterfaceWriter(vw), func(v reflect.Value) bool {
 					return !v.CanInterface()
 				})}
 				vw.RecursionCheck = false

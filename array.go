@@ -8,10 +8,10 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// ArrayValueWriter is a [ValueWriter] that handles array values.
+// ArrayWriter is a [ValueWriter] that handles array values.
 //
-// It should be created with [NewArrayValueWriter].
-type ArrayValueWriter struct {
+// It should be created with [NewArrayWriter].
+type ArrayWriter struct {
 	ValueWriter
 	// ShowIndexes shows the indexes.
 	// Default: false.
@@ -21,9 +21,9 @@ type ArrayValueWriter struct {
 	MaxLen int
 }
 
-// NewArrayValueWriter creates a new [ArrayValueWriter] with default values.
-func NewArrayValueWriter(vw ValueWriter) *ArrayValueWriter {
-	return &ArrayValueWriter{
+// NewArrayWriter creates a new [ArrayWriter] with default values.
+func NewArrayWriter(vw ValueWriter) *ArrayWriter {
+	return &ArrayWriter{
 		ValueWriter: vw,
 		ShowIndexes: false,
 		MaxLen:      0,
@@ -31,7 +31,7 @@ func NewArrayValueWriter(vw ValueWriter) *ArrayValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ArrayValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *ArrayWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Array {
 		return false
 	}
@@ -40,7 +40,7 @@ func (vw *ArrayValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *ArrayValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *ArrayWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ.Kind() == reflect.Array {
 		res = vw

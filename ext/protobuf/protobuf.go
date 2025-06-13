@@ -14,32 +14,32 @@ import (
 
 var messageImplementsCache = reflectutil.NewImplementsCacheFor[protoreflect.ProtoMessage]()
 
-// ConfigureDefault configures [pretty.DefaultCommonValueWriter] with [ConfigureCommonValueWriter].
+// ConfigureDefault configures [pretty.DefaultCommonWriter] with [ConfigureCommonValueWriter].
 func ConfigureDefault() {
-	ConfigureCommonValueWriter(pretty.DefaultCommonValueWriter)
+	ConfigureCommonValueWriter(pretty.DefaultCommonWriter)
 }
 
-// ConfigureCommonValueWriter configures a [pretty.CommonValueWriter] with a [ValueWriter].
-func ConfigureCommonValueWriter(vw *pretty.CommonValueWriter) {
-	vw.ValueWriters = append(vw.ValueWriters, NewValueWriter(vw))
+// ConfigureCommonValueWriter configures a [pretty.CommonWriter] with a [MessageWriter].
+func ConfigureCommonValueWriter(vw *pretty.CommonWriter) {
+	vw.ValueWriters = append(vw.ValueWriters, NewMessageWriter(vw))
 }
 
-// ValueWriter is a [pretty.ValueWriter] that handles protobuf messages.
+// MessageWriter is a [pretty.MessageWriter] that handles protobuf messages.
 //
-// It should be created with [NewValueWriter].
-type ValueWriter struct {
+// It should be created with [NewMessageWriter].
+type MessageWriter struct {
 	pretty.ValueWriter
 }
 
-// NewValueWriter creates a new [ValueWriter].
-func NewValueWriter(vw pretty.ValueWriter) *ValueWriter {
-	return &ValueWriter{
+// NewMessageWriter creates a new [MessageWriter].
+func NewMessageWriter(vw pretty.ValueWriter) *MessageWriter {
+	return &MessageWriter{
 		ValueWriter: vw,
 	}
 }
 
 // WriteValue implements [pretty.ValueWriter].
-func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
+func (vw *MessageWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 	if !messageImplementsCache.ImplementedBy(v.Type()) {
 		return false
 	}
@@ -52,7 +52,7 @@ func (vw *ValueWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 	return true
 }
 
-func (vw *ValueWriter) writeMessage(st *pretty.State, m protoreflect.Message) {
+func (vw *MessageWriter) writeMessage(st *pretty.State, m protoreflect.Message) {
 	write.MustString(st.Writer, "{")
 	fs := m.Descriptor().Fields()
 	l := fs.Len()
@@ -81,7 +81,7 @@ func (vw *ValueWriter) writeMessage(st *pretty.State, m protoreflect.Message) {
 	write.MustString(st.Writer, "}")
 }
 
-func (vw *ValueWriter) getInterface(v protoreflect.Value, fd protoreflect.FieldDescriptor) any {
+func (vw *MessageWriter) getInterface(v protoreflect.Value, fd protoreflect.FieldDescriptor) any {
 	itf := v.Interface()
 	switch itf := itf.(type) {
 	case protoreflect.Message:
@@ -96,7 +96,7 @@ func (vw *ValueWriter) getInterface(v protoreflect.Value, fd protoreflect.FieldD
 	return itf
 }
 
-func (vw *ValueWriter) getList(l protoreflect.List, fd protoreflect.FieldDescriptor) any {
+func (vw *MessageWriter) getList(l protoreflect.List, fd protoreflect.FieldDescriptor) any {
 	// TODO create typed slice
 	res := make([]any, l.Len())
 	for i := range l.Len() {
@@ -105,7 +105,7 @@ func (vw *ValueWriter) getList(l protoreflect.List, fd protoreflect.FieldDescrip
 	return res
 }
 
-func (vw *ValueWriter) getMap(m protoreflect.Map, fd protoreflect.FieldDescriptor) any {
+func (vw *MessageWriter) getMap(m protoreflect.Map, fd protoreflect.FieldDescriptor) any {
 	// TODO create typed map
 	res := make(map[any]any, m.Len())
 	for key, value := range m.Range {
@@ -114,7 +114,7 @@ func (vw *ValueWriter) getMap(m protoreflect.Map, fd protoreflect.FieldDescripto
 	return res
 }
 
-func (vw *ValueWriter) getEnum(e protoreflect.EnumNumber, fd protoreflect.FieldDescriptor) EnumValue {
+func (vw *MessageWriter) getEnum(e protoreflect.EnumNumber, fd protoreflect.FieldDescriptor) EnumValue {
 	res := EnumValue{
 		Number: int32(e),
 	}
@@ -126,7 +126,7 @@ func (vw *ValueWriter) getEnum(e protoreflect.EnumNumber, fd protoreflect.FieldD
 }
 
 // Supports implements [pretty.SupportChecker].
-func (vw *ValueWriter) Supports(typ reflect.Type) pretty.ValueWriter {
+func (vw *MessageWriter) Supports(typ reflect.Type) pretty.ValueWriter {
 	var res pretty.ValueWriter
 	if messageImplementsCache.ImplementedBy(typ) {
 		res = vw

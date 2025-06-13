@@ -9,14 +9,14 @@ func init() {
 		{
 			name:  "Default",
 			value: [1]any{123},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = false
 			},
 		},
 		{
 			name:  "Nil",
 			value: [1]any{nil},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = false
 			},
 			ignoreBenchmark: true,
@@ -24,7 +24,7 @@ func init() {
 		{
 			name:  "SupportDisabled",
 			value: [1]any{123},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = false
 				vw.Support = nil
 			},
@@ -32,7 +32,7 @@ func init() {
 		{
 			name:  "Not",
 			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{&vw.Kind.Interface}
 			},
 			ignoreBenchmark: true,

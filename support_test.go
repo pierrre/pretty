@@ -9,7 +9,7 @@ func init() {
 		{
 			name:  "Empty",
 			value: 123,
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Support.Checkers = nil
 			},
 		},

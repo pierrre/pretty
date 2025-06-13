@@ -6,26 +6,26 @@ import (
 	"github.com/pierrre/pretty/internal/must"
 )
 
-// PointerValueWriter is a [ValueWriter] that handles pointer values.
+// PointerWriter is a [ValueWriter] that handles pointer values.
 //
-// It should be created with [NewPointerValueWriter].
-type PointerValueWriter struct {
+// It should be created with [NewPointerWriter].
+type PointerWriter struct {
 	ValueWriter
 	// ShowAddr shows the address.
 	// Default: true.
 	ShowAddr bool
 }
 
-// NewPointerValueWriter creates a new [PointerValueWriter] with default values.
-func NewPointerValueWriter(vw ValueWriter) *PointerValueWriter {
-	return &PointerValueWriter{
+// NewPointerWriter creates a new [PointerWriter] with default values.
+func NewPointerWriter(vw ValueWriter) *PointerWriter {
+	return &PointerWriter{
 		ValueWriter: vw,
 		ShowAddr:    true,
 	}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *PointerValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *PointerWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Pointer {
 		return false
 	}
@@ -42,7 +42,7 @@ func (vw *PointerValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *PointerValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *PointerWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ.Kind() == reflect.Pointer {
 		res = vw

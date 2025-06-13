@@ -15,10 +15,10 @@ import (
 
 var bytesType = reflect.TypeFor[[]byte]()
 
-// BytesHexDumpValueWriter is a [ValueWriter] that handles []byte and writes them with [hex.Dumper].
+// BytesHexDumpWriter is a [ValueWriter] that handles []byte and writes them with [hex.Dumper].
 //
-// It should be created with [NewBytesHexDumpValueWriter].
-type BytesHexDumpValueWriter struct {
+// It should be created with [NewBytesHexDumpWriter].
+type BytesHexDumpWriter struct {
 	// ShowLen shows the len.
 	// Default: true.
 	ShowLen bool
@@ -33,9 +33,9 @@ type BytesHexDumpValueWriter struct {
 	MaxLen int
 }
 
-// NewBytesHexDumpValueWriter creates a new [BytesHexDumpValueWriter].
-func NewBytesHexDumpValueWriter() *BytesHexDumpValueWriter {
-	return &BytesHexDumpValueWriter{
+// NewBytesHexDumpWriter creates a new [BytesHexDumpWriter].
+func NewBytesHexDumpWriter() *BytesHexDumpWriter {
+	return &BytesHexDumpWriter{
 		ShowLen:  true,
 		ShowCap:  true,
 		ShowAddr: false,
@@ -44,7 +44,7 @@ func NewBytesHexDumpValueWriter() *BytesHexDumpValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *BytesHexDumpValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *BytesHexDumpWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Slice || v.Type() != bytesType {
 		return false
 	}
@@ -57,7 +57,7 @@ func (vw *BytesHexDumpValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *BytesHexDumpValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *BytesHexDumpWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ.Kind() == reflect.Slice && typ == bytesType {
 		res = vw
@@ -72,10 +72,10 @@ type Bytesable interface {
 
 var bytesableImplementsCache = reflectutil.NewImplementsCacheFor[Bytesable]()
 
-// BytesableHexDumpValueWriter is a [ValueWriter] that handles [Bytesable] and writes thems with [hex.Dumper].
+// BytesableHexDumpWriter is a [ValueWriter] that handles [Bytesable] and writes thems with [hex.Dumper].
 //
-// It should be created with [NewBytesableHexDumpValueWriter].
-type BytesableHexDumpValueWriter struct {
+// It should be created with [NewBytesableHexDumpWriter].
+type BytesableHexDumpWriter struct {
 	// ShowLen shows the len.
 	// Default: true.
 	ShowLen bool
@@ -90,9 +90,9 @@ type BytesableHexDumpValueWriter struct {
 	MaxLen int
 }
 
-// NewBytesableHexDumpValueWriter creates a new [BytesableHexDumpValueWriter].
-func NewBytesableHexDumpValueWriter() *BytesableHexDumpValueWriter {
-	return &BytesableHexDumpValueWriter{
+// NewBytesableHexDumpWriter creates a new [BytesableHexDumpWriter].
+func NewBytesableHexDumpWriter() *BytesableHexDumpWriter {
+	return &BytesableHexDumpWriter{
 		ShowLen:  true,
 		ShowCap:  true,
 		ShowAddr: false,
@@ -101,7 +101,7 @@ func NewBytesableHexDumpValueWriter() *BytesableHexDumpValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *BytesableHexDumpValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *BytesableHexDumpWriter) WriteValue(st *State, v reflect.Value) bool {
 	typ := v.Type()
 	if typ == reflectValueType {
 		return false
@@ -124,7 +124,7 @@ func (vw *BytesableHexDumpValueWriter) WriteValue(st *State, v reflect.Value) bo
 }
 
 // Supports implements [SupportChecker].
-func (vw *BytesableHexDumpValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *BytesableHexDumpWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ != reflectValueType && bytesableImplementsCache.ImplementedBy(typ) {
 		res = vw

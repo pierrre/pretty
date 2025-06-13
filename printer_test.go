@@ -15,14 +15,14 @@ type testCase struct {
 	name             string
 	value            any
 	configurePrinter func(p *Printer)
-	configureWriter  func(vw *CommonValueWriter)
+	configureWriter  func(vw *CommonWriter)
 	ignoreResult     bool
 	ignoreAllocs     bool
 	ignoreBenchmark  bool
 }
 
 func (tc *testCase) newPrinter() *Printer {
-	vw := NewCommonValueWriter()
+	vw := NewCommonWriter()
 	vw.ConfigureTest(true)
 	if tc.configureWriter != nil {
 		tc.configureWriter(vw)

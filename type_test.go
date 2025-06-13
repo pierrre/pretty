@@ -184,7 +184,7 @@ func init() {
 				type myBool bool
 				return myBool(false)
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Type.ShowUnderlyingType = false
 			},
 			ignoreBenchmark: true,
@@ -192,7 +192,7 @@ func init() {
 		{
 			name:  "Disabled",
 			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.ShowType = false
 			},
 			ignoreBenchmark: true,
@@ -202,8 +202,8 @@ func init() {
 		{
 			name:  "Default",
 			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
-				vw.ByTypeValueWriters[reflect.TypeFor[string]()] = ValueWriterFunc(func(st *State, v reflect.Value) bool {
+			configureWriter: func(vw *CommonWriter) {
+				vw.ByType[reflect.TypeFor[string]()] = ValueWriterFunc(func(st *State, v reflect.Value) bool {
 					write.MustString(st.Writer, "custom")
 					return true
 				})
@@ -212,19 +212,19 @@ func init() {
 		{
 			name:  "NotFound",
 			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
-				vw.ByTypeValueWriters[reflect.TypeFor[int]()] = nil
+			configureWriter: func(vw *CommonWriter) {
+				vw.ByType[reflect.TypeFor[int]()] = nil
 			},
 		},
 		{
 			name:  "Support",
 			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				cvw := ValueWriterFunc(func(st *State, v reflect.Value) bool {
 					write.MustString(st.Writer, "custom")
 					return true
 				})
-				btvw := NewByTypeValueWriters()
+				btvw := NewByTypeWriters()
 				btvw[reflect.TypeFor[string]()] = &SupportCheckerValueWriter{
 					ValueWriter: cvw,
 					SupportChecker: SupportCheckerFunc(func(typ reflect.Type) ValueWriter {

@@ -14,7 +14,7 @@ import (
 
 func init() {
 	ConfigureDefault()
-	pretty.DefaultCommonValueWriter.CanInterface = false
+	pretty.DefaultCommonWriter.CanInterface = false
 }
 
 func Test(t *testing.T) {
@@ -80,7 +80,7 @@ func Test(t *testing.T) {
 
 func TestSupports(t *testing.T) {
 	// TODO improve tests of this package.
-	vw := NewValueWriter(nil)
+	vw := NewMessageWriter(nil)
 	assert.Equal(t, vw.Supports(reflect.TypeFor[*wrapperspb.StringValue]()), pretty.ValueWriter(vw))
 	assert.Zero(t, vw.Supports(reflect.TypeFor[string]()))
 }

@@ -7,18 +7,18 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// InvalidValueWriter is a [ValueWriter] that handles invalid values.
+// InvalidWriter is a [ValueWriter] that handles invalid values.
 //
-// It should be created with [NewInvalidValueWriter].
-type InvalidValueWriter struct{}
+// It should be created with [NewInvalidWriter].
+type InvalidWriter struct{}
 
-// NewInvalidValueWriter creates a new [InvalidValueWriter].
-func NewInvalidValueWriter() *InvalidValueWriter {
-	return &InvalidValueWriter{}
+// NewInvalidWriter creates a new [InvalidWriter].
+func NewInvalidWriter() *InvalidWriter {
+	return &InvalidWriter{}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *InvalidValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *InvalidWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.IsValid() {
 		return false
 	}

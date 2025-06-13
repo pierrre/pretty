@@ -9,10 +9,10 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// TypeValueWriter is a [ValueWriter] that writes the type of the value.
+// TypeWriter is a [ValueWriter] that writes the type of the value.
 //
-// It should be created with [NewTypeValueWriter].
-type TypeValueWriter struct {
+// It should be created with [NewTypeWriter].
+type TypeWriter struct {
 	ValueWriter
 	// ShowKnownTypes shows known types.
 	// Default: false.
@@ -22,9 +22,9 @@ type TypeValueWriter struct {
 	ShowUnderlyingType bool
 }
 
-// NewTypeValueWriter creates a new [TypeValueWriter] with default values.
-func NewTypeValueWriter(vw ValueWriter) *TypeValueWriter {
-	return &TypeValueWriter{
+// NewTypeWriter creates a new [TypeWriter] with default values.
+func NewTypeWriter(vw ValueWriter) *TypeWriter {
+	return &TypeWriter{
 		ValueWriter:        vw,
 		ShowKnownTypes:     false,
 		ShowUnderlyingType: true,
@@ -32,7 +32,7 @@ func NewTypeValueWriter(vw ValueWriter) *TypeValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *TypeValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *TypeWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !st.KnownType || vw.ShowKnownTypes {
 		write.MustString(st.Writer, "[")
 		writeType(st.Writer, v.Type())
@@ -47,7 +47,7 @@ func (vw *TypeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	return true
 }
 
-func (vw *TypeValueWriter) writeUnderlyingType(w io.Writer, v reflect.Value) {
+func (vw *TypeWriter) writeUnderlyingType(w io.Writer, v reflect.Value) {
 	if !vw.ShowUnderlyingType {
 		return
 	}
@@ -64,18 +64,18 @@ func writeType(w io.Writer, typ reflect.Type) {
 	write.MustString(w, reflectutil.TypeFullName(typ))
 }
 
-// ByTypeValueWriters is a [ValueWriter] that selects a [ValueWriter] by [reflect.Type].
+// ByTypeWriters is a [ValueWriter] that selects a [ValueWriter] by [reflect.Type].
 //
-// It should be created with [NewByTypeValueWriters].
-type ByTypeValueWriters map[reflect.Type]ValueWriter
+// It should be created with [NewByTypeWriters].
+type ByTypeWriters map[reflect.Type]ValueWriter
 
-// NewByTypeValueWriters creates a new [ByTypeValueWriters].
-func NewByTypeValueWriters() ByTypeValueWriters {
-	return make(ByTypeValueWriters)
+// NewByTypeWriters creates a new [ByTypeWriters].
+func NewByTypeWriters() ByTypeWriters {
+	return make(ByTypeWriters)
 }
 
 // WriteValue implements [ValueWriter].
-func (vws ByTypeValueWriters) WriteValue(st *State, v reflect.Value) bool {
+func (vws ByTypeWriters) WriteValue(st *State, v reflect.Value) bool {
 	if len(vws) == 0 {
 		return false
 	}
@@ -88,6 +88,6 @@ func (vws ByTypeValueWriters) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vws ByTypeValueWriters) Supports(typ reflect.Type) ValueWriter {
+func (vws ByTypeWriters) Supports(typ reflect.Type) ValueWriter {
 	return supportsValueWriter(typ, vws[typ])
 }

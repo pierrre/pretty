@@ -8,7 +8,7 @@ import (
 )
 
 func TestCommonValueWriterSetShowLen(t *testing.T) {
-	vw := NewCommonValueWriter()
+	vw := NewCommonWriter()
 	vw.SetShowLen(true)
 	assert.True(t, vw.Kind.Chan.ShowLen)
 	assert.True(t, vw.Kind.Map.ShowLen)
@@ -20,7 +20,7 @@ func TestCommonValueWriterSetShowLen(t *testing.T) {
 }
 
 func TestCommonValueWriterSetShowIndexes(t *testing.T) {
-	vw := NewCommonValueWriter()
+	vw := NewCommonWriter()
 	vw.SetShowIndexes(true)
 	assert.True(t, vw.Kind.Array.ShowIndexes)
 	assert.True(t, vw.Kind.Slice.ShowIndexes)

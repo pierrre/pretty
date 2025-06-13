@@ -11,24 +11,24 @@ import (
 
 var errorImplementsCache = reflectutil.NewImplementsCacheFor[error]()
 
-// ErrorValueWriter is a [ValueWriter] that handles errors.
+// ErrorWriter is a [ValueWriter] that handles errors.
 //
-// It should be created with [NewErrorValueWriter].
-type ErrorValueWriter struct {
+// It should be created with [NewErrorWriter].
+type ErrorWriter struct {
 	// Write writes the error.
-	// Default: [ErrorValueWriter.WriteError].
+	// Default: [ErrorWriter.WriteError].
 	Write func(st *State, err error)
 }
 
-// NewErrorValueWriter creates a new [ErrorValueWriter] with default values.
-func NewErrorValueWriter() *ErrorValueWriter {
-	vw := &ErrorValueWriter{}
+// NewErrorWriter creates a new [ErrorWriter] with default values.
+func NewErrorWriter() *ErrorWriter {
+	vw := &ErrorWriter{}
 	vw.Write = vw.WriteError
 	return vw
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ErrorValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *ErrorWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !errorImplementsCache.ImplementedBy(v.Type()) {
 		return false
 	}
@@ -42,7 +42,7 @@ func (vw *ErrorValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *ErrorValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *ErrorWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if errorImplementsCache.ImplementedBy(typ) {
 		res = vw
@@ -51,6 +51,6 @@ func (vw *ErrorValueWriter) Supports(typ reflect.Type) ValueWriter {
 }
 
 // WriteError writes the error with error.Error.
-func (vw *ErrorValueWriter) WriteError(st *State, err error) {
+func (vw *ErrorWriter) WriteError(st *State, err error) {
 	write.Must(strconvio.WriteQuote(st.Writer, err.Error()))
 }

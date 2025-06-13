@@ -7,22 +7,22 @@ import (
 	"github.com/pierrre/pretty/internal/indent"
 )
 
-// ConfigureDefault configures [pretty.DefaultCommonValueWriter].
+// ConfigureDefault configures [pretty.DefaultCommonWriter].
 //
-// It calls [ConfigureCommonValueWriter] with [pretty.DefaultCommonValueWriter].
+// It calls [ConfigureCommonWriter] with [pretty.DefaultCommonWriter].
 func ConfigureDefault() {
-	ConfigureCommonValueWriter(pretty.DefaultCommonValueWriter)
+	ConfigureCommonWriter(pretty.DefaultCommonWriter)
 }
 
-// ConfigureCommonValueWriter configures a [pretty.CommonValueWriter].
+// ConfigureCommonWriter configures a [pretty.CommonWriter].
 //
-// It calls [ConfigureErrorValueWriter] with [pretty.CommonValueWriter.Error].
-func ConfigureCommonValueWriter(vw *pretty.CommonValueWriter) {
-	ConfigureErrorValueWriter(vw.Error)
+// It calls [ConfigureErrorWriter] with [pretty.CommonWriter.Error].
+func ConfigureCommonWriter(vw *pretty.CommonWriter) {
+	ConfigureErrorWriter(vw.Error)
 }
 
-// ConfigureErrorValueWriter configures a [pretty.ErrorValueWriter] with [Write].
-func ConfigureErrorValueWriter(vw *pretty.ErrorValueWriter) {
+// ConfigureErrorWriter configures a [pretty.ErrorWriter] with [Write].
+func ConfigureErrorWriter(vw *pretty.ErrorWriter) {
 	vw.Write = Write
 }
 

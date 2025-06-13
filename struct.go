@@ -8,26 +8,26 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// StructValueWriter is a [ValueWriter] that handles struct values.
+// StructWriter is a [ValueWriter] that handles struct values.
 //
-// It should be created with [NewStructValueWriter].
-type StructValueWriter struct {
+// It should be created with [NewStructWriter].
+type StructWriter struct {
 	ValueWriter
 	// FieldFilter filters the fields.
 	// Default: nil.
 	FieldFilter StructFieldFilter
 }
 
-// NewStructValueWriter creates a new [StructValueWriter] with default values.
-func NewStructValueWriter(vw ValueWriter) *StructValueWriter {
-	return &StructValueWriter{
+// NewStructWriter creates a new [StructWriter] with default values.
+func NewStructWriter(vw ValueWriter) *StructWriter {
+	return &StructWriter{
 		ValueWriter: vw,
 		FieldFilter: nil,
 	}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *StructWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Struct {
 		return false
 	}
@@ -59,7 +59,7 @@ func (vw *StructValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *StructValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *StructWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ.Kind() == reflect.Struct {
 		res = vw
@@ -69,7 +69,7 @@ func (vw *StructValueWriter) Supports(typ reflect.Type) ValueWriter {
 
 // StructFieldFilter is a function that filters struct fields.
 //
-// It's used by [StructValueWriter].
+// It's used by [StructWriter].
 type StructFieldFilter func(v reflect.Value, field reflect.StructField) bool
 
 // NewExportedStructFieldFilter creates a new [StructFieldFilter] that returns true for exported fields and false otherwise.

@@ -6,26 +6,26 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// MaxDepthValueWriter is a [ValueWriter] that limits the depth.
+// MaxDepthWriter is a [ValueWriter] that limits the depth.
 //
-// It should be created with [NewMaxDepthValueWriter].
-type MaxDepthValueWriter struct {
+// It should be created with [NewMaxDepthWriter].
+type MaxDepthWriter struct {
 	ValueWriter
 	// Max is the maximum depth.
 	// Default: 0 (no limit).
 	Max int
 }
 
-// NewMaxDepthValueWriter creates a new [MaxDepthValueWriter].
-func NewMaxDepthValueWriter(vw ValueWriter) *MaxDepthValueWriter {
-	return &MaxDepthValueWriter{
+// NewMaxDepthWriter creates a new [MaxDepthWriter].
+func NewMaxDepthWriter(vw ValueWriter) *MaxDepthWriter {
+	return &MaxDepthWriter{
 		ValueWriter: vw,
 		Max:         0,
 	}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *MaxDepthValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *MaxDepthWriter) WriteValue(st *State, v reflect.Value) bool {
 	if vw.Max <= 0 {
 		return vw.ValueWriter.WriteValue(st, v)
 	}

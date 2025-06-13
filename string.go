@@ -7,10 +7,10 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// StringValueWriter is a [ValueWriter] that handles string values.
+// StringWriter is a [ValueWriter] that handles string values.
 //
-// It should be created with [NewStringValueWriter].
-type StringValueWriter struct {
+// It should be created with [NewStringWriter].
+type StringWriter struct {
 	// ShowLen shows the len.
 	// Default: true.
 	ShowLen bool
@@ -25,9 +25,9 @@ type StringValueWriter struct {
 	MaxLen int
 }
 
-// NewStringValueWriter creates a new [StringValueWriter] with default values.
-func NewStringValueWriter() *StringValueWriter {
-	return &StringValueWriter{
+// NewStringWriter creates a new [StringWriter] with default values.
+func NewStringWriter() *StringWriter {
+	return &StringWriter{
 		ShowLen:  true,
 		ShowAddr: false,
 		Quote:    true,
@@ -36,7 +36,7 @@ func NewStringValueWriter() *StringValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *StringValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *StringWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.String {
 		return false
 	}
@@ -45,7 +45,7 @@ func (vw *StringValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *StringValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *StringWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ.Kind() == reflect.String {
 		res = vw

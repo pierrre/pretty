@@ -20,7 +20,7 @@ func init() {
 		{
 			name:  "Disabled",
 			value: [1]any{123},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = false
 			},
 			ignoreBenchmark: true,
@@ -28,7 +28,7 @@ func init() {
 		{
 			name:  "DisabledNil",
 			value: [1]any{},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = false
 			},
 			ignoreBenchmark: true,
@@ -36,9 +36,9 @@ func init() {
 		{
 			name:  "Writer",
 			value: [1]any{123},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = false
-				vw.ValueWriters = ValueWriters{NewFilterValueWriter(NewUnwrapInterfaceValueWriter(vw), func(v reflect.Value) bool {
+				vw.ValueWriters = ValueWriters{NewFilterWriter(NewUnwrapInterfaceWriter(vw), func(v reflect.Value) bool {
 					return v.Kind() == reflect.Interface
 				})}
 			},
@@ -46,9 +46,9 @@ func init() {
 		{
 			name:  "WriterNil",
 			value: [1]any{},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = false
-				vw.ValueWriters = ValueWriters{NewFilterValueWriter(NewUnwrapInterfaceValueWriter(vw), func(v reflect.Value) bool {
+				vw.ValueWriters = ValueWriters{NewFilterWriter(NewUnwrapInterfaceWriter(vw), func(v reflect.Value) bool {
 					return v.Kind() == reflect.Interface
 				})}
 			},

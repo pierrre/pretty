@@ -7,23 +7,23 @@ import (
 	"github.com/pierrre/go-libs/reflectutil"
 )
 
-// DefaultCommonValueWriter is the default [CommonValueWriter].
+// DefaultCommonWriter is the default [CommonWriter].
 //
-// It is configured with [CommonValueWriter.ConfigureTest] and [testing.Testing].
-var DefaultCommonValueWriter = NewCommonValueWriter()
+// It is configured with [CommonWriter.ConfigureTest] and [testing.Testing].
+var DefaultCommonWriter = NewCommonWriter()
 
 func init() {
-	DefaultCommonValueWriter.ConfigureTest(testing.Testing())
+	DefaultCommonWriter.ConfigureTest(testing.Testing())
 }
 
-// CommonValueWriter is a [ValueWriter] with common [ValueWriter].
+// CommonWriter is a [ValueWriter] with common [ValueWriter].
 //
 // Any [ValueWriter] can be configured, but it's not allowed to change the pointer value.
 // Any [ValueWriter] can be set to nil in order to disable it.
 // It is not allowed to updated the wrapped [ValueWriter].
 //
-// It should be created with [NewCommonValueWriter].
-type CommonValueWriter struct {
+// It should be created with [NewCommonWriter].
+type CommonWriter struct {
 	// UnwrapInterface indicates whether to unwrap interface values.
 	// Default: true.
 	UnwrapInterface bool
@@ -40,58 +40,58 @@ type CommonValueWriter struct {
 	// Default: true.
 	ShowType bool
 	// Type is the [ValueWriter] for types.
-	Type TypeValueWriter
+	Type TypeWriter
 
 	// The [ValueWriter]s below can be set to nil to disable them.
-	ByTypeValueWriters ByTypeValueWriters
-	ValueWriters       ValueWriters
-	Support            *SupportWriter
-	Time               *TimeValueWriter
-	BytesHexDump       *BytesHexDumpValueWriter
-	MathBigInt         *MathBigIntWriter
-	Iter               *IterValueWriter
-	WeakPointer        *WeakPointerWriter
-	ReflectValue       *ReflectValueWriter
-	ReflectType        *ReflectTypeWriter
-	Error              *ErrorValueWriter
-	BytesableHexDump   *BytesableHexDumpValueWriter
-	Stringer           *StringerValueWriter
+	ByType           ByTypeWriters
+	ValueWriters     ValueWriters
+	Support          *SupportWriter
+	Time             *TimeWriter
+	BytesHexDump     *BytesHexDumpWriter
+	MathBigInt       *MathBigIntWriter
+	Iter             *IterWriter
+	WeakPointer      *WeakPointerWriter
+	ReflectValue     *ReflectValueWriter
+	ReflectType      *ReflectTypeWriter
+	Error            *ErrorWriter
+	BytesableHexDump *BytesableHexDumpWriter
+	Stringer         *StringerWriter
 
 	// Kind is the default [ValueWriter].
 	// It must not be set to nil.
-	Kind *KindValueWriter
+	Kind *KindWriter
 }
 
-// NewCommonValueWriter creates a new [CommonValueWriter] initialized with default values.
-func NewCommonValueWriter() *CommonValueWriter {
-	vw := &CommonValueWriter{}
+// NewCommonWriter creates a new [CommonWriter] initialized with default values.
+func NewCommonWriter() *CommonWriter {
+	vw := &CommonWriter{}
 	vw.UnwrapInterface = true
 	vw.RecursionCheck = true
 	vw.MaxDepth = 0
 	vw.CanInterface = true
 	vw.ShowType = true
-	vw.Type = *NewTypeValueWriter(ValueWriterFunc(vw.writeValue))
-	vw.ByTypeValueWriters = NewByTypeValueWriters()
+	vw.Type = *NewTypeWriter(ValueWriterFunc(vw.writeValue))
+	vw.ByType = NewByTypeWriters()
 	vw.Support = NewSupportWriter()
 	vw.Support.Checkers = []SupportChecker{
 		SupportCheckerFunc(vw.supports),
 	}
-	vw.Time = NewTimeValueWriter()
-	vw.BytesHexDump = NewBytesHexDumpValueWriter()
+	vw.Time = NewTimeWriter()
+	vw.BytesHexDump = NewBytesHexDumpWriter()
 	vw.MathBigInt = NewMathBigIntWriter()
-	vw.Iter = NewIterValueWriter(vw)
+	vw.Iter = NewIterWriter(vw)
 	vw.WeakPointer = NewWeakPointerWriter(vw)
 	vw.ReflectValue = NewReflectValueWriter(vw)
 	vw.ReflectType = NewReflectTypeWriter()
-	vw.Error = NewErrorValueWriter()
-	vw.BytesableHexDump = NewBytesableHexDumpValueWriter()
-	vw.Stringer = NewStringerValueWriter()
-	vw.Kind = NewKindValueWriter(vw)
+	vw.Error = NewErrorWriter()
+	vw.BytesableHexDump = NewBytesableHexDumpWriter()
+	vw.Stringer = NewStringerWriter()
+	vw.Kind = NewKindWriter(vw)
 	return vw
 }
 
 // SetShowLen sets ShowLen on all [ValueWriter] that supports it.
-func (vw *CommonValueWriter) SetShowLen(show bool) {
+func (vw *CommonWriter) SetShowLen(show bool) {
 	vw.Kind.Chan.ShowLen = show
 	vw.Kind.Map.ShowLen = show
 	vw.Kind.Slice.ShowLen = show
@@ -102,7 +102,7 @@ func (vw *CommonValueWriter) SetShowLen(show bool) {
 }
 
 // SetShowCap sets ShowCap on all [ValueWriter] that supports it.
-func (vw *CommonValueWriter) SetShowCap(show bool) {
+func (vw *CommonWriter) SetShowCap(show bool) {
 	vw.Kind.Chan.ShowCap = show
 	vw.Kind.Slice.ShowCap = show
 	vw.BytesHexDump.ShowCap = show
@@ -110,7 +110,7 @@ func (vw *CommonValueWriter) SetShowCap(show bool) {
 }
 
 // SetShowAddr sets ShowAddr on all [ValueWriter] that supports it.
-func (vw *CommonValueWriter) SetShowAddr(show bool) {
+func (vw *CommonWriter) SetShowAddr(show bool) {
 	vw.Kind.Chan.ShowAddr = show
 	vw.Kind.Func.ShowAddr = show
 	vw.Kind.Map.ShowAddr = show
@@ -122,18 +122,18 @@ func (vw *CommonValueWriter) SetShowAddr(show bool) {
 }
 
 // SetShowIndexes sets ShowIndexes on all [ValueWriter] that supports it.
-func (vw *CommonValueWriter) SetShowIndexes(show bool) {
+func (vw *CommonWriter) SetShowIndexes(show bool) {
 	vw.Kind.Array.ShowIndexes = show
 	vw.Kind.Slice.ShowIndexes = show
 	vw.Kind.Chan.ShowIndexes = show
 }
 
-// ConfigureTest configures the [CommonValueWriter] for testing.
+// ConfigureTest configures the [CommonWriter] for testing.
 //
 // It makes the result deterministic.
 // It sorts the keys of maps and disables the address/capacity.
 // The enabled boolean is used to enable or disable the configuration.
-func (vw *CommonValueWriter) ConfigureTest(enabled bool) {
+func (vw *CommonWriter) ConfigureTest(enabled bool) {
 	vw.Kind.Map.SortKeys = enabled
 	vw.SetShowAddr(!enabled)
 	vw.SetShowCap(!enabled)
@@ -142,7 +142,7 @@ func (vw *CommonValueWriter) ConfigureTest(enabled bool) {
 // WriteValue implements [ValueWriter].
 //
 //nolint:gocyclo // Yes it's complex.
-func (vw *CommonValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *CommonWriter) WriteValue(st *State, v reflect.Value) bool {
 	if vw.UnwrapInterface {
 		var isNil bool
 		v, isNil = unwrapInterface(st, v)
@@ -176,8 +176,8 @@ func (vw *CommonValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 //nolint:gocyclo // We need to call all [ValueWriter].
-func (vw *CommonValueWriter) writeValue(st *State, v reflect.Value) bool {
-	if vw.ByTypeValueWriters != nil && vw.ByTypeValueWriters.WriteValue(st, v) {
+func (vw *CommonWriter) writeValue(st *State, v reflect.Value) bool {
+	if vw.ByType != nil && vw.ByType.WriteValue(st, v) {
 		return true
 	}
 	if vw.ValueWriters != nil && vw.ValueWriters.WriteValue(st, v) {
@@ -220,7 +220,7 @@ func (vw *CommonValueWriter) writeValue(st *State, v reflect.Value) bool {
 }
 
 //nolint:gocyclo // We need to call all [SupportChecker].
-func (vw *CommonValueWriter) supports(typ reflect.Type) ValueWriter {
+func (vw *CommonWriter) supports(typ reflect.Type) ValueWriter {
 	if f := callSupportCheckerPointer(vw.Time, typ); f != nil {
 		return f
 	}

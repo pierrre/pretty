@@ -4,10 +4,10 @@ import (
 	"reflect"
 )
 
-// SliceValueWriter is a [ValueWriter] that handles slice values.
+// SliceWriter is a [ValueWriter] that handles slice values.
 //
-// It should be created with [NewSliceValueWriter].
-type SliceValueWriter struct {
+// It should be created with [NewSliceWriter].
+type SliceWriter struct {
 	ValueWriter
 	// ShowLen shows the len.
 	// Default: true.
@@ -26,9 +26,9 @@ type SliceValueWriter struct {
 	MaxLen int
 }
 
-// NewSliceValueWriter creates a new [SliceValueWriter] with default values.
-func NewSliceValueWriter(vw ValueWriter) *SliceValueWriter {
-	return &SliceValueWriter{
+// NewSliceWriter creates a new [SliceWriter] with default values.
+func NewSliceWriter(vw ValueWriter) *SliceWriter {
+	return &SliceWriter{
 		ValueWriter: vw,
 		ShowLen:     true,
 		ShowCap:     true,
@@ -39,7 +39,7 @@ func NewSliceValueWriter(vw ValueWriter) *SliceValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *SliceValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *SliceWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Slice {
 		return false
 	}
@@ -59,7 +59,7 @@ func (vw *SliceValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *SliceValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *SliceWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ.Kind() == reflect.Slice {
 		res = vw

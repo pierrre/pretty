@@ -30,7 +30,7 @@ func Formatter(vi any) fmt.Formatter {
 }
 
 // DefaultPrinter is the default [Printer].
-var DefaultPrinter = NewPrinter(DefaultCommonValueWriter)
+var DefaultPrinter = NewPrinter(DefaultCommonWriter)
 
 // Printer pretty-prints values.
 //

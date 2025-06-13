@@ -7,10 +7,10 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// TimeValueWriter is a [ValueWriter] that handles [time.Time] values.
+// TimeWriter is a [ValueWriter] that handles [time.Time] values.
 //
-// It should be created with [NewTimeValueWriter].
-type TimeValueWriter struct {
+// It should be created with [NewTimeWriter].
+type TimeWriter struct {
 	// Format is the format of the time.
 	// Default: [time.RFC3339Nano].
 	Format string
@@ -20,9 +20,9 @@ type TimeValueWriter struct {
 	Location *time.Location
 }
 
-// NewTimeValueWriter creates a new [TimeValueWriter] with default values.
-func NewTimeValueWriter() *TimeValueWriter {
-	return &TimeValueWriter{
+// NewTimeWriter creates a new [TimeWriter] with default values.
+func NewTimeWriter() *TimeWriter {
+	return &TimeWriter{
 		Format: time.RFC3339Nano,
 	}
 }
@@ -30,7 +30,7 @@ func NewTimeValueWriter() *TimeValueWriter {
 var timeType = reflect.TypeFor[time.Time]()
 
 // WriteValue implements [ValueWriter].
-func (vw *TimeValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *TimeWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Struct || v.Type() != timeType {
 		return false
 	}
@@ -49,7 +49,7 @@ func (vw *TimeValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *TimeValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *TimeWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ == timeType {
 		res = vw

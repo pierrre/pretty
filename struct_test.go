@@ -26,7 +26,7 @@ func init() {
 				Bar:        123.456,
 				unexported: 123,
 			},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Struct.FieldFilter = NewExportedStructFieldFilter()
 			},
 		},
@@ -37,14 +37,14 @@ func init() {
 				Bar:        123.456,
 				unexported: 123,
 			},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
 			name:  "Not",
 			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{&vw.Kind.Struct}
 			},
 			ignoreBenchmark: true,

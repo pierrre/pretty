@@ -4,22 +4,22 @@ import (
 	"reflect"
 )
 
-// UnwrapInterfaceValueWriter is a [ValueWriter] that unwraps interface values.
+// UnwrapInterfaceWriter is a [ValueWriter] that unwraps interface values.
 //
-// It should be created with [NewUnwrapInterfaceValueWriter].
-type UnwrapInterfaceValueWriter struct {
+// It should be created with [NewUnwrapInterfaceWriter].
+type UnwrapInterfaceWriter struct {
 	ValueWriter
 }
 
-// NewUnwrapInterfaceValueWriter creates a new [UnwrapInterfaceValueWriter].
-func NewUnwrapInterfaceValueWriter(vw ValueWriter) *UnwrapInterfaceValueWriter {
-	return &UnwrapInterfaceValueWriter{
+// NewUnwrapInterfaceWriter creates a new [UnwrapInterfaceWriter].
+func NewUnwrapInterfaceWriter(vw ValueWriter) *UnwrapInterfaceWriter {
+	return &UnwrapInterfaceWriter{
 		ValueWriter: vw,
 	}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *UnwrapInterfaceValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *UnwrapInterfaceWriter) WriteValue(st *State, v reflect.Value) bool {
 	v, isNil := unwrapInterface(st, v)
 	return isNil || vw.ValueWriter.WriteValue(st, v)
 }

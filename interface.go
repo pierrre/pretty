@@ -6,22 +6,22 @@ import (
 	"github.com/pierrre/pretty/internal/must"
 )
 
-// InterfaceValueWriter is a [ValueWriter] that handles interface values.
+// InterfaceWriter is a [ValueWriter] that handles interface values.
 //
-// It should be created with [NewInterfaceValueWriter].
-type InterfaceValueWriter struct {
+// It should be created with [NewInterfaceWriter].
+type InterfaceWriter struct {
 	ValueWriter
 }
 
-// NewInterfaceValueWriter creates a new [InterfaceValueWriter].
-func NewInterfaceValueWriter(vw ValueWriter) *InterfaceValueWriter {
-	return &InterfaceValueWriter{
+// NewInterfaceWriter creates a new [InterfaceWriter].
+func NewInterfaceWriter(vw ValueWriter) *InterfaceWriter {
+	return &InterfaceWriter{
 		ValueWriter: vw,
 	}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *InterfaceValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *InterfaceWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Interface {
 		return false
 	}
@@ -35,7 +35,7 @@ func (vw *InterfaceValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *InterfaceValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *InterfaceWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ.Kind() == reflect.Interface {
 		res = vw

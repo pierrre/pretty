@@ -10,10 +10,10 @@ import (
 
 var stringerImplementsCache = reflectutil.NewImplementsCacheFor[fmt.Stringer]()
 
-// StringerValueWriter is a [ValueWriter] that handles [fmt.Stringer].
+// StringerWriter is a [ValueWriter] that handles [fmt.Stringer].
 //
-// It should be created with [NewStringerValueWriter].
-type StringerValueWriter struct {
+// It should be created with [NewStringerWriter].
+type StringerWriter struct {
 	// ShowLen shows the len.
 	// Default: true.
 	ShowLen bool
@@ -25,9 +25,9 @@ type StringerValueWriter struct {
 	MaxLen int
 }
 
-// NewStringerValueWriter creates a new [StringerValueWriter].
-func NewStringerValueWriter() *StringerValueWriter {
-	return &StringerValueWriter{
+// NewStringerWriter creates a new [StringerWriter].
+func NewStringerWriter() *StringerWriter {
+	return &StringerWriter{
 		ShowLen: true,
 		Quote:   true,
 		MaxLen:  0,
@@ -35,7 +35,7 @@ func NewStringerValueWriter() *StringerValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *StringerValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *StringerWriter) WriteValue(st *State, v reflect.Value) bool {
 	typ := v.Type()
 	if typ == reflectValueType {
 		return false
@@ -54,7 +54,7 @@ func (vw *StringerValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *StringerValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *StringerWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ != reflectValueType && stringerImplementsCache.ImplementedBy(typ) {
 		res = vw

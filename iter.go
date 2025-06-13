@@ -8,8 +8,8 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// IterValueWriter is a [ValueWriter] that handles iterators ([iter.Seq] or [iter.Seq2]).
-type IterValueWriter struct {
+// IterWriter is a [ValueWriter] that handles iterators ([iter.Seq] or [iter.Seq2]).
+type IterWriter struct {
 	ValueWriter
 	// ShowKeysInfos shows keys infos (for [iter.Seq2]).
 	// Default: false.
@@ -19,9 +19,9 @@ type IterValueWriter struct {
 	MaxLen int
 }
 
-// NewIterValueWriter creates a new [IterValueWriter] with default values.
-func NewIterValueWriter(vw ValueWriter) *IterValueWriter {
-	return &IterValueWriter{
+// NewIterWriter creates a new [IterWriter] with default values.
+func NewIterWriter(vw ValueWriter) *IterWriter {
+	return &IterWriter{
 		ValueWriter:   vw,
 		ShowKeysInfos: false,
 		MaxLen:        0,
@@ -29,7 +29,7 @@ func NewIterValueWriter(vw ValueWriter) *IterValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *IterValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *IterWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Func {
 		return false
 	}
@@ -48,7 +48,7 @@ func (vw *IterValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	return false
 }
 
-func (vw *IterValueWriter) writeSeq(st *State, it iter.Seq[reflect.Value]) {
+func (vw *IterWriter) writeSeq(st *State, it iter.Seq[reflect.Value]) {
 	write.MustString(st.Writer, "{")
 	st.IndentLevel++
 	i := 0
@@ -73,7 +73,7 @@ func (vw *IterValueWriter) writeSeq(st *State, it iter.Seq[reflect.Value]) {
 	write.MustString(st.Writer, "}")
 }
 
-func (vw *IterValueWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, reflect.Value]) {
+func (vw *IterWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, reflect.Value]) {
 	write.MustString(st.Writer, "{")
 	st.IndentLevel++
 	i := 0
@@ -104,7 +104,7 @@ func (vw *IterValueWriter) writeSeq2(st *State, it iter.Seq2[reflect.Value, refl
 }
 
 // Supports implements [SupportChecker].
-func (vw *IterValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *IterWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ.Kind() == reflect.Func && (typ.CanSeq() || typ.CanSeq2()) {
 		res = vw

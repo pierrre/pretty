@@ -18,7 +18,7 @@ func init() {
 		{
 			name:  "ShowAddr",
 			value: map[int]int{1: 2},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 				vw.Kind.Map.ShowAddr = true
 			},
@@ -28,14 +28,14 @@ func init() {
 		{
 			name:  "UnsortedExported",
 			value: map[int]int{1: 2},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 			},
 		},
 		{
 			name:  "UnsortedExportedShowType",
 			value: map[int]int{1: 2},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 				vw.UnwrapInterface = false
 				vw.Type.ShowKnownTypes = true
@@ -44,7 +44,7 @@ func init() {
 		{
 			name:  "UnsortedExportedTruncated",
 			value: map[int]int{1: 2, 3: 4},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 				vw.Kind.Map.MaxLen = 1
 			},
@@ -53,21 +53,21 @@ func init() {
 		{
 			name:  "UnsortedExportedInterface",
 			value: map[any]any{1: 2},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 			},
 		},
 		{
 			name:  "UnsortedUnexported",
 			value: testUnexported{v: map[int]int{1: 2}},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 			},
 		},
 		{
 			name:  "UnsortedUnexportedTruncated",
 			value: testUnexported{v: map[int]int{1: 2, 3: 4}},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 				vw.Kind.Map.MaxLen = 1
 			},
@@ -77,14 +77,14 @@ func init() {
 		{
 			name:  "SortedExported",
 			value: map[int]int{1: 2, 3: 4, 5: 6},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = true
 			},
 		},
 		{
 			name:  "SortedExportedTruncated",
 			value: map[int]int{1: 2, 3: 4, 5: 6},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = true
 				vw.Kind.Map.MaxLen = 2
 			},
@@ -93,7 +93,7 @@ func init() {
 		{
 			name:  "SortedUnexported",
 			value: testUnexported{v: map[int]int{1: 2, 3: 4, 5: 6}},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = true
 			},
 		},
@@ -104,7 +104,7 @@ func init() {
 		{
 			name:  "ShowKnownTypes",
 			value: map[string]int{"a": 1, "b": 2, "c": 3},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Type.ShowKnownTypes = true
 			},
 		},
@@ -115,21 +115,21 @@ func init() {
 		{
 			name:  "KeysStringShowInfos",
 			value: map[string]int{"a": 1, "b": 2, "c": 3},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.ShowKeysInfos = true
 			},
 		},
 		{
 			name:  "SupportDisabled",
 			value: map[int]int{1: 2},
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
 			name:  "Not",
 			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{&vw.Kind.Map}
 			},
 			ignoreBenchmark: true,

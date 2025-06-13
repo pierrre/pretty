@@ -7,24 +7,24 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// FuncValueWriter is a [ValueWriter] that handles function values.
+// FuncWriter is a [ValueWriter] that handles function values.
 //
-// It should be created with [NewFuncValueWriter].
-type FuncValueWriter struct {
+// It should be created with [NewFuncWriter].
+type FuncWriter struct {
 	// ShowAddr shows the address.
 	// Default: false.
 	ShowAddr bool
 }
 
-// NewFuncValueWriter creates a new [FuncValueWriter] with default values.
-func NewFuncValueWriter() *FuncValueWriter {
-	return &FuncValueWriter{
+// NewFuncWriter creates a new [FuncWriter] with default values.
+func NewFuncWriter() *FuncWriter {
+	return &FuncWriter{
 		ShowAddr: false,
 	}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *FuncValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *FuncWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Func {
 		return false
 	}
@@ -42,7 +42,7 @@ func (vw *FuncValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *FuncValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *FuncWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ.Kind() == reflect.Func {
 		res = vw

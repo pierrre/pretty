@@ -7,10 +7,10 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// ComplexValueWriter is a [ValueWriter] that handles complex values.
+// ComplexWriter is a [ValueWriter] that handles complex values.
 //
-// It should be created with [NewComplexValueWriter].
-type ComplexValueWriter struct {
+// It should be created with [NewComplexWriter].
+type ComplexWriter struct {
 	// Format is the format used to format the complex.
 	// Default: 'g'.
 	Format byte
@@ -19,16 +19,16 @@ type ComplexValueWriter struct {
 	Precision int
 }
 
-// NewComplexValueWriter creates a new [ComplexValueWriter] with default values.
-func NewComplexValueWriter() *ComplexValueWriter {
-	return &ComplexValueWriter{
+// NewComplexWriter creates a new [ComplexWriter] with default values.
+func NewComplexWriter() *ComplexWriter {
+	return &ComplexWriter{
 		Format:    'g',
 		Precision: -1,
 	}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ComplexValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *ComplexWriter) WriteValue(st *State, v reflect.Value) bool {
 	var bitSize int
 	switch v.Kind() { //nolint:exhaustive // Only handles complex.
 	case reflect.Complex64:
@@ -43,7 +43,7 @@ func (vw *ComplexValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *ComplexValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *ComplexWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	switch typ.Kind() { //nolint:exhaustive // Only handles complex.
 	case reflect.Complex64, reflect.Complex128:

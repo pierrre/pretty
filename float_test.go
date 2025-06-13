@@ -17,14 +17,14 @@ func init() {
 		{
 			name:  "SupportDisabled",
 			value: float64(123.456),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
 			name:  "Not",
 			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{&vw.Kind.Float}
 			},
 			ignoreBenchmark: true,

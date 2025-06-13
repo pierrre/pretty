@@ -8,10 +8,10 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// ChanValueWriter is a [ValueWriter] that handles chan values.
+// ChanWriter is a [ValueWriter] that handles chan values.
 //
-// It should be created with [NewChanValueWriter].
-type ChanValueWriter struct {
+// It should be created with [NewChanWriter].
+type ChanWriter struct {
 	ValueWriter
 	// ShowLen shows the len.
 	// Default: true.
@@ -36,9 +36,9 @@ type ChanValueWriter struct {
 	MaxLen int
 }
 
-// NewChanValueWriter creates a new [ChanValueWriter] with default values.
-func NewChanValueWriter(vw ValueWriter) *ChanValueWriter {
-	return &ChanValueWriter{
+// NewChanWriter creates a new [ChanWriter] with default values.
+func NewChanWriter(vw ValueWriter) *ChanWriter {
+	return &ChanWriter{
 		ValueWriter: vw,
 		ShowLen:     true,
 		ShowCap:     true,
@@ -50,7 +50,7 @@ func NewChanValueWriter(vw ValueWriter) *ChanValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *ChanValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *ChanWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Chan {
 		return false
 	}
@@ -71,7 +71,7 @@ func (vw *ChanValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	return true
 }
 
-func (vw *ChanValueWriter) writeElems(st *State, v reflect.Value) {
+func (vw *ChanWriter) writeElems(st *State, v reflect.Value) {
 	l := v.Len()
 	truncated := false
 	if vw.MaxLen > 0 && l > vw.MaxLen {
@@ -96,7 +96,7 @@ func (vw *ChanValueWriter) writeElems(st *State, v reflect.Value) {
 	write.MustString(st.Writer, "}")
 }
 
-func (vw *ChanValueWriter) writeElem(st *State, v reflect.Value, i int) {
+func (vw *ChanWriter) writeElem(st *State, v reflect.Value, i int) {
 	st.WriteIndent()
 	if vw.ShowIndexes {
 		write.Must(strconvio.WriteInt(st.Writer, int64(i), 10))
@@ -114,7 +114,7 @@ func (vw *ChanValueWriter) writeElem(st *State, v reflect.Value, i int) {
 }
 
 // Supports implements [SupportChecker].
-func (vw *ChanValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *ChanWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ.Kind() == reflect.Chan {
 		res = vw

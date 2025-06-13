@@ -51,7 +51,7 @@ func init() {
 				v.Pointer = weak.Make(&s)
 				return v
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
@@ -60,7 +60,7 @@ func init() {
 			value: func() weak.Pointer[string] {
 				return weak.Make[string](nil)
 			}(),
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.WeakPointer = nil
 			},
 			ignoreBenchmark: true,

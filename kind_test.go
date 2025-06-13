@@ -12,7 +12,7 @@ func init() {
 		{
 			name:  "Custom",
 			value: "test",
-			configureWriter: func(vw *CommonValueWriter) {
+			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.ValueWriters[reflect.String] = ValueWriterFunc(func(st *State, v reflect.Value) bool {
 					write.MustString(st.Writer, "custom")
 					return true

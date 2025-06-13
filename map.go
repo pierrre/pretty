@@ -9,10 +9,10 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// MapValueWriter is a [ValueWriter] that handles map values.
+// MapWriter is a [ValueWriter] that handles map values.
 //
-// It should be created with [NewMapValueWriter].
-type MapValueWriter struct {
+// It should be created with [NewMapWriter].
+type MapWriter struct {
 	ValueWriter
 	// ShowLen shows the len.
 	// Default: true.
@@ -31,9 +31,9 @@ type MapValueWriter struct {
 	MaxLen int
 }
 
-// NewMapValueWriter creates a new [MapValueWriter] with default values.
-func NewMapValueWriter(vw ValueWriter) *MapValueWriter {
-	return &MapValueWriter{
+// NewMapWriter creates a new [MapWriter] with default values.
+func NewMapWriter(vw ValueWriter) *MapWriter {
+	return &MapWriter{
 		ValueWriter:   vw,
 		ShowLen:       true,
 		ShowAddr:      false,
@@ -44,7 +44,7 @@ func NewMapValueWriter(vw ValueWriter) *MapValueWriter {
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *MapValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *MapWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Map {
 		return false
 	}
@@ -73,7 +73,7 @@ func (vw *MapValueWriter) WriteValue(st *State, v reflect.Value) bool {
 	return true
 }
 
-func (vw *MapValueWriter) writeSorted(st *State, v reflect.Value) {
+func (vw *MapWriter) writeSorted(st *State, v reflect.Value) {
 	es := reflectutil.GetSortedMap(v)
 	for i, e := range es {
 		ok := vw.writeEntry(st, e.Key, e.Value, i)
@@ -84,7 +84,7 @@ func (vw *MapValueWriter) writeSorted(st *State, v reflect.Value) {
 	es.Release()
 }
 
-func (vw *MapValueWriter) writeUnsorted(st *State, v reflect.Value) {
+func (vw *MapWriter) writeUnsorted(st *State, v reflect.Value) {
 	if v.CanInterface() {
 		vw.writeUnsortedExported(st, v)
 	} else {
@@ -109,7 +109,7 @@ func getReflectValuePool(typ reflect.Type) *syncutil.Pool[*reflect.Value] {
 	return pool
 }
 
-func (vw *MapValueWriter) writeUnsortedExported(st *State, v reflect.Value) {
+func (vw *MapWriter) writeUnsortedExported(st *State, v reflect.Value) {
 	iter := v.MapRange()
 	typ := v.Type()
 	keyPool := getReflectValuePool(typ.Key())
@@ -132,7 +132,7 @@ func (vw *MapValueWriter) writeUnsortedExported(st *State, v reflect.Value) {
 	valuePool.Put(valueP)
 }
 
-func (vw *MapValueWriter) writeUnsortedUnexported(st *State, v reflect.Value) {
+func (vw *MapWriter) writeUnsortedUnexported(st *State, v reflect.Value) {
 	iter := v.MapRange()
 	for i := 0; iter.Next(); i++ {
 		key := iter.Key()
@@ -144,7 +144,7 @@ func (vw *MapValueWriter) writeUnsortedUnexported(st *State, v reflect.Value) {
 	}
 }
 
-func (vw *MapValueWriter) writeEntry(st *State, key reflect.Value, value reflect.Value, i int) bool {
+func (vw *MapWriter) writeEntry(st *State, key reflect.Value, value reflect.Value, i int) bool {
 	st.WriteIndent()
 	if vw.MaxLen > 0 && i >= vw.MaxLen {
 		writeTruncated(st.Writer)
@@ -162,7 +162,7 @@ func (vw *MapValueWriter) writeEntry(st *State, key reflect.Value, value reflect
 }
 
 // Supports implements [SupportChecker].
-func (vw *MapValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *MapWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ.Kind() == reflect.Map {
 		res = vw

@@ -7,18 +7,18 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// BoolValueWriter is a [ValueWriter] that handles bool values.
+// BoolWriter is a [ValueWriter] that handles bool values.
 //
-// It should be created with [NewBoolValueWriter].
-type BoolValueWriter struct{}
+// It should be created with [NewBoolWriter].
+type BoolWriter struct{}
 
-// NewBoolValueWriter creates a new [BoolValueWriter].
-func NewBoolValueWriter() *BoolValueWriter {
-	return &BoolValueWriter{}
+// NewBoolWriter creates a new [BoolWriter].
+func NewBoolWriter() *BoolWriter {
+	return &BoolWriter{}
 }
 
 // WriteValue implements [ValueWriter].
-func (vw *BoolValueWriter) WriteValue(st *State, v reflect.Value) bool {
+func (vw *BoolWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Bool {
 		return false
 	}
@@ -27,7 +27,7 @@ func (vw *BoolValueWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 // Supports implements [SupportChecker].
-func (vw *BoolValueWriter) Supports(typ reflect.Type) ValueWriter {
+func (vw *BoolWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	if typ.Kind() == reflect.Bool {
 		res = vw
