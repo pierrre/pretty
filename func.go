@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"runtime"
 
+	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/pretty/internal/write"
 )
 
@@ -36,9 +37,19 @@ func (vw *FuncWriter) WriteValue(st *State, v reflect.Value) bool {
 		showAddr: vw.ShowAddr,
 		addr:     p,
 	}.writeWithTrailingSpace(st)
-	name := runtime.FuncForPC(p).Name()
-	write.MustString(st.Writer, name)
+	write.MustString(st.Writer, getFuncName(p))
 	return true
+}
+
+var funcNameCache syncutil.Map[uintptr, string]
+
+func getFuncName(p uintptr) string {
+	name, ok := funcNameCache.Load(p)
+	if !ok {
+		name = runtime.FuncForPC(p).Name()
+		funcNameCache.Store(p, name)
+	}
+	return name
 }
 
 // Supports implements [SupportChecker].
