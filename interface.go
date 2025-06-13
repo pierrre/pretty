@@ -25,10 +25,10 @@ func (vw *InterfaceWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Interface {
 		return false
 	}
-	writeArrow(st.Writer)
 	if checkNil(st.Writer, v) {
 		return true
 	}
+	writeArrow(st.Writer)
 	st.KnownType = false // We want to show the type of the value.
 	must.Handle(vw.ValueWriter.WriteValue(st, v.Elem()))
 	return true

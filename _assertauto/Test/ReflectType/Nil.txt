@@ -1,5 +1,5 @@
 [[1]reflect.Type] {
-	=> <nil>,
+	<nil>,
 }
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {

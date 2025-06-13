@@ -1,5 +1,5 @@
 [[1]interface {}] {
-	=> <nil>,
+	<nil>,
 }
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
