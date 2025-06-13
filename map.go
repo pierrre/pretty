@@ -92,7 +92,7 @@ func (vw *MapValueWriter) writeUnsorted(st *State, v reflect.Value) {
 	}
 }
 
-var reflectValuePools = syncutil.Map[reflect.Type, *syncutil.Pool[*reflect.Value]]{}
+var reflectValuePools syncutil.Map[reflect.Type, *syncutil.Pool[*reflect.Value]]
 
 func getReflectValuePool(typ reflect.Type) *syncutil.Pool[*reflect.Value] {
 	pool, ok := reflectValuePools.Load(typ)
