@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	addTestCasesPrefix("IterSeq", []*testCase{
+	addTestCasesPrefix("Iter/Seq", []*testCase{
 		{
 			name:  "Default",
 			value: slices.Values([]string{"a", "b", "c"}),
@@ -61,7 +61,7 @@ func init() {
 			},
 		},
 	})
-	addTestCasesPrefix("IterSeq2", []*testCase{
+	addTestCasesPrefix("Iter/Seq2", []*testCase{
 		{
 			name:  "Default",
 			value: slices.All([]string{"a", "b", "c"}),
