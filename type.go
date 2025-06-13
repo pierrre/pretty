@@ -32,6 +32,13 @@ func NewTypeWriter(vw ValueWriter) *TypeWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *TypeWriter) WriteValue(st *State, v reflect.Value) bool {
+	knownType := vw.writeType(st, v)
+	must.Handle(vw.ValueWriter.WriteValue(st, v))
+	vw.postType(st, knownType)
+	return true
+}
+
+func (vw *TypeWriter) writeType(st *State, v reflect.Value) (knownType bool) {
 	if !st.KnownType || vw.ShowKnownTypes {
 		typ := v.Type()
 		write.MustString(st.Writer, "[")
@@ -47,11 +54,13 @@ func (vw *TypeWriter) WriteValue(st *State, v reflect.Value) bool {
 		}
 		write.MustString(st.Writer, " ")
 	}
-	knownType := st.KnownType
+	knownType = st.KnownType
 	st.KnownType = true // The type is known, because we showed it.
-	must.Handle(vw.ValueWriter.WriteValue(st, v))
+	return knownType
+}
+
+func (vw *TypeWriter) postType(st *State, knownType bool) {
 	st.KnownType = knownType
-	return true
 }
 
 // ByTypeWriters is a [ValueWriter] that selects a [ValueWriter] by [reflect.Type].

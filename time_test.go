@@ -35,7 +35,7 @@ func init() {
 				v: testTime,
 			},
 			configureWriter: func(vw *CommonWriter) {
-				vw.CanInterface = false
+				vw.CanInterface = nil
 			},
 			ignoreBenchmark: true,
 		},

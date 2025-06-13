@@ -3,8 +3,6 @@ package pretty
 import (
 	"reflect"
 	"testing"
-
-	"github.com/pierrre/go-libs/reflectutil"
 )
 
 // DefaultCommonWriter is the default [CommonWriter].
@@ -18,31 +16,15 @@ func init() {
 
 // CommonWriter is a [ValueWriter] with common [ValueWriter].
 //
-// Any [ValueWriter] can be configured, but it's not allowed to change the pointer value.
-// Any [ValueWriter] can be set to nil in order to disable it.
-// It is not allowed to updated the wrapped [ValueWriter].
+// Any [ValueWriter] can be configured, and can be set to nil in order to disable it.
 //
 // It should be created with [NewCommonWriter].
 type CommonWriter struct {
-	// UnwrapInterface indicates whether to unwrap interface values.
-	// Default: true.
-	UnwrapInterface bool
-	// RecursionCheck indicates whether to check for infinite recursion.
-	// Default: true.
-	RecursionCheck bool
-	// MaxDepth indicates the maximum depth to write.
-	// Default: 0 (no limit).
-	MaxDepth int
-	// CanInterface indicates whether to convert the [reflect.Value] so it can be used with [reflect.Value.Interface].
-	// Default: true.
-	CanInterface bool
-	// ShowType indicates whether to show the type of values.
-	// Default: true.
-	ShowType bool
-	// Type is the [ValueWriter] for types.
-	Type TypeWriter
-
-	// The [ValueWriter]s below can be set to nil to disable them.
+	UnwrapInterface  *UnwrapInterfaceWriter
+	Recursion        *RecursionWriter
+	MaxDepth         *MaxDepthWriter
+	CanInterface     *CanInterfaceWriter
+	Type             *TypeWriter
 	ByType           ByTypeWriters
 	ValueWriters     ValueWriters
 	Support          *SupportWriter
@@ -57,25 +39,21 @@ type CommonWriter struct {
 	Error            *ErrorWriter
 	BytesableHexDump *BytesableHexDumpWriter
 	Stringer         *StringerWriter
-
-	// Kind is the default [ValueWriter].
-	// It must not be set to nil.
-	Kind *KindWriter
+	Kind             *KindWriter
 }
 
 // NewCommonWriter creates a new [CommonWriter] initialized with default values.
 func NewCommonWriter() *CommonWriter {
 	vw := &CommonWriter{}
-	vw.UnwrapInterface = true
-	vw.RecursionCheck = true
-	vw.MaxDepth = 0
-	vw.CanInterface = true
-	vw.ShowType = true
-	vw.Type = *NewTypeWriter(ValueWriterFunc(vw.writeValue))
+	vw.UnwrapInterface = NewUnwrapInterfaceWriter(nil)
+	vw.Recursion = NewRecursionWriter(nil)
+	vw.MaxDepth = NewMaxDepthWriter(nil)
+	vw.CanInterface = NewCanInterfaceWriter(nil)
+	vw.Type = NewTypeWriter(nil)
 	vw.ByType = NewByTypeWriters()
 	vw.Support = NewSupportWriter()
 	vw.Support.Checkers = []SupportChecker{
-		SupportCheckerFunc(vw.supports),
+		vw,
 	}
 	vw.Time = NewTimeWriter()
 	vw.BytesHexDump = NewBytesHexDumpWriter()
@@ -113,6 +91,7 @@ func (vw *CommonWriter) SetShowCap(show bool) {
 
 // SetShowAddr sets ShowAddr on all [ValueWriter] that supports it.
 func (vw *CommonWriter) SetShowAddr(show bool) {
+	vw.Recursion.ShowAddr = show
 	vw.Kind.Chan.ShowAddr = show
 	vw.Kind.Func.ShowAddr = show
 	vw.Kind.Map.ShowAddr = show
@@ -142,37 +121,36 @@ func (vw *CommonWriter) ConfigureTest(enabled bool) {
 }
 
 // WriteValue implements [ValueWriter].
-//
-//nolint:gocyclo // Yes it's complex.
 func (vw *CommonWriter) WriteValue(st *State, v reflect.Value) bool {
-	if vw.UnwrapInterface {
+	if vw.UnwrapInterface != nil {
 		var isNil bool
-		v, isNil = unwrapInterface(st, v)
+		v, isNil = vw.UnwrapInterface.unwrapInterface(st, v)
 		if isNil {
 			return true
 		}
 	}
-	if vw.RecursionCheck {
-		showInfos := vw.Kind != nil && vw.Kind.Pointer.ShowAddr
-		visitedAdded, recursionDetected := checkRecursion(st, v, showInfos)
+	if vw.Recursion != nil {
+		recursionVisitedAdded, recursionDetected := vw.Recursion.checkRecursion(st, v)
 		if recursionDetected {
 			return true
 		}
-		if visitedAdded {
-			defer postRecursion(st)
+		if recursionVisitedAdded {
+			defer vw.Recursion.postRecursion(st)
 		}
 	}
-	if vw.MaxDepth > 0 {
-		if checkMaxDepth(st, vw.MaxDepth) {
+	if vw.MaxDepth != nil {
+		maxReached := vw.MaxDepth.checkMaxDepth(st)
+		defer vw.MaxDepth.postMaxDepth(st)
+		if maxReached {
 			return true
 		}
-		defer postMaxDepth(st)
 	}
-	if vw.CanInterface {
-		v, _ = reflectutil.ConvertValueCanInterface(v)
+	if vw.CanInterface != nil {
+		v = vw.CanInterface.convertValue(v)
 	}
-	if vw.ShowType {
-		return vw.Type.WriteValue(st, v)
+	if vw.Type != nil {
+		knownType := vw.Type.writeType(st, v)
+		defer vw.Type.postType(st, knownType)
 	}
 	return vw.writeValue(st, v)
 }
@@ -224,8 +202,10 @@ func (vw *CommonWriter) writeValue(st *State, v reflect.Value) bool {
 	return vw.Kind.WriteValue(st, v)
 }
 
+// Supports implements [SupportChecker].
+//
 //nolint:gocyclo // We need to call all [SupportChecker].
-func (vw *CommonWriter) supports(typ reflect.Type) ValueWriter {
+func (vw *CommonWriter) Supports(typ reflect.Type) ValueWriter {
 	if f := callSupportCheckerPointer(vw.Time, typ); f != nil {
 		return f
 	}
@@ -259,7 +239,10 @@ func (vw *CommonWriter) supports(typ reflect.Type) ValueWriter {
 	if f := callSupportCheckerPointer(vw.Stringer, typ); f != nil {
 		return f
 	}
-	return vw.Kind.Supports(typ)
+	if f := callSupportCheckerPointer(vw.Kind, typ); f != nil {
+		return f
+	}
+	return nil
 }
 
 func callSupportCheckerPointer[P interface {

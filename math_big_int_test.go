@@ -27,7 +27,7 @@ func init() {
 				v: big.NewInt(123),
 			},
 			configureWriter: func(vw *CommonWriter) {
-				vw.CanInterface = false
+				vw.CanInterface = nil
 			},
 			ignoreBenchmark: true,
 		},

@@ -15,11 +15,11 @@ func init() {
 				return testUnexported{v: &i}
 			}(),
 			configureWriter: func(vw *CommonWriter) {
-				vw.CanInterface = false
+				vw.CanInterface = nil
 				vw.ValueWriters = ValueWriters{NewFilterWriter(NewCanInterfaceWriter(vw), func(v reflect.Value) bool {
 					return !v.CanInterface()
 				})}
-				vw.RecursionCheck = false
+				vw.Recursion = nil
 			},
 		},
 	})

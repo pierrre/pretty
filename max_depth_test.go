@@ -16,7 +16,7 @@ func init() {
 				return v4
 			}(),
 			configureWriter: func(vw *CommonWriter) {
-				vw.MaxDepth = 2
+				vw.MaxDepth.Max = 2
 			},
 		},
 		{

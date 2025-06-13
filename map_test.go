@@ -37,7 +37,7 @@ func init() {
 			value: map[int]int{1: 2},
 			configureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
-				vw.UnwrapInterface = false
+				vw.UnwrapInterface = nil
 				vw.Type.ShowKnownTypes = true
 			},
 		},

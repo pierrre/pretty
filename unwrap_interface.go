@@ -20,11 +20,11 @@ func NewUnwrapInterfaceWriter(vw ValueWriter) *UnwrapInterfaceWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *UnwrapInterfaceWriter) WriteValue(st *State, v reflect.Value) bool {
-	v, isNil := unwrapInterface(st, v)
+	v, isNil := vw.unwrapInterface(st, v)
 	return isNil || vw.ValueWriter.WriteValue(st, v)
 }
 
-func unwrapInterface(st *State, v reflect.Value) (_ reflect.Value, isNil bool) {
+func (vw *UnwrapInterfaceWriter) unwrapInterface(st *State, v reflect.Value) (_ reflect.Value, isNil bool) {
 	if v.Kind() == reflect.Interface {
 		if checkNil(st.Writer, v) {
 			return reflect.Value{}, true

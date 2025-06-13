@@ -193,9 +193,17 @@ func init() {
 			name:  "Disabled",
 			value: "test",
 			configureWriter: func(vw *CommonWriter) {
-				vw.ShowType = false
+				vw.Type = nil
 			},
 			ignoreBenchmark: true,
+		},
+		{
+			name:  "Writer",
+			value: 123,
+			configureWriter: func(vw *CommonWriter) {
+				vw.Type = nil
+				vw.ValueWriters = ValueWriters{NewTypeWriter(vw.Kind.Int)}
+			},
 		},
 	})
 	addTestCasesPrefix("ByType", []*testCase{

@@ -22,6 +22,11 @@ func NewCanInterfaceWriter(vw ValueWriter) *CanInterfaceWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *CanInterfaceWriter) WriteValue(st *State, v reflect.Value) bool {
-	v, _ = reflectutil.ConvertValueCanInterface(v)
+	v = vw.convertValue(v)
 	return vw.ValueWriter.WriteValue(st, v)
+}
+
+func (vw *CanInterfaceWriter) convertValue(v reflect.Value) reflect.Value {
+	v, _ = reflectutil.ConvertValueCanInterface(v)
+	return v
 }

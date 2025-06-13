@@ -10,7 +10,7 @@ import (
 
 func init() {
 	ConfigureDefault()
-	pretty.DefaultCommonWriter.CanInterface = false
+	pretty.DefaultCommonWriter.CanInterface = nil
 }
 
 func TestValueWriter(t *testing.T) {
