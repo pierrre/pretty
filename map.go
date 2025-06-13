@@ -51,14 +51,15 @@ func (vw *MapWriter) WriteValue(st *State, v reflect.Value) bool {
 	if checkNil(st.Writer, v) {
 		return true
 	}
+	l := v.Len()
 	infos{
 		showLen:  vw.ShowLen,
-		len:      v.Len(),
+		len:      l,
 		showAddr: vw.ShowAddr,
 		addr:     uintptr(v.UnsafePointer()),
 	}.writeWithTrailingSpace(st)
 	write.MustString(st.Writer, "{")
-	if v.Len() > 0 {
+	if l > 0 {
 		write.MustString(st.Writer, "\n")
 		st.IndentLevel++
 		if vw.SortKeys {

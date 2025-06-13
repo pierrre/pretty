@@ -79,7 +79,7 @@ func (vw *ChanWriter) writeElems(st *State, v reflect.Value) {
 		truncated = true
 	}
 	write.MustString(st.Writer, "{")
-	if v.Len() > 0 {
+	if l > 0 {
 		write.MustString(st.Writer, "\n")
 		st.IndentLevel++
 		for i := range l {

@@ -56,7 +56,7 @@ func writeArray(st *State, v reflect.Value, showIndexes bool, maxLen int, vw Val
 		truncated = true
 	}
 	write.MustString(st.Writer, "{")
-	if v.Len() > 0 {
+	if l > 0 {
 		write.MustString(st.Writer, "\n")
 		st.IndentLevel++
 		for i := range l {
