@@ -183,10 +183,10 @@ func (vw *CommonWriter) WriteValue(st *State, v reflect.Value) bool {
 
 //nolint:gocyclo // We need to call all [ValueWriter].
 func (vw *CommonWriter) writeValue(st *State, v reflect.Value) bool {
-	if vw.ByType != nil && vw.ByType.WriteValue(st, v) {
+	if len(vw.ByType) != 0 && vw.ByType.WriteValue(st, v) {
 		return true
 	}
-	if vw.ValueWriters != nil && vw.ValueWriters.WriteValue(st, v) {
+	if len(vw.ValueWriters) != 0 && vw.ValueWriters.WriteValue(st, v) {
 		return true
 	}
 	if vw.Support != nil && vw.Support.WriteValue(st, v) {

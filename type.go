@@ -75,15 +75,14 @@ func NewByTypeWriters() ByTypeWriters {
 
 // WriteValue implements [ValueWriter].
 func (vws ByTypeWriters) WriteValue(st *State, v reflect.Value) bool {
-	if len(vws) == 0 {
-		return false
+	if len(vws) != 0 {
+		typ := v.Type()
+		vw, ok := vws[typ]
+		if ok {
+			return vw.WriteValue(st, v)
+		}
 	}
-	typ := v.Type()
-	vw, ok := vws[typ]
-	if !ok {
-		return false
-	}
-	return vw.WriteValue(st, v)
+	return false
 }
 
 // Supports implements [SupportChecker].
