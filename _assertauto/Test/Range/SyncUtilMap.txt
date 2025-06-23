@@ -1,0 +1,8 @@
+[*github.com/pierrre/go-libs/syncutil.Map[string,string]] => Range() => {
+	"foo": (len=3) "bar",
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 6,
+}

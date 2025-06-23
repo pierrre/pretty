@@ -33,6 +33,7 @@ type CommonWriter struct {
 	MathBigInt       *MathBigIntWriter
 	IterSeq          *IterSeqWriter
 	IterSeq2         *IterSeq2Writer
+	Range            *RangeWriter
 	WeakPointer      *WeakPointerWriter
 	ReflectValue     *ReflectValueWriter
 	ReflectType      *ReflectTypeWriter
@@ -60,6 +61,7 @@ func NewCommonWriter() *CommonWriter {
 	vw.MathBigInt = NewMathBigIntWriter()
 	vw.IterSeq = NewIterSeqWriter(vw)
 	vw.IterSeq2 = NewIterSeq2Writer(vw)
+	vw.Range = NewRangeWriter(vw)
 	vw.WeakPointer = NewWeakPointerWriter(vw)
 	vw.ReflectValue = NewReflectValueWriter(vw)
 	vw.ReflectType = NewReflectTypeWriter()
@@ -207,6 +209,9 @@ func (vw *CommonWriter) writeValue(st *State, v reflect.Value) bool {
 	if vw.IterSeq2 != nil && vw.IterSeq2.WriteValue(st, v) {
 		return true
 	}
+	if vw.Range != nil && vw.Range.WriteValue(st, v) {
+		return true
+	}
 	if vw.WeakPointer != nil && vw.WeakPointer.WriteValue(st, v) {
 		return true
 	}
@@ -245,6 +250,9 @@ func (vw *CommonWriter) Supports(typ reflect.Type) ValueWriter {
 		return f
 	}
 	if f := callSupportCheckerPointer(vw.IterSeq2, typ); f != nil {
+		return f
+	}
+	if f := callSupportCheckerPointer(vw.Range, typ); f != nil {
 		return f
 	}
 	if f := callSupportCheckerPointer(vw.WeakPointer, typ); f != nil {
