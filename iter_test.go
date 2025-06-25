@@ -47,6 +47,16 @@ func init() {
 			}(),
 		},
 		{
+			name: "Unexported",
+			value: testUnexported{
+				v: slices.Values([]string{"a", "b", "c"}),
+			},
+			configureWriter: func(vw *CommonWriter) {
+				vw.CanInterface = nil
+			},
+			ignoreBenchmark: true,
+		},
+		{
 			name:  "SupportDisabled",
 			value: slices.Values([]string{"a", "b", "c"}),
 			configureWriter: func(vw *CommonWriter) {
@@ -104,6 +114,16 @@ func init() {
 					}
 				}
 			}(),
+		},
+		{
+			name: "Unexported",
+			value: testUnexported{
+				v: slices.All([]string{"a", "b", "c"}),
+			},
+			configureWriter: func(vw *CommonWriter) {
+				vw.CanInterface = nil
+			},
+			ignoreBenchmark: true,
 		},
 		{
 			name:  "SupportDisabled",

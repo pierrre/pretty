@@ -1,0 +1,8 @@
+[github.com/pierrre/pretty_test.testUnexported] {
+	v: [iter.Seq2[int,string]](func(func(int, string) bool)) github.com/pierrre/pretty_test.init.13.All[...].func24,
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

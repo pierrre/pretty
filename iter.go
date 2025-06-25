@@ -33,6 +33,9 @@ func (vw *IterSeqWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !v.Type().CanSeq() {
 		return false
 	}
+	if !v.CanInterface() {
+		return false
+	}
 	if checkNil(st.Writer, v) {
 		return true
 	}
@@ -99,6 +102,9 @@ func (vw *IterSeq2Writer) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	if !v.Type().CanSeq2() {
+		return false
+	}
+	if !v.CanInterface() {
 		return false
 	}
 	if checkNil(st.Writer, v) {
