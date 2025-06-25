@@ -3,6 +3,7 @@ package pretty
 import (
 	"reflect"
 
+	"github.com/pierrre/pretty/internal/itfassert"
 	"github.com/pierrre/pretty/internal/write"
 )
 
@@ -31,10 +32,10 @@ func (vw *MathBigIntWriter) WriteValue(st *State, v reflect.Value) bool {
 	if elemTyp.Kind() != reflect.Struct || elemTyp.PkgPath() != "math/big" || elemTyp.Name() != "Int" {
 		return false
 	}
-	if !v.CanInterface() {
+	i, ok := itfassert.Assert[interface{ Text(base int) string }](v)
+	if !ok {
 		return false
 	}
-	i := v.Interface().(interface{ Text(base int) string }) //nolint:forcetypeassert // Check above.
 	text := i.Text(vw.Base)
 	write.MustString(st.Writer, text)
 	return true
