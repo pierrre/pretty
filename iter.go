@@ -39,7 +39,7 @@ func (vw *IterSeqWriter) WriteValue(st *State, v reflect.Value) bool {
 	write.MustString(st.Writer, "{")
 	st.IndentLevel++
 	i := 0
-	for v := range v.Seq() {
+	v.Seq()(func(v reflect.Value) bool {
 		if i == 0 {
 			write.MustString(st.Writer, "\n")
 		}
@@ -47,12 +47,13 @@ func (vw *IterSeqWriter) WriteValue(st *State, v reflect.Value) bool {
 		if vw.MaxLen > 0 && i >= vw.MaxLen {
 			writeTruncated(st.Writer)
 			write.MustString(st.Writer, "\n")
-			break
+			return false
 		}
 		must.Handle(vw.ValueWriter.WriteValue(st, v))
 		write.MustString(st.Writer, ",\n")
 		i++
-	}
+		return true
+	})
 	st.IndentLevel--
 	if i != 0 {
 		st.WriteIndent()
@@ -106,7 +107,7 @@ func (vw *IterSeq2Writer) WriteValue(st *State, v reflect.Value) bool {
 	write.MustString(st.Writer, "{")
 	st.IndentLevel++
 	i := 0
-	for k, v := range v.Seq2() {
+	v.Seq2()(func(k, v reflect.Value) bool {
 		if i == 0 {
 			write.MustString(st.Writer, "\n")
 		}
@@ -114,7 +115,7 @@ func (vw *IterSeq2Writer) WriteValue(st *State, v reflect.Value) bool {
 		if vw.MaxLen > 0 && i >= vw.MaxLen {
 			writeTruncated(st.Writer)
 			write.MustString(st.Writer, "\n")
-			break
+			return false
 		}
 		showInfos := st.ShowInfos
 		st.ShowInfos = vw.ShowKeysInfos
@@ -124,7 +125,8 @@ func (vw *IterSeq2Writer) WriteValue(st *State, v reflect.Value) bool {
 		must.Handle(vw.ValueWriter.WriteValue(st, v))
 		write.MustString(st.Writer, ",\n")
 		i++
-	}
+		return true
+	})
 	st.IndentLevel--
 	if i != 0 {
 		st.WriteIndent()
