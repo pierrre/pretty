@@ -18,7 +18,6 @@ Go pretty print library.
   - [`error`](https://pkg.go.dev/github.com/pierrre/pretty#ErrorWriter)
   - [`[]byte` hex dump](https://pkg.go.dev/github.com/pierrre/pretty#BytesHexDumpWriter)
   - [`fmt.Stringer`](https://pkg.go.dev/github.com/pierrre/pretty#StringerWriter)
-  - [`pierrre/errors`](https://pkg.go.dev/github.com/pierrre/pretty/ext/pierrreerrors)
 - [No infinite recursion](https://pkg.go.dev/github.com/pierrre/pretty#RecursionWriter)
 - Fast and (almost) no memory allocation
 

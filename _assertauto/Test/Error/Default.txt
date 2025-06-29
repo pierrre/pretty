@@ -1,6 +1,19 @@
-[*github.com/pierrre/pretty_test.testError] => .Error() => "test"
+[*fmt.wrapError] {
+	Error(): "test: error1\nerror2",
+	Unwrap(): [*errors.joinError] {
+		Error(): "error1\nerror2",
+		Unwrap(): [[]error] (len=2) {
+			[*errors.errorString] {
+				Error(): "error1",
+			},
+			[*errors.errorString] {
+				Error(): "error2",
+			},
+		},
+	},
+}
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,
-	Allocs: [float64] 0,
+	Allocs: [float64] 3,
 }
