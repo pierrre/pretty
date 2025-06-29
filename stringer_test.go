@@ -4,52 +4,53 @@ import (
 	"reflect"
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Stringer", []*testCase{
+	prettytest.AddCasesPrefix("Stringer", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: &testStringer{s: "test"},
+			Name:  "Default",
+			Value: &testStringer{s: "test"},
 		},
 		{
-			name:            "Nil",
-			value:           (*testStringer)(nil),
-			ignoreBenchmark: true,
+			Name:            "Nil",
+			Value:           (*testStringer)(nil),
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Truncated",
-			value: &testStringer{s: "test"},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Truncated",
+			Value: &testStringer{s: "test"},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Stringer.MaxLen = 2
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ReflectValue",
-			value: reflect.ValueOf(123),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ReflectValue",
+			Value: reflect.ValueOf(123),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{
 					vw.Stringer,
 					vw.ReflectValue,
 				}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: &testStringer{s: "test"},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: &testStringer{s: "test"},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Disabled",
-			value: &testStringer{s: "test"},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: &testStringer{s: "test"},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Stringer = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

@@ -4,17 +4,18 @@ import (
 	"reflect"
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("CanInterface", []*testCase{
+	prettytest.AddCasesPrefix("CanInterface", []*prettytest.Case{
 		{
-			name: "Writer",
-			value: func() any {
+			Name: "Writer",
+			Value: func() any {
 				i := 123
-				return testUnexported{v: &i}
+				return prettytest.Unexported(&i)
 			}(),
-			configureWriter: func(vw *CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.CanInterface = nil
 				vw.ValueWriters = ValueWriters{NewFilterWriter(NewCanInterfaceWriter(vw), func(v reflect.Value) bool {
 					return !v.CanInterface()

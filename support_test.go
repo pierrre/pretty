@@ -2,14 +2,15 @@ package pretty_test
 
 import (
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Support", []*testCase{
+	prettytest.AddCasesPrefix("Support", []*prettytest.Case{
 		{
-			name:  "Empty",
-			value: 123,
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Empty",
+			Value: 123,
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support.Checkers = nil
 			},
 		},

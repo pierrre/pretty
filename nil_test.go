@@ -1,10 +1,14 @@
 package pretty_test
 
+import (
+	"github.com/pierrre/pretty/internal/prettytest"
+)
+
 func init() {
-	addTestCases([]*testCase{
+	prettytest.AddCases([]*prettytest.Case{
 		{
-			name:  "Nil",
-			value: nil,
+			Name:  "Nil",
+			Value: nil,
 		},
 	})
 }

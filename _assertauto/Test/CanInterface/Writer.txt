@@ -1,4 +1,4 @@
-[github.com/pierrre/pretty_test.testUnexported] {
+[github.com/pierrre/pretty/internal/prettytest.unexported[*int]] {
 	v: [*int] => 123,
 }
 	========== assertauto ==========

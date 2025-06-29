@@ -2,61 +2,62 @@ package pretty_test
 
 import (
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Array", []*testCase{
+	prettytest.AddCasesPrefix("Array", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: [...]int{1, 2, 3},
+			Name:  "Default",
+			Value: [...]int{1, 2, 3},
 		},
 		{
-			name:  "ShowIndexes",
-			value: [...]int{1, 2, 3},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowIndexes",
+			Value: [...]int{1, 2, 3},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Array.ShowIndexes = true
 			},
 		},
 		{
-			name:            "Empty",
-			value:           [0]int{},
-			ignoreBenchmark: true,
+			Name:            "Empty",
+			Value:           [0]int{},
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Truncated",
-			value: [...]int{1, 2, 3},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Truncated",
+			Value: [...]int{1, 2, 3},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Array.MaxLen = 2
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:            "UnknownType",
-			value:           [...]any{1, 2, 3},
-			ignoreBenchmark: true,
+			Name:            "UnknownType",
+			Value:           [...]any{1, 2, 3},
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ShowKnownTypes",
-			value: [...]int{1, 2, 3},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowKnownTypes",
+			Value: [...]int{1, 2, 3},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Type.ShowKnownTypes = true
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: [...]int{1, 2, 3},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: [...]int{1, 2, 3},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.Array}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

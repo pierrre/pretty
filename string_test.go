@@ -2,57 +2,58 @@ package pretty_test
 
 import (
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("String", []*testCase{
+	prettytest.AddCasesPrefix("String", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: "test",
+			Name:  "Default",
+			Value: "test",
 		},
 		{
-			name:            "Empty",
-			value:           "",
-			ignoreBenchmark: true,
+			Name:            "Empty",
+			Value:           "",
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ShowAddr",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowAddr",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.String.ShowAddr = true
 			},
-			ignoreResult:    true,
-			ignoreBenchmark: true,
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Unquoted",
-			value: "aaa\nbbb",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Unquoted",
+			Value: "aaa\nbbb",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.String.Quote = false
 			},
 		},
 		{
-			name:  "Truncated",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Truncated",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.String.MaxLen = 2
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Not",
-			value: 123,
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: 123,
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.String}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

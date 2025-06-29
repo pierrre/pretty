@@ -6,32 +6,33 @@ import (
 	"slices"
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Iter/Seq", []*testCase{
+	prettytest.AddCasesPrefix("Iter/Seq", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: slices.Values([]string{"a", "b", "c"}),
+			Name:  "Default",
+			Value: slices.Values([]string{"a", "b", "c"}),
 		},
 		{
-			name:  "Nil",
-			value: iter.Seq[int](nil),
+			Name:  "Nil",
+			Value: iter.Seq[int](nil),
 		},
 		{
-			name:  "Empty",
-			value: slices.Values([]string(nil)),
+			Name:  "Empty",
+			Value: slices.Values([]string(nil)),
 		},
 		{
-			name:  "Truncated",
-			value: slices.Values([]string{"a", "b", "c"}),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Truncated",
+			Value: slices.Values([]string{"a", "b", "c"}),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.IterSeq.MaxLen = 2
 			},
 		},
 		{
-			name: "Large",
-			value: func() iter.Seq[int] {
+			Name: "Large",
+			Value: func() iter.Seq[int] {
 				i := 0
 				return func(yield func(int) bool) {
 					for {
@@ -47,60 +48,58 @@ func init() {
 			}(),
 		},
 		{
-			name: "Unexported",
-			value: testUnexported{
-				v: slices.Values([]string{"a", "b", "c"}),
-			},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Unexported",
+			Value: prettytest.Unexported(slices.Values([]string{"a", "b", "c"})),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.CanInterface = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: slices.Values([]string{"a", "b", "c"}),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: slices.Values([]string{"a", "b", "c"}),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Disabled",
-			value: slices.Values([]string{"a", "b", "c"}),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: slices.Values([]string{"a", "b", "c"}),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.IterSeq = nil
 			},
 		},
 	})
-	addTestCasesPrefix("Iter/Seq2", []*testCase{
+	prettytest.AddCasesPrefix("Iter/Seq2", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: slices.All([]string{"a", "b", "c"}),
+			Name:  "Default",
+			Value: slices.All([]string{"a", "b", "c"}),
 		},
 		{
-			name:  "Nil",
-			value: iter.Seq2[string, int](nil),
+			Name:  "Nil",
+			Value: iter.Seq2[string, int](nil),
 		},
 		{
-			name:  "Empty",
-			value: slices.All([]string(nil)),
+			Name:  "Empty",
+			Value: slices.All([]string(nil)),
 		},
 		{
-			name:  "Truncated",
-			value: slices.All([]string{"a", "b", "c"}),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Truncated",
+			Value: slices.All([]string{"a", "b", "c"}),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.IterSeq2.MaxLen = 2
 			},
 		},
 		{
-			name:  "KeysStringShowInfos",
-			value: maps.All(map[string]int{"a": 1}),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "KeysStringShowInfos",
+			Value: maps.All(map[string]int{"a": 1}),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.IterSeq2.ShowKeysInfos = true
 			},
 		},
 		{
-			name: "Large",
-			value: func() iter.Seq2[int, int] {
+			Name: "Large",
+			Value: func() iter.Seq2[int, int] {
 				i := 0
 				return func(yield func(int, int) bool) {
 					for {
@@ -116,26 +115,24 @@ func init() {
 			}(),
 		},
 		{
-			name: "Unexported",
-			value: testUnexported{
-				v: slices.All([]string{"a", "b", "c"}),
-			},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Unexported",
+			Value: prettytest.Unexported(slices.All([]string{"a", "b", "c"})),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.CanInterface = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: slices.All([]string{"a", "b", "c"}),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: slices.All([]string{"a", "b", "c"}),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Disabled",
-			value: slices.All([]string{"a", "b", "c"}),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: slices.All([]string{"a", "b", "c"}),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.IterSeq2 = nil
 			},
 		},

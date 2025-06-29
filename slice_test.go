@@ -2,84 +2,85 @@ package pretty_test
 
 import (
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Slice", []*testCase{
+	prettytest.AddCasesPrefix("Slice", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: []int{1, 2, 3},
+			Name:  "Default",
+			Value: []int{1, 2, 3},
 		},
 		{
-			name:            "Nil",
-			value:           []int(nil),
-			ignoreBenchmark: true,
+			Name:            "Nil",
+			Value:           []int(nil),
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ShowAddr",
-			value: []int{1, 2, 3},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowAddr",
+			Value: []int{1, 2, 3},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Slice.ShowAddr = true
 			},
-			ignoreResult:    true,
-			ignoreBenchmark: true,
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ShowCap",
-			value: []int{1, 2, 3},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowCap",
+			Value: []int{1, 2, 3},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Slice.ShowCap = true
 			},
-			ignoreResult:    true,
-			ignoreBenchmark: true,
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ShowIndexes",
-			value: []int{1, 2, 3},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowIndexes",
+			Value: []int{1, 2, 3},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Slice.ShowIndexes = true
 			},
 		},
 		{
-			name:            "Empty",
-			value:           []int{},
-			ignoreBenchmark: true,
+			Name:            "Empty",
+			Value:           []int{},
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Truncated",
-			value: []int{1, 2, 3},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Truncated",
+			Value: []int{1, 2, 3},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Slice.MaxLen = 2
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:            "UnknownType",
-			value:           []any{1, 2, 3},
-			ignoreBenchmark: true,
+			Name:            "UnknownType",
+			Value:           []any{1, 2, 3},
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ShowKnownTypes",
-			value: []int{1, 2, 3},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowKnownTypes",
+			Value: []int{1, 2, 3},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Type.ShowKnownTypes = true
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: []int{1, 2, 3},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: []int{1, 2, 3},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.Slice}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

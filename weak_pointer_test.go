@@ -5,13 +5,14 @@ import (
 	"weak"
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("WeakPointer", []*testCase{
+	prettytest.AddCasesPrefix("WeakPointer", []*prettytest.Case{
 		{
-			name: "Default",
-			value: func() any {
+			Name: "Default",
+			Value: func() any {
 				v := testWeakPointer{}
 				s := "test"
 				v.Value = &s
@@ -20,50 +21,48 @@ func init() {
 			}(),
 		},
 		{
-			name: "GarbageCollected",
-			value: func() weak.Pointer[[64]byte] {
+			Name: "GarbageCollected",
+			Value: func() weak.Pointer[[64]byte] {
 				p := weak.Make(new([64]byte))
 				runtime.GC()
 				return p
 			}(),
 		},
 		{
-			name: "Nil",
-			value: func() weak.Pointer[string] {
+			Name: "Nil",
+			Value: func() weak.Pointer[string] {
 				return weak.Make[string](nil)
 			}(),
 		},
 		{
-			name: "Unexported",
-			value: func() any {
-				return testUnexported{
-					v: weak.Make[string](nil),
-				}
+			Name: "Unexported",
+			Value: func() any {
+				return prettytest.Unexported(weak.Make[string](nil))
 			}(),
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name: "SupportDisabled",
-			value: func() any {
+			Name: "SupportDisabled",
+			Value: func() any {
 				v := testWeakPointer{}
 				s := "test"
 				v.Value = &s
 				v.Pointer = weak.Make(&s)
 				return v
 			}(),
-			configureWriter: func(vw *CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name: "Disabled",
-			value: func() weak.Pointer[string] {
+			Name: "Disabled",
+			Value: func() weak.Pointer[string] {
 				return weak.Make[string](nil)
 			}(),
-			configureWriter: func(vw *CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.WeakPointer = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

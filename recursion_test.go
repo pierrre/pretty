@@ -4,62 +4,63 @@ import (
 	"reflect"
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Recursion", []*testCase{
+	prettytest.AddCasesPrefix("Recursion", []*prettytest.Case{
 		{
-			name: "Pointer",
-			value: func() any {
+			Name: "Pointer",
+			Value: func() any {
 				var v any
 				v = &v
 				return v
 			}(),
 		},
 		{
-			name: "Slice",
-			value: func() []any {
+			Name: "Slice",
+			Value: func() []any {
 				v := make([]any, 1)
 				v[0] = v
 				return v
 			}(),
 		},
 		{
-			name: "Map",
-			value: func() map[int]any {
+			Name: "Map",
+			Value: func() map[int]any {
 				v := make(map[int]any)
 				v[0] = v
 				return v
 			}(),
 		},
 		{
-			name: "ShowAddr",
-			value: func() any {
+			Name: "ShowAddr",
+			Value: func() any {
 				var v any
 				v = &v
 				return v
 			}(),
-			configureWriter: func(vw *CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Recursion.ShowAddr = true
 			},
-			ignoreResult: true,
+			IgnoreResult: true,
 		},
 		{
-			name:  "Disabled",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Recursion = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name: "Writer",
-			value: func() any {
+			Name: "Writer",
+			Value: func() any {
 				var v any
 				v = &v
 				return v
 			}(),
-			configureWriter: func(vw *CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				rvw := NewRecursionWriter(vw)
 				rvw.ShowAddr = false
 				vw.Recursion = nil

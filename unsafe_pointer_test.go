@@ -4,43 +4,44 @@ import (
 	"unsafe" //nolint:depguard // Required for test.
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("UnsafePointer", []*testCase{
+	prettytest.AddCasesPrefix("UnsafePointer", []*prettytest.Case{
 		{
-			name: "Default",
-			value: func() unsafe.Pointer {
+			Name: "Default",
+			Value: func() unsafe.Pointer {
 				i := 123
 				return unsafe.Pointer(&i) //nolint:gosec // It's OK.
 			}(),
-			ignoreResult: true,
+			IgnoreResult: true,
 		},
 		{
-			name: "Nil",
-			value: func() unsafe.Pointer {
+			Name: "Nil",
+			Value: func() unsafe.Pointer {
 				return unsafe.Pointer(nil) //nolint:gosec // It's OK.
 			}(),
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name: "SupportDisabled",
-			value: func() unsafe.Pointer {
+			Name: "SupportDisabled",
+			Value: func() unsafe.Pointer {
 				i := 123
 				return unsafe.Pointer(&i) //nolint:gosec // It's OK.
 			}(),
-			configureWriter: func(vw *CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
-			ignoreResult: true,
+			IgnoreResult: true,
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.UnsafePointer}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

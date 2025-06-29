@@ -2,33 +2,34 @@ package pretty_test
 
 import (
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Error", []*testCase{
+	prettytest.AddCasesPrefix("Error", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: &testError{},
+			Name:  "Default",
+			Value: &testError{},
 		},
 		{
-			name:            "Nil",
-			value:           (*testError)(nil),
-			ignoreBenchmark: true,
+			Name:            "Nil",
+			Value:           (*testError)(nil),
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: &testError{},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: &testError{},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Disabled",
-			value: &testError{},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: &testError{},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Error = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

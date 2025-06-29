@@ -1,4 +1,4 @@
-[github.com/pierrre/pretty_test.testUnexported] {
+[github.com/pierrre/pretty/internal/prettytest.unexported[weak.Pointer[string]]] {
 	v: [weak.Pointer[string]] {
 		_: [[0]*string] {},
 		u: [unsafe.Pointer] <nil>,

@@ -4,15 +4,16 @@ import (
 	"reflect"
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 	"github.com/pierrre/pretty/internal/write"
 )
 
 func init() {
-	addTestCasesPrefix("Filter", []*testCase{
+	prettytest.AddCasesPrefix("Filter", []*prettytest.Case{
 		{
-			name:  "Match",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Match",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = []ValueWriter{NewFilterWriter(
 					ValueWriterFunc(func(st *State, v reflect.Value) bool {
 						write.MustString(st.Writer, "aaaa")
@@ -24,9 +25,9 @@ func init() {
 			},
 		},
 		{
-			name:  "NoMatch",
-			value: 123,
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "NoMatch",
+			Value: 123,
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = []ValueWriter{NewFilterWriter(
 					ValueWriterFunc(func(st *State, v reflect.Value) bool {
 						panic("should not be called")

@@ -2,137 +2,138 @@ package pretty_test
 
 import (
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Map", []*testCase{
+	prettytest.AddCasesPrefix("Map", []*prettytest.Case{
 		{
-			name:  "Nil",
-			value: map[int]int(nil),
+			Name:  "Nil",
+			Value: map[int]int(nil),
 		},
 		{
-			name:            "Empty",
-			value:           map[int]int{},
-			ignoreBenchmark: true,
+			Name:            "Empty",
+			Value:           map[int]int{},
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ShowAddr",
-			value: map[int]int{1: 2},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowAddr",
+			Value: map[int]int{1: 2},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 				vw.Kind.Map.ShowAddr = true
 			},
-			ignoreResult:    true,
-			ignoreBenchmark: true,
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "UnsortedExported",
-			value: map[int]int{1: 2},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "UnsortedExported",
+			Value: map[int]int{1: 2},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 			},
 		},
 		{
-			name:  "UnsortedExportedShowType",
-			value: map[int]int{1: 2},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "UnsortedExportedShowType",
+			Value: map[int]int{1: 2},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 				vw.UnwrapInterface = nil
 				vw.Type.ShowKnownTypes = true
 			},
 		},
 		{
-			name:  "UnsortedExportedTruncated",
-			value: map[int]int{1: 2, 3: 4},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "UnsortedExportedTruncated",
+			Value: map[int]int{1: 2, 3: 4},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 				vw.Kind.Map.MaxLen = 1
 			},
-			ignoreResult: true,
+			IgnoreResult: true,
 		},
 		{
-			name:  "UnsortedExportedInterface",
-			value: map[any]any{1: 2},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "UnsortedExportedInterface",
+			Value: map[any]any{1: 2},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 			},
 		},
 		{
-			name:  "UnsortedUnexported",
-			value: testUnexported{v: map[int]int{1: 2}},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "UnsortedUnexported",
+			Value: prettytest.Unexported(map[int]int{1: 2}),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 			},
 		},
 		{
-			name:  "UnsortedUnexportedTruncated",
-			value: testUnexported{v: map[int]int{1: 2, 3: 4}},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "UnsortedUnexportedTruncated",
+			Value: prettytest.Unexported(map[int]int{1: 2, 3: 4}),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = false
 				vw.Kind.Map.MaxLen = 1
 			},
-			ignoreResult:    true,
-			ignoreBenchmark: true,
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SortedExported",
-			value: map[int]int{1: 2, 3: 4, 5: 6},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SortedExported",
+			Value: map[int]int{1: 2, 3: 4, 5: 6},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = true
 			},
 		},
 		{
-			name:  "SortedExportedTruncated",
-			value: map[int]int{1: 2, 3: 4, 5: 6},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SortedExportedTruncated",
+			Value: map[int]int{1: 2, 3: 4, 5: 6},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = true
 				vw.Kind.Map.MaxLen = 2
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SortedUnexported",
-			value: testUnexported{v: map[int]int{1: 2, 3: 4, 5: 6}},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SortedUnexported",
+			Value: prettytest.Unexported(map[int]int{1: 2, 3: 4, 5: 6}),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.SortKeys = true
 			},
 		},
 		{
-			name:  "UnknownType",
-			value: map[any]any{"a": 1, "b": 2, "c": 3},
+			Name:  "UnknownType",
+			Value: map[any]any{"a": 1, "b": 2, "c": 3},
 		},
 		{
-			name:  "ShowKnownTypes",
-			value: map[string]int{"a": 1, "b": 2, "c": 3},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowKnownTypes",
+			Value: map[string]int{"a": 1, "b": 2, "c": 3},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Type.ShowKnownTypes = true
 			},
 		},
 		{
-			name:  "KeysString",
-			value: map[string]int{"a": 1, "b": 2, "c": 3},
+			Name:  "KeysString",
+			Value: map[string]int{"a": 1, "b": 2, "c": 3},
 		},
 		{
-			name:  "KeysStringShowInfos",
-			value: map[string]int{"a": 1, "b": 2, "c": 3},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "KeysStringShowInfos",
+			Value: map[string]int{"a": 1, "b": 2, "c": 3},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Map.ShowKeysInfos = true
 			},
 		},
 		{
-			name:  "SupportDisabled",
-			value: map[int]int{1: 2},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: map[int]int{1: 2},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.Map}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

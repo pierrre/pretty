@@ -4,49 +4,48 @@ import (
 	"reflect"
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("ReflectValue", []*testCase{
+	prettytest.AddCasesPrefix("ReflectValue", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: reflect.ValueOf(123),
+			Name:  "Default",
+			Value: reflect.ValueOf(123),
 		},
 		{
-			name:            "Nil",
-			value:           reflect.ValueOf(nil),
-			ignoreBenchmark: true,
+			Name:            "Nil",
+			Value:           reflect.ValueOf(nil),
+			IgnoreBenchmark: true,
 		},
 		{
-			name: "Unexported",
-			value: testUnexported{
-				v: reflect.ValueOf(123),
-			},
-			ignoreBenchmark: true,
+			Name:            "Unexported",
+			Value:           prettytest.Unexported(reflect.ValueOf(123)),
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: reflect.ValueOf(123),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: reflect.ValueOf(123),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Disabled",
-			value: reflect.ValueOf(123),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: reflect.ValueOf(123),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ReflectValue = nil
 			},
-			ignoreResult:    true,
-			ignoreBenchmark: true,
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.ReflectValue}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

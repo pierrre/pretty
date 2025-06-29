@@ -2,44 +2,45 @@ package pretty_test
 
 import (
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Uint", []*testCase{
+	prettytest.AddCasesPrefix("Uint", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: uint(123),
+			Name:  "Default",
+			Value: uint(123),
 		},
 		{
-			name:  "8",
-			value: uint8(123),
+			Name:  "8",
+			Value: uint8(123),
 		},
 		{
-			name:  "16",
-			value: uint16(123),
+			Name:  "16",
+			Value: uint16(123),
 		},
 		{
-			name:  "32",
-			value: uint32(123),
+			Name:  "32",
+			Value: uint32(123),
 		},
 		{
-			name:  "64",
-			value: uint64(123),
+			Name:  "64",
+			Value: uint64(123),
 		},
 		{
-			name:  "SupportDisabled",
-			value: uint(123),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: uint(123),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.Uint}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

@@ -5,212 +5,213 @@ import (
 	"unsafe" //nolint:depguard // Required for test.
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 	"github.com/pierrre/pretty/internal/write"
 )
 
 func init() {
-	addTestCasesPrefix("Type", []*testCase{
+	prettytest.AddCasesPrefix("Type", []*prettytest.Case{
 		{
-			name: "CustomBool",
-			value: func() any {
+			Name: "CustomBool",
+			Value: func() any {
 				type myBool bool
 				return myBool(false)
 			}(),
 		},
 		{
-			name: "CustomInt",
-			value: func() any {
+			Name: "CustomInt",
+			Value: func() any {
 				type myInt int
 				return myInt(0)
 			}(),
 		},
 		{
-			name: "CustomInt8",
-			value: func() any {
+			Name: "CustomInt8",
+			Value: func() any {
 				type myInt8 int8
 				return myInt8(0)
 			}(),
 		},
 		{
-			name: "CustomInt16",
-			value: func() any {
+			Name: "CustomInt16",
+			Value: func() any {
 				type myInt16 int16
 				return myInt16(0)
 			}(),
 		},
 		{
-			name: "CustomInt32",
-			value: func() any {
+			Name: "CustomInt32",
+			Value: func() any {
 				type myInt32 int32
 				return myInt32(0)
 			}(),
 		},
 		{
-			name: "CustomInt64",
-			value: func() any {
+			Name: "CustomInt64",
+			Value: func() any {
 				type myInt64 int64
 				return myInt64(0)
 			}(),
 		},
 		{
-			name: "CustomUint",
-			value: func() any {
+			Name: "CustomUint",
+			Value: func() any {
 				type myUint uint
 				return myUint(0)
 			}(),
 		},
 		{
-			name: "CustomUint8",
-			value: func() any {
+			Name: "CustomUint8",
+			Value: func() any {
 				type myUint8 uint8
 				return myUint8(0)
 			}(),
 		},
 		{
-			name: "CustomUint16",
-			value: func() any {
+			Name: "CustomUint16",
+			Value: func() any {
 				type myUint16 uint16
 				return myUint16(0)
 			}(),
 		},
 		{
-			name: "CustomUInt32",
-			value: func() any {
+			Name: "CustomUInt32",
+			Value: func() any {
 				type myUint32 uint32
 				return myUint32(0)
 			}(),
 		},
 		{
-			name: "CustomUInt64",
-			value: func() any {
+			Name: "CustomUInt64",
+			Value: func() any {
 				type myUint64 uint64
 				return myUint64(0)
 			}(),
 		},
 		{
-			name: "CustomUintptr",
-			value: func() any {
+			Name: "CustomUintptr",
+			Value: func() any {
 				type myUintptr uintptr
 				return myUintptr(0)
 			}(),
 		},
 		{
-			name: "CustomFloat32",
-			value: func() any {
+			Name: "CustomFloat32",
+			Value: func() any {
 				type myFloat32 float32
 				return myFloat32(0)
 			}(),
 		},
 		{
-			name: "CustomFloat64",
-			value: func() any {
+			Name: "CustomFloat64",
+			Value: func() any {
 				type myFloat64 float64
 				return myFloat64(0)
 			}(),
 		},
 		{
-			name: "CustomComplex64",
-			value: func() any {
+			Name: "CustomComplex64",
+			Value: func() any {
 				type myComplex64 complex64
 				return myComplex64(0)
 			}(),
 		},
 		{
-			name: "CustomComplex128",
-			value: func() any {
+			Name: "CustomComplex128",
+			Value: func() any {
 				type myComplex128 complex128
 				return myComplex128(0)
 			}(),
 		},
 		{
-			name: "CustomArray",
-			value: func() any {
+			Name: "CustomArray",
+			Value: func() any {
 				type myArray [1]int
 				return myArray{}
 			}(),
 		},
 		{
-			name: "CustomChan",
-			value: func() any {
+			Name: "CustomChan",
+			Value: func() any {
 				type myChan chan int
 				return myChan(nil)
 			}(),
 		},
 		{
-			name: "CustomFunc",
-			value: func() any {
+			Name: "CustomFunc",
+			Value: func() any {
 				type myFunc func(int, string) (int, error)
 				return myFunc(nil)
 			}(),
 		},
 		{
-			name: "CustomMap",
-			value: func() any {
+			Name: "CustomMap",
+			Value: func() any {
 				type myMap map[int]int
 				return myMap(nil)
 			}(),
 		},
 		{
-			name: "CustomPointer",
-			value: func() any {
+			Name: "CustomPointer",
+			Value: func() any {
 				type myPointer *int
 				return myPointer(nil)
 			}(),
 		},
 		{
-			name: "CustomSlice",
-			value: func() any {
+			Name: "CustomSlice",
+			Value: func() any {
 				type mySlice []int
 				return mySlice(nil)
 			}(),
 		},
 		{
-			name: "CustomString",
-			value: func() any {
+			Name: "CustomString",
+			Value: func() any {
 				type myString string
 				return myString("")
 			}(),
 		},
 		{
-			name: "CustomUnsafePointer",
-			value: func() any {
+			Name: "CustomUnsafePointer",
+			Value: func() any {
 				type myUnsafePointer unsafe.Pointer
 				return myUnsafePointer(nil)
 			}(),
 		},
 		{
-			name: "ShowUnderlyingTypeDisabled",
-			value: func() any {
+			Name: "ShowUnderlyingTypeDisabled",
+			Value: func() any {
 				type myBool bool
 				return myBool(false)
 			}(),
-			configureWriter: func(vw *CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Type.ShowUnderlyingType = false
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Disabled",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Type = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Writer",
-			value: 123,
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Writer",
+			Value: 123,
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Type = nil
 				vw.ValueWriters = ValueWriters{NewTypeWriter(vw.Kind.Int)}
 			},
 		},
 	})
-	addTestCasesPrefix("ByType", []*testCase{
+	prettytest.AddCasesPrefix("ByType", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Default",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ByType[reflect.TypeFor[string]()] = ValueWriterFunc(func(st *State, v reflect.Value) bool {
 					write.MustString(st.Writer, "custom")
 					return true
@@ -218,16 +219,16 @@ func init() {
 			},
 		},
 		{
-			name:  "NotFound",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "NotFound",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ByType[reflect.TypeFor[int]()] = nil
 			},
 		},
 		{
-			name:  "Support",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Support",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				cvw := ValueWriterFunc(func(st *State, v reflect.Value) bool {
 					write.MustString(st.Writer, "custom")
 					return true

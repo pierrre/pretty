@@ -1,4 +1,4 @@
-[github.com/pierrre/pretty_test.testUnexported] {
+[github.com/pierrre/pretty/internal/prettytest.unexported[time.Time]] {
 	v: [time.Time] {
 		wall: [uint64] 0,
 		ext: [int64] 63393490800,

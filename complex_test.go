@@ -2,32 +2,33 @@ package pretty_test
 
 import (
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Complex", []*testCase{
+	prettytest.AddCasesPrefix("Complex", []*prettytest.Case{
 		{
-			name:  "64",
-			value: complex64(123.456 + 789.123i),
+			Name:  "64",
+			Value: complex64(123.456 + 789.123i),
 		},
 		{
-			name:  "128",
-			value: complex128(123.456 + 789.123i),
+			Name:  "128",
+			Value: complex128(123.456 + 789.123i),
 		},
 		{
-			name:  "SupportDisabled",
-			value: complex128(123.456 + 789.123i),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: complex128(123.456 + 789.123i),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.Complex}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

@@ -2,70 +2,71 @@ package pretty_test
 
 import (
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Pointer", []*testCase{
+	prettytest.AddCasesPrefix("Pointer", []*prettytest.Case{
 		{
-			name: "Default",
-			value: func() *int {
+			Name: "Default",
+			Value: func() *int {
 				i := 123
 				return &i
 			}(),
 		},
 		{
-			name:            "Nil",
-			value:           (*int)(nil),
-			ignoreBenchmark: true,
+			Name:            "Nil",
+			Value:           (*int)(nil),
+			IgnoreBenchmark: true,
 		},
 		{
-			name: "ShowAddr",
-			value: func() *int {
+			Name: "ShowAddr",
+			Value: func() *int {
 				i := 123
 				return &i
 			}(),
-			configureWriter: func(vw *CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Pointer.ShowAddr = true
 			},
-			ignoreResult:    true,
-			ignoreBenchmark: true,
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name: "UnknownType",
-			value: func() *any {
+			Name: "UnknownType",
+			Value: func() *any {
 				i := any(123)
 				return &i
 			}(),
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name: "ShowKnownTypes",
-			value: func() *int {
+			Name: "ShowKnownTypes",
+			Value: func() *int {
 				i := 123
 				return &i
 			}(),
-			configureWriter: func(vw *CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Type.ShowKnownTypes = true
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name: "SupportDisabled",
-			value: func() *int {
+			Name: "SupportDisabled",
+			Value: func() *int {
 				i := 123
 				return &i
 			}(),
-			configureWriter: func(vw *CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.Pointer}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

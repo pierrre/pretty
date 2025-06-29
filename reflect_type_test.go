@@ -6,45 +6,46 @@ import (
 	"reflect"
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("ReflectType", []*testCase{
+	prettytest.AddCasesPrefix("ReflectType", []*prettytest.Case{
 		{
-			name:  "String",
-			value: reflect.TypeFor[string](),
+			Name:  "String",
+			Value: reflect.TypeFor[string](),
 		},
 		{
-			name:  "Pointer",
-			value: reflect.TypeFor[*string](),
+			Name:  "Pointer",
+			Value: reflect.TypeFor[*string](),
 		},
 		{
-			name:  "Array",
-			value: reflect.TypeFor[[10]string](),
+			Name:  "Array",
+			Value: reflect.TypeFor[[10]string](),
 		},
 		{
-			name:  "Slice",
-			value: reflect.TypeFor[[]string](),
+			Name:  "Slice",
+			Value: reflect.TypeFor[[]string](),
 		},
 		{
-			name:  "Map",
-			value: reflect.TypeFor[map[string]int](),
+			Name:  "Map",
+			Value: reflect.TypeFor[map[string]int](),
 		},
 		{
-			name:  "Chan",
-			value: reflect.TypeFor[chan<- int](),
+			Name:  "Chan",
+			Value: reflect.TypeFor[chan<- int](),
 		},
 		{
-			name:  "Func",
-			value: reflect.TypeFor[func(int) int](),
+			Name:  "Func",
+			Value: reflect.TypeFor[func(int) int](),
 		},
 		{
-			name:  "Interface",
-			value: reflect.TypeFor[io.Writer](),
+			Name:  "Interface",
+			Value: reflect.TypeFor[io.Writer](),
 		},
 		{
-			name: "Struct",
-			value: reflect.TypeFor[struct {
+			Name: "Struct",
+			Value: reflect.TypeFor[struct {
 				String string
 				Int    int
 				Float  float64
@@ -52,37 +53,37 @@ func init() {
 			}](),
 		},
 		{
-			name:  "EmptyInterface",
-			value: reflect.TypeFor[any](),
+			Name:  "EmptyInterface",
+			Value: reflect.TypeFor[any](),
 		},
 		{
-			name:  "EmptyStruct",
-			value: reflect.TypeFor[struct{}](),
+			Name:  "EmptyStruct",
+			Value: reflect.TypeFor[struct{}](),
 		},
 		{
-			name: "CustomString",
-			value: func() reflect.Type {
+			Name: "CustomString",
+			Value: func() reflect.Type {
 				type CustomString string
 				return reflect.TypeFor[CustomString]()
 			}(),
 		},
 		{
-			name: "CustomPointer",
-			value: func() reflect.Type {
+			Name: "CustomPointer",
+			Value: func() reflect.Type {
 				type CustomPointer *string
 				return reflect.TypeFor[CustomPointer]()
 			}(),
 		},
 		{
-			name: "CustomSlice",
-			value: func() reflect.Type {
+			Name: "CustomSlice",
+			Value: func() reflect.Type {
 				type CustomSlice []string
 				return reflect.TypeFor[CustomSlice]()
 			}(),
 		},
 		{
-			name: "CustomStruct",
-			value: func() reflect.Type {
+			Name: "CustomStruct",
+			Value: func() reflect.Type {
 				type CustomStruct struct {
 					String string
 					Int    int
@@ -93,31 +94,31 @@ func init() {
 			}(),
 		},
 		{
-			name:  "BytesBuffer",
-			value: reflect.TypeFor[*bytes.Buffer](),
+			Name:  "BytesBuffer",
+			Value: reflect.TypeFor[*bytes.Buffer](),
 		},
 		{
-			name:  "Nil",
-			value: [1]reflect.Type{},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Nil",
+			Value: [1]reflect.Type{},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: reflect.TypeFor[string](),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: reflect.TypeFor[string](),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Disabled",
-			value: reflect.TypeFor[string](),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: reflect.TypeFor[string](),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ReflectType = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

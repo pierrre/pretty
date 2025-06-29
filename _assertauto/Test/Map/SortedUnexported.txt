@@ -1,4 +1,4 @@
-[github.com/pierrre/pretty_test.testUnexported] {
+[github.com/pierrre/pretty/internal/prettytest.unexported[map[int]int]] {
 	v: [map[int]int] (len=3) {
 		1: 2,
 		3: 4,

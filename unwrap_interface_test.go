@@ -4,39 +4,40 @@ import (
 	"reflect"
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("UnwrapInterface", []*testCase{
+	prettytest.AddCasesPrefix("UnwrapInterface", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: [1]any{123},
+			Name:  "Default",
+			Value: [1]any{123},
 		},
 		{
-			name:            "Nil",
-			value:           [1]any{},
-			ignoreBenchmark: true,
+			Name:            "Nil",
+			Value:           [1]any{},
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Disabled",
-			value: [1]any{123},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: [1]any{123},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "DisabledNil",
-			value: [1]any{},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "DisabledNil",
+			Value: [1]any{},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Writer",
-			value: [1]any{123},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Writer",
+			Value: [1]any{123},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = nil
 				vw.ValueWriters = ValueWriters{NewFilterWriter(NewUnwrapInterfaceWriter(vw), func(v reflect.Value) bool {
 					return v.Kind() == reflect.Interface
@@ -44,9 +45,9 @@ func init() {
 			},
 		},
 		{
-			name:  "WriterNil",
-			value: [1]any{},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "WriterNil",
+			Value: [1]any{},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = nil
 				vw.ValueWriters = ValueWriters{NewFilterWriter(NewUnwrapInterfaceWriter(vw), func(v reflect.Value) bool {
 					return v.Kind() == reflect.Interface

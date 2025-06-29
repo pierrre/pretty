@@ -5,135 +5,136 @@ import (
 	"reflect"
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("BytesHexDump", []*testCase{
+	prettytest.AddCasesPrefix("BytesHexDump", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: bytes.Repeat([]byte("test"), 100),
+			Name:  "Default",
+			Value: bytes.Repeat([]byte("test"), 100),
 		},
 		{
-			name:            "Nil",
-			value:           []byte(nil),
-			ignoreBenchmark: true,
+			Name:            "Nil",
+			Value:           []byte(nil),
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Truncated",
-			value: []byte("test"),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Truncated",
+			Value: []byte("test"),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.BytesHexDump.MaxLen = 2
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ShowCap",
-			value: []byte("test"),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowCap",
+			Value: []byte("test"),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.BytesHexDump.ShowCap = true
 			},
-			ignoreResult:    true,
-			ignoreBenchmark: true,
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ShowAddr",
-			value: []byte("test"),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowAddr",
+			Value: []byte("test"),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.BytesHexDump.ShowAddr = true
 			},
-			ignoreResult:    true,
-			ignoreBenchmark: true,
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: []byte("test"),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: []byte("test"),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Disabled",
-			value: []byte("test"),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: []byte("test"),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.BytesHexDump = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.BytesHexDump}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
-	addTestCasesPrefix("BytesableHexDump", []*testCase{
+	prettytest.AddCasesPrefix("BytesableHexDump", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: &testBytesable{b: bytes.Repeat([]byte("test"), 100)},
+			Name:  "Default",
+			Value: &testBytesable{b: bytes.Repeat([]byte("test"), 100)},
 		},
 		{
-			name:            "Nil",
-			value:           (*testBytesable)(nil),
-			ignoreBenchmark: true,
+			Name:            "Nil",
+			Value:           (*testBytesable)(nil),
+			IgnoreBenchmark: true,
 		},
 		{
-			name:            "NilBytes",
-			value:           &testBytesable{},
-			ignoreBenchmark: true,
+			Name:            "NilBytes",
+			Value:           &testBytesable{},
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Truncated",
-			value: &testBytesable{b: []byte("test")},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Truncated",
+			Value: &testBytesable{b: []byte("test")},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.BytesableHexDump.MaxLen = 2
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ReflectValue",
-			value: reflect.ValueOf(123),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ReflectValue",
+			Value: reflect.ValueOf(123),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{
 					vw.BytesableHexDump,
 					vw.ReflectValue,
 				}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ShowCap",
-			value: &testBytesable{b: []byte("test")},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowCap",
+			Value: &testBytesable{b: []byte("test")},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.BytesableHexDump.ShowCap = true
 			},
-			ignoreResult:    true,
-			ignoreBenchmark: true,
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ShowAddr",
-			value: &testBytesable{b: []byte("test")},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowAddr",
+			Value: &testBytesable{b: []byte("test")},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.BytesableHexDump.ShowAddr = true
 			},
-			ignoreResult:    true,
-			ignoreBenchmark: true,
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: &testBytesable{b: []byte("test")},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: &testBytesable{b: []byte("test")},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Disabled",
-			value: &testBytesable{b: []byte("test")},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: &testBytesable{b: []byte("test")},
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.BytesableHexDump = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

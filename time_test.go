@@ -5,69 +5,66 @@ import (
 
 	. "github.com/pierrre/pretty"
 	"github.com/pierrre/pretty/internal/must"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 var testTime = time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
 
 func init() {
-	addTestCasesPrefix("Time", []*testCase{
+	prettytest.AddCasesPrefix("Time", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: testTime,
+			Name:  "Default",
+			Value: testTime,
 		},
 		{
-			name:            "Zero",
-			value:           time.Time{},
-			ignoreBenchmark: true,
+			Name:            "Zero",
+			Value:           time.Time{},
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Location",
-			value: testTime,
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Location",
+			Value: testTime,
+			ConfigureWriter: func(vw *CommonWriter) {
 				var err error
 				vw.Time.Location, err = time.LoadLocation("Europe/Paris")
 				must.NoError(err)
 			},
 		},
 		{
-			name: "Unexported",
-			value: testUnexported{
-				v: testTime,
-			},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Unexported",
+			Value: prettytest.Unexported(testTime),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.CanInterface = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name: "UnexportedCanInterface",
-			value: testUnexported{
-				v: &testTime,
-			},
-			ignoreBenchmark: true,
+			Name:            "UnexportedCanInterface",
+			Value:           prettytest.Unexported(&testTime),
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: testTime,
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: testTime,
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Disabled",
-			value: testTime,
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: testTime,
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Time = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.Time}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

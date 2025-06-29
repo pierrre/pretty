@@ -2,42 +2,43 @@ package pretty_test
 
 import (
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Func", []*testCase{
+	prettytest.AddCasesPrefix("Func", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: String,
+			Name:  "Default",
+			Value: String,
 		},
 		{
-			name:            "Nil",
-			value:           (func())(nil),
-			ignoreBenchmark: true,
+			Name:            "Nil",
+			Value:           (func())(nil),
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "ShowAddr",
-			value: String,
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "ShowAddr",
+			Value: String,
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Func.ShowAddr = true
 			},
-			ignoreResult:    true,
-			ignoreBenchmark: true,
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "SupportDisabled",
-			value: String,
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: String,
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.Func}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

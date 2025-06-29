@@ -2,32 +2,33 @@ package pretty_test
 
 import (
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Float", []*testCase{
+	prettytest.AddCasesPrefix("Float", []*prettytest.Case{
 		{
-			name:  "32",
-			value: float32(123.456),
+			Name:  "32",
+			Value: float32(123.456),
 		},
 		{
-			name:  "64",
-			value: float64(123.456),
+			Name:  "64",
+			Value: float64(123.456),
 		},
 		{
-			name:  "SupportDisabled",
-			value: float64(123.456),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: float64(123.456),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.Float}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

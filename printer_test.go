@@ -9,86 +9,25 @@ import (
 	"github.com/pierrre/assert"
 	"github.com/pierrre/assert/assertauto"
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
-type testCase struct {
-	name             string
-	value            any
-	configurePrinter func(p *Printer)
-	configureWriter  func(vw *CommonWriter)
-	ignoreResult     bool
-	ignoreAllocs     bool
-	ignoreBenchmark  bool
-}
-
-func (tc *testCase) newPrinter() *Printer {
-	vw := NewCommonWriter()
-	vw.ConfigureTest(true)
-	if tc.configureWriter != nil {
-		tc.configureWriter(vw)
-	}
-	p := NewPrinter(vw)
-	if tc.configurePrinter != nil {
-		tc.configurePrinter(p)
-	}
-	return p
-}
-
-var testCases []*testCase
-
-func addTestCases(tcs []*testCase) {
-	testCases = append(testCases, tcs...)
-}
-
-func addTestCasesPrefix(prefix string, tcs []*testCase) {
-	for _, tc := range tcs {
-		tc.name = prefix + "/" + tc.name
-	}
-	addTestCases(tcs)
-}
-
 func init() {
-	addTestCasesPrefix("Printer", []*testCase{
+	prettytest.AddCasesPrefix("Printer", []*prettytest.Case{
 		{
-			name:         "Default",
-			value:        DefaultPrinter,
-			ignoreResult: true,
+			Name:         "Default",
+			Value:        DefaultPrinter,
+			IgnoreResult: true,
 		},
 	})
 }
 
 func Test(t *testing.T) {
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			p := tc.newPrinter()
-			if !tc.ignoreResult {
-				assertauto.Equal(t, tc.value, assertauto.ValueStringer(p.String))
-			}
-			s := p.String(tc.value)
-			t.Log(s)
-			if !tc.ignoreAllocs {
-				allocs, _ := assertauto.AllocsPerRun(t, 100, func() {
-					t.Helper()
-					p.Write(io.Discard, tc.value)
-				})
-				t.Logf("allocs: %g", allocs)
-			}
-		})
-	}
+	prettytest.Test(t)
 }
 
 func Benchmark(b *testing.B) {
-	for _, tc := range testCases {
-		if tc.ignoreBenchmark {
-			continue
-		}
-		b.Run(tc.name, func(b *testing.B) {
-			p := tc.newPrinter()
-			for b.Loop() {
-				p.Write(io.Discard, tc.value)
-			}
-		})
-	}
+	prettytest.Benchmark(b)
 }
 
 func TestWrite(t *testing.T) {
@@ -151,8 +90,4 @@ func TestFormatter(t *testing.T) {
 		_, err := fmt.Fprintf(io.Discard, "%v", f)
 		assert.NoError(t, err)
 	})
-}
-
-type testUnexported struct {
-	v any
 }

@@ -2,52 +2,53 @@ package pretty_test
 
 import (
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("Struct", []*testCase{
+	prettytest.AddCasesPrefix("Struct", []*prettytest.Case{
 		{
-			name: "Default",
-			value: testStruct{
+			Name: "Default",
+			Value: testStruct{
 				Foo:        123,
 				Bar:        123.456,
 				unexported: 123,
 			},
 		},
 		{
-			name:            "Empty",
-			value:           struct{}{},
-			ignoreBenchmark: true,
+			Name:            "Empty",
+			Value:           struct{}{},
+			IgnoreBenchmark: true,
 		},
 		{
-			name: "FieldFilterExported",
-			value: testStruct{
+			Name: "FieldFilterExported",
+			Value: testStruct{
 				Foo:        123,
 				Bar:        123.456,
 				unexported: 123,
 			},
-			configureWriter: func(vw *CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Kind.Struct.FieldFilter = NewExportedStructFieldFilter()
 			},
 		},
 		{
-			name: "SupportDisabled",
-			value: testStruct{
+			Name: "SupportDisabled",
+			Value: testStruct{
 				Foo:        123,
 				Bar:        123.456,
 				unexported: 123,
 			},
-			configureWriter: func(vw *CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Not",
-			value: "test",
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{vw.Kind.Struct}
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 	})
 }

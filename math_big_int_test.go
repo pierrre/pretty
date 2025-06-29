@@ -5,47 +5,46 @@ import (
 	"strings"
 
 	. "github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 )
 
 func init() {
-	addTestCasesPrefix("MathBigInt", []*testCase{
+	prettytest.AddCasesPrefix("MathBigInt", []*prettytest.Case{
 		{
-			name:  "Default",
-			value: big.NewInt(123),
+			Name:  "Default",
+			Value: big.NewInt(123),
 		},
 		{
-			name: "Large",
-			value: func() any {
+			Name: "Large",
+			Value: func() any {
 				i := new(big.Int)
 				i, _ = i.SetString(strings.Repeat("1234567890", 10), 10)
 				return i
 			}(),
 		},
 		{
-			name: "Unexported",
-			value: testUnexported{
-				v: big.NewInt(123),
-			},
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Unexported",
+			Value: prettytest.Unexported(big.NewInt(123)),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.CanInterface = nil
 			},
-			ignoreBenchmark: true,
+			IgnoreBenchmark: true,
 		},
 		{
-			name:  "Nil",
-			value: (*big.Int)(nil),
+			Name:  "Nil",
+			Value: (*big.Int)(nil),
 		},
 		{
-			name:  "SupportDisabled",
-			value: big.NewInt(123),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "SupportDisabled",
+			Value: big.NewInt(123),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
-			name:  "Disabled",
-			value: big.NewInt(123),
-			configureWriter: func(vw *CommonWriter) {
+			Name:  "Disabled",
+			Value: big.NewInt(123),
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.MathBigInt = nil
 			},
 		},
