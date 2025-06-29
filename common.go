@@ -65,7 +65,7 @@ func NewCommonWriter() *CommonWriter {
 	vw.WeakPointer = NewWeakPointerWriter(vw)
 	vw.ReflectValue = NewReflectValueWriter(vw)
 	vw.ReflectType = NewReflectTypeWriter()
-	vw.Error = NewErrorWriter()
+	vw.Error = NewErrorWriter(vw)
 	vw.BytesableHexDump = NewBytesableHexDumpWriter()
 	vw.Stringer = NewStringerWriter()
 	vw.Kind = NewKindWriter(vw)

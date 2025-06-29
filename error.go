@@ -6,6 +6,7 @@ import (
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/strconvio"
 	"github.com/pierrre/pretty/internal/itfassert"
+	"github.com/pierrre/pretty/internal/must"
 	"github.com/pierrre/pretty/internal/write"
 )
 
@@ -15,16 +16,14 @@ var errorImplementsCache = reflectutil.NewImplementsCacheFor[error]()
 //
 // It should be created with [NewErrorWriter].
 type ErrorWriter struct {
-	// Write writes the error.
-	// Default: [ErrorWriter.WriteError].
-	Write func(st *State, err error)
+	ValueWriter
 }
 
 // NewErrorWriter creates a new [ErrorWriter] with default values.
-func NewErrorWriter() *ErrorWriter {
-	vw := &ErrorWriter{}
-	vw.Write = vw.WriteError
-	return vw
+func NewErrorWriter(vw ValueWriter) *ErrorWriter {
+	return &ErrorWriter{
+		ValueWriter: vw,
+	}
 }
 
 // WriteValue implements [ValueWriter].
@@ -36,8 +35,29 @@ func (vw *ErrorWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	writeArrowWrappedString(st.Writer, ".Error() ")
-	vw.Write(st, err)
+	write.MustString(st.Writer, "{\n")
+	st.IndentLevel++
+	st.WriteIndent()
+	write.MustString(st.Writer, "Error: ")
+	write.Must(strconvio.WriteQuote(st.Writer, err.Error()))
+	write.MustString(st.Writer, ",\n")
+	switch err := err.(type) { //nolint:errorlint // We want to check which interface is implemented by the current error.
+	case interface{ Unwrap() error }:
+		st.WriteIndent()
+		write.MustString(st.Writer, "Unwrap: ")
+		st.KnownType = false // We want to show the type of the unwrapped error.
+		must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(err.Unwrap())))
+		write.MustString(st.Writer, ",\n")
+	case interface{ Unwrap() []error }:
+		st.WriteIndent()
+		write.MustString(st.Writer, "Unwrap: ")
+		st.KnownType = false // We want to show the type of the unwrapped errors.
+		must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(err.Unwrap())))
+		write.MustString(st.Writer, ",\n")
+	}
+	st.IndentLevel--
+	st.WriteIndent()
+	write.MustString(st.Writer, "}")
 	return true
 }
 
@@ -48,9 +68,4 @@ func (vw *ErrorWriter) Supports(typ reflect.Type) ValueWriter {
 		res = vw
 	}
 	return res
-}
-
-// WriteError writes the error with error.Error.
-func (vw *ErrorWriter) WriteError(st *State, err error) {
-	write.Must(strconvio.WriteQuote(st.Writer, err.Error()))
 }

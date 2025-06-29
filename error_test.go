@@ -1,6 +1,9 @@
 package pretty_test
 
 import (
+	"errors"
+	"fmt"
+
 	. "github.com/pierrre/pretty"
 	"github.com/pierrre/pretty/internal/prettytest"
 )
@@ -8,8 +11,11 @@ import (
 func init() {
 	prettytest.AddCasesPrefix("Error", []*prettytest.Case{
 		{
-			Name:  "Default",
-			Value: &testError{},
+			Name: "Default",
+			Value: fmt.Errorf("test: %w", errors.Join(
+				errors.New("error1"),
+				errors.New("error2"),
+			)),
 		},
 		{
 			Name:            "Nil",
