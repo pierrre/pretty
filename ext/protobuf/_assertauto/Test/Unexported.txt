@@ -1,5 +1,5 @@
-[github.com/pierrre/pretty/ext/protobuf.myType] {
-	unexported: [*google.golang.org/protobuf/types/known/wrapperspb.StringValue] => {
+[github.com/pierrre/pretty/internal/prettytest.unexported[*google.golang.org/protobuf/types/known/wrapperspb.StringValue]] {
+	v: [*google.golang.org/protobuf/types/known/wrapperspb.StringValue] => {
 		state: [google.golang.org/protobuf/internal/impl.MessageState] {
 			NoUnkeyedLiterals: [google.golang.org/protobuf/internal/pragma.NoUnkeyedLiterals] {},
 			DoNotCompare: [google.golang.org/protobuf/internal/pragma.DoNotCompare]([0]func()) {},
@@ -10,4 +10,9 @@
 		unknownFields: [[]uint8] <nil>,
 		sizeCache: [int32] 0,
 	},
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
 }

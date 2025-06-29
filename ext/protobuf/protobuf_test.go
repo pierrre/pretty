@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/pierrre/assert"
-	"github.com/pierrre/assert/assertauto"
 	"github.com/pierrre/pretty"
+	"github.com/pierrre/pretty/internal/prettytest"
 	"google.golang.org/protobuf/types/known/apipb"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -14,36 +14,28 @@ import (
 
 func init() {
 	ConfigureDefault()
-	pretty.DefaultCommonWriter.CanInterface = nil
-}
-
-func Test(t *testing.T) {
-	for _, tc := range []struct {
-		name  string
-		value any
-	}{
+	prettytest.AddCases([]*prettytest.Case{
 		{
-			name:  "Nil",
-			value: (*wrapperspb.StringValue)(nil),
+			Name:            "Nil",
+			Value:           (*wrapperspb.StringValue)(nil),
+			ConfigureWriter: ConfigureCommonValueWriter,
 		},
 		{
-			name: "Unexported",
-			value: func() any {
-				type myType struct {
-					unexported *wrapperspb.StringValue
-				}
-				return myType{
-					unexported: wrapperspb.String("test"),
-				}
-			}(),
+			Name:  "Unexported",
+			Value: prettytest.Unexported(wrapperspb.String("test")),
+			ConfigureWriter: func(vw *pretty.CommonWriter) {
+				ConfigureCommonValueWriter(vw)
+				vw.CanInterface = nil
+			},
 		},
 		{
-			name:  "String",
-			value: wrapperspb.String("test"),
+			Name:            "String",
+			Value:           wrapperspb.String("test"),
+			ConfigureWriter: ConfigureCommonValueWriter,
 		},
 		{
-			name: "List",
-			value: &structpb.ListValue{
+			Name: "List",
+			Value: &structpb.ListValue{
 				Values: []*structpb.Value{
 					{
 						Kind: &structpb.Value_StringValue{
@@ -57,25 +49,28 @@ func Test(t *testing.T) {
 					},
 				},
 			},
+			ConfigureWriter: ConfigureCommonValueWriter,
 		},
 		{
-			name: "Struct",
-			value: &structpb.Struct{
+			Name: "Struct",
+			Value: &structpb.Struct{
 				Fields: map[string]*structpb.Value{
 					"test1": structpb.NewStringValue("test"),
 					"test2": structpb.NewNumberValue(123),
 				},
 			},
+			ConfigureWriter: ConfigureCommonValueWriter,
 		},
 		{
-			name:  "Api",
-			value: &apipb.Api{},
+			Name:            "Api",
+			Value:           &apipb.Api{},
+			ConfigureWriter: ConfigureCommonValueWriter,
 		},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			assertauto.Equal(t, tc.value)
-		})
-	}
+	})
+}
+
+func Test(t *testing.T) {
+	prettytest.Test(t)
 }
 
 func TestSupports(t *testing.T) {
@@ -83,4 +78,8 @@ func TestSupports(t *testing.T) {
 	vw := NewMessageWriter(nil)
 	assert.Equal(t, vw.Supports(reflect.TypeFor[*wrapperspb.StringValue]()), pretty.ValueWriter(vw))
 	assert.Zero(t, vw.Supports(reflect.TypeFor[string]()))
+}
+
+func Benchmark(b *testing.B) {
+	prettytest.Benchmark(b)
 }

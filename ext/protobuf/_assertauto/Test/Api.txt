@@ -10,3 +10,8 @@
 		Name: [string] (len=13) "SYNTAX_PROTO2",
 	},
 }
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 7,
+}
