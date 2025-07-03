@@ -9,7 +9,7 @@ Go pretty print library.
 - [Pretty print value](https://pkg.go.dev/github.com/pierrre/pretty#example-package)
 - [String](https://pkg.go.dev/github.com/pierrre/pretty#String) / [Write](https://pkg.go.dev/github.com/pierrre/pretty#Write) / [Formatter](https://pkg.go.dev/github.com/pierrre/pretty#Formatter)
 - [Configuration](https://pkg.go.dev/github.com/pierrre/pretty#CommonWriter):
-  - [Indentation](https://pkg.go.dev/github.com/pierrre/pretty#Config)
+  - [Indentation](https://pkg.go.dev/github.com/pierrre/pretty#Printer.Indent)
   - [Max depth](https://pkg.go.dev/github.com/pierrre/pretty#MaxDepthWriter)
   - [String](https://pkg.go.dev/github.com/pierrre/pretty#StringWriter)
   - [Slice](https://pkg.go.dev/github.com/pierrre/pretty#SliceWriter)
