@@ -1,5 +1,5 @@
 [github.com/pierrre/pretty_test.testWeakPointer] {
-	Pointer: [weak.Pointer[string]] => [*string] => (len=4) "test",
+	Pointer: [weak.Pointer[string]] => (len=4) "test",
 	Value: [*string] => (len=4) "test",
 }
 	========== assertauto ==========

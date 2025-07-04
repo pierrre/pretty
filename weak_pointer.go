@@ -45,8 +45,6 @@ func (vw *WeakPointerWriter) WriteValue(st *State, v reflect.Value) bool {
 		write.MustString(st.Writer, "<garbage collected>")
 		return true
 	}
-	writeArrow(st.Writer)
-	st.KnownType = false // We want to show the type of the pointer.
 	must.Handle(vw.ValueWriter.WriteValue(st, p))
 	return true
 }
