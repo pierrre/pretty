@@ -1,6 +1,7 @@
 package protobuf
 
 import (
+	"bytes"
 	"reflect"
 	"testing"
 
@@ -31,6 +32,11 @@ func init() {
 		{
 			Name:            "String",
 			Value:           wrapperspb.String("test"),
+			ConfigureWriter: ConfigureCommonValueWriter,
+		},
+		{
+			Name:            "Bytes",
+			Value:           wrapperspb.Bytes(bytes.Repeat([]byte("test"), 100)),
 			ConfigureWriter: ConfigureCommonValueWriter,
 		},
 		{
