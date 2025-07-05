@@ -38,6 +38,10 @@ func init() {
 			IgnoreBenchmark: true,
 		},
 		{
+			Name:  "Panic",
+			Value: &testStringer{panic: true},
+		},
+		{
 			Name:  "SupportDisabled",
 			Value: &testStringer{s: "test"},
 			ConfigureWriter: func(vw *CommonWriter) {
@@ -56,9 +60,13 @@ func init() {
 }
 
 type testStringer struct {
-	s string
+	s     string
+	panic bool
 }
 
 func (sr *testStringer) String() string {
+	if sr.panic {
+		panic("panic")
+	}
 	return sr.s
 }

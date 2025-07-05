@@ -122,6 +122,13 @@ func init() {
 			IgnoreBenchmark: true,
 		},
 		{
+			Name: "Panic",
+			Value: &testBytesable{
+				panic: true,
+			},
+			IgnoreBenchmark: true,
+		},
+		{
 			Name:  "SupportDisabled",
 			Value: &testBytesable{b: []byte("test")},
 			ConfigureWriter: func(vw *CommonWriter) {
@@ -140,9 +147,13 @@ func init() {
 }
 
 type testBytesable struct {
-	b []byte
+	b     []byte
+	panic bool
 }
 
 func (b *testBytesable) Bytes() []byte {
+	if b.panic {
+		panic("panic")
+	}
 	return b.b
 }

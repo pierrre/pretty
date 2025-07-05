@@ -12,6 +12,8 @@ var stringerImplementsCache = reflectutil.NewImplementsCacheFor[fmt.Stringer]()
 
 // StringerWriter is a [ValueWriter] that handles [fmt.Stringer].
 //
+// If [fmt.Stringer.String] panics, [StringerWriter.WriteValue] returns false.
+//
 // It should be created with [NewStringerWriter].
 type StringerWriter struct {
 	// ShowLen shows the len.
@@ -47,7 +49,17 @@ func (vw *StringerWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	s := sr.String()
+	s, ok := func() (_ string, ok bool) {
+		defer func() {
+			if !ok {
+				_ = recover()
+			}
+		}()
+		return sr.String(), true
+	}()
+	if !ok {
+		return false
+	}
 	writeArrowWrappedString(st.Writer, ".String() ")
 	writeStringValue(st, s, vw.ShowLen, false, 0, vw.Quote, vw.MaxLen)
 	return true

@@ -74,6 +74,8 @@ var bytesableImplementsCache = reflectutil.NewImplementsCacheFor[Bytesable]()
 
 // BytesableHexDumpWriter is a [ValueWriter] that handles [Bytesable] and writes thems with [hex.Dumper].
 //
+// If [Bytesable.Bytes] panics, [BytesableHexDumpWriter.WriteValue] returns false.
+//
 // It should be created with [NewBytesableHexDumpWriter].
 type BytesableHexDumpWriter struct {
 	// ShowLen shows the len.
@@ -113,7 +115,17 @@ func (vw *BytesableHexDumpWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	b := br.Bytes()
+	b, ok := func() (_ []byte, ok bool) {
+		defer func() {
+			if !ok {
+				_ = recover()
+			}
+		}()
+		return br.Bytes(), true
+	}()
+	if !ok {
+		return false
+	}
 	writeArrowWrappedString(st.Writer, ".Bytes() ")
 	if b == nil {
 		writeNil(st.Writer)
