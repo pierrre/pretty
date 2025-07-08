@@ -32,12 +32,16 @@ func (vw *MathBigIntWriter) WriteValue(st *State, v reflect.Value) bool {
 	if elemTyp.Kind() != reflect.Struct || elemTyp.PkgPath() != "math/big" || elemTyp.Name() != "Int" {
 		return false
 	}
-	i, ok := itfassert.Assert[interface{ Text(base int) string }](v)
+	i, ok := itfassert.Assert[interface {
+		Append(buf []byte, base int) []byte
+	}](v)
 	if !ok {
 		return false
 	}
-	text := i.Text(vw.Base)
-	write.MustString(st.Writer, text)
+	bp := bytesPool.Get()
+	*bp = i.Append((*bp)[:0], vw.Base)
+	write.Must(st.Writer.Write(*bp))
+	bytesPool.Put(bp)
 	return true
 }
 
