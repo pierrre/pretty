@@ -1,0 +1,18 @@
+[github.com/pierrre/pretty/internal/prettytest.unexported[*math/big.Float]] {
+	v: [*math/big.Float] => {
+		prec: [uint32] 53,
+		mode: [math/big.RoundingMode](uint8) 0,
+		acc: [math/big.Accuracy](int8) 0,
+		form: [math/big.form](uint8) 1,
+		neg: [bool] false,
+		mant: [math/big.nat]([]math/big.Word) (len=1) {
+			17791884659092862976,
+		},
+		exp: [int32] 7,
+	},
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

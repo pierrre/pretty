@@ -2,6 +2,7 @@ package pretty
 
 import (
 	"io"
+	"reflect"
 
 	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/pretty/internal/write"
@@ -26,4 +27,14 @@ var bytesPool = syncutil.Pool[*[]byte]{
 		b := make([]byte, 1024)
 		return &b
 	},
+}
+
+func callSupportCheckerPointer[P interface {
+	*T
+	SupportChecker
+}, T any](p P, typ reflect.Type) ValueWriter {
+	if p != nil {
+		return p.Supports(typ)
+	}
+	return nil
 }

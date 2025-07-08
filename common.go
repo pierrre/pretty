@@ -30,7 +30,7 @@ type CommonWriter struct {
 	Support          *SupportWriter
 	Time             *TimeWriter
 	BytesHexDump     *BytesHexDumpWriter
-	MathBigInt       *MathBigIntWriter
+	MathBig          *MathBigWriter
 	IterSeq          *IterSeqWriter
 	IterSeq2         *IterSeq2Writer
 	Range            *RangeWriter
@@ -58,7 +58,7 @@ func NewCommonWriter() *CommonWriter {
 	}
 	vw.Time = NewTimeWriter()
 	vw.BytesHexDump = NewBytesHexDumpWriter()
-	vw.MathBigInt = NewMathBigIntWriter()
+	vw.MathBig = NewMathBigWriter()
 	vw.IterSeq = NewIterSeqWriter(vw)
 	vw.IterSeq2 = NewIterSeq2Writer(vw)
 	vw.Range = NewRangeWriter(vw)
@@ -200,7 +200,7 @@ func (vw *CommonWriter) writeValue(st *State, v reflect.Value) bool {
 	if vw.BytesHexDump != nil && vw.BytesHexDump.WriteValue(st, v) {
 		return true
 	}
-	if vw.MathBigInt != nil && vw.MathBigInt.WriteValue(st, v) {
+	if vw.MathBig != nil && vw.MathBig.WriteValue(st, v) {
 		return true
 	}
 	if vw.IterSeq != nil && vw.IterSeq.WriteValue(st, v) {
@@ -237,54 +237,44 @@ func (vw *CommonWriter) writeValue(st *State, v reflect.Value) bool {
 //
 //nolint:gocyclo // We need to call all [SupportChecker].
 func (vw *CommonWriter) Supports(typ reflect.Type) ValueWriter {
-	if f := callSupportCheckerPointer(vw.Time, typ); f != nil {
-		return f
+	if w := callSupportCheckerPointer(vw.Time, typ); w != nil {
+		return w
 	}
-	if f := callSupportCheckerPointer(vw.BytesHexDump, typ); f != nil {
-		return f
+	if w := callSupportCheckerPointer(vw.BytesHexDump, typ); w != nil {
+		return w
 	}
-	if f := callSupportCheckerPointer(vw.MathBigInt, typ); f != nil {
-		return f
+	if w := callSupportCheckerPointer(vw.MathBig, typ); w != nil {
+		return w
 	}
-	if f := callSupportCheckerPointer(vw.IterSeq, typ); f != nil {
-		return f
+	if w := callSupportCheckerPointer(vw.IterSeq, typ); w != nil {
+		return w
 	}
-	if f := callSupportCheckerPointer(vw.IterSeq2, typ); f != nil {
-		return f
+	if w := callSupportCheckerPointer(vw.IterSeq2, typ); w != nil {
+		return w
 	}
-	if f := callSupportCheckerPointer(vw.Range, typ); f != nil {
-		return f
+	if w := callSupportCheckerPointer(vw.Range, typ); w != nil {
+		return w
 	}
-	if f := callSupportCheckerPointer(vw.WeakPointer, typ); f != nil {
-		return f
+	if w := callSupportCheckerPointer(vw.WeakPointer, typ); w != nil {
+		return w
 	}
-	if f := callSupportCheckerPointer(vw.ReflectValue, typ); f != nil {
-		return f
+	if w := callSupportCheckerPointer(vw.ReflectValue, typ); w != nil {
+		return w
 	}
-	if f := callSupportCheckerPointer(vw.ReflectType, typ); f != nil {
-		return f
+	if w := callSupportCheckerPointer(vw.ReflectType, typ); w != nil {
+		return w
 	}
-	if f := callSupportCheckerPointer(vw.Error, typ); f != nil {
-		return f
+	if w := callSupportCheckerPointer(vw.Error, typ); w != nil {
+		return w
 	}
-	if f := callSupportCheckerPointer(vw.BytesableHexDump, typ); f != nil {
-		return f
+	if w := callSupportCheckerPointer(vw.BytesableHexDump, typ); w != nil {
+		return w
 	}
-	if f := callSupportCheckerPointer(vw.Stringer, typ); f != nil {
-		return f
+	if w := callSupportCheckerPointer(vw.Stringer, typ); w != nil {
+		return w
 	}
-	if f := callSupportCheckerPointer(vw.Kind, typ); f != nil {
-		return f
-	}
-	return nil
-}
-
-func callSupportCheckerPointer[P interface {
-	*T
-	SupportChecker
-}, T any](p P, typ reflect.Type) ValueWriter {
-	if p != nil {
-		return p.Supports(typ)
+	if w := callSupportCheckerPointer(vw.Kind, typ); w != nil {
+		return w
 	}
 	return nil
 }
