@@ -98,7 +98,7 @@ func init() {
 			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{
 					vw.BytesableHexDump,
-					vw.ReflectValue,
+					vw.Reflect.Value,
 				}
 			},
 			IgnoreBenchmark: true,

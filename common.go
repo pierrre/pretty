@@ -34,8 +34,7 @@ type CommonWriter struct {
 	Iter             *IterWriter
 	Range            *RangeWriter
 	WeakPointer      *WeakPointerWriter
-	ReflectValue     *ReflectValueWriter
-	ReflectType      *ReflectTypeWriter
+	Reflect          *ReflectWriter
 	Error            *ErrorWriter
 	BytesableHexDump *BytesableHexDumpWriter
 	Stringer         *StringerWriter
@@ -61,8 +60,7 @@ func NewCommonWriter() *CommonWriter {
 	vw.Iter = NewIterWriter(vw)
 	vw.Range = NewRangeWriter(vw)
 	vw.WeakPointer = NewWeakPointerWriter(vw)
-	vw.ReflectValue = NewReflectValueWriter(vw)
-	vw.ReflectType = NewReflectTypeWriter()
+	vw.Reflect = NewReflectWriter(vw)
 	vw.Error = NewErrorWriter(vw)
 	vw.BytesableHexDump = NewBytesableHexDumpWriter()
 	vw.Stringer = NewStringerWriter()
@@ -210,10 +208,7 @@ func (vw *CommonWriter) writeValue(st *State, v reflect.Value) bool {
 	if vw.WeakPointer != nil && vw.WeakPointer.WriteValue(st, v) {
 		return true
 	}
-	if vw.ReflectValue != nil && vw.ReflectValue.WriteValue(st, v) {
-		return true
-	}
-	if vw.ReflectType != nil && vw.ReflectType.WriteValue(st, v) {
+	if vw.Reflect != nil && vw.Reflect.WriteValue(st, v) {
 		return true
 	}
 	if vw.Error != nil && vw.Error.WriteValue(st, v) {
@@ -250,10 +245,7 @@ func (vw *CommonWriter) Supports(typ reflect.Type) ValueWriter {
 	if w := callSupportCheckerPointer(vw.WeakPointer, typ); w != nil {
 		return w
 	}
-	if w := callSupportCheckerPointer(vw.ReflectValue, typ); w != nil {
-		return w
-	}
-	if w := callSupportCheckerPointer(vw.ReflectType, typ); w != nil {
+	if w := callSupportCheckerPointer(vw.Reflect, typ); w != nil {
 		return w
 	}
 	if w := callSupportCheckerPointer(vw.Error, typ); w != nil {

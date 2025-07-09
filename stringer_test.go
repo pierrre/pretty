@@ -32,7 +32,7 @@ func init() {
 			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ValueWriters = ValueWriters{
 					vw.Stringer,
-					vw.ReflectValue,
+					vw.Reflect.Value,
 				}
 			},
 			IgnoreBenchmark: true,

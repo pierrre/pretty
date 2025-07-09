@@ -10,7 +10,47 @@ import (
 )
 
 func init() {
-	prettytest.AddCasesPrefix("ReflectType", []*prettytest.Case{
+	prettytest.AddCasesPrefix("Reflect/Value", []*prettytest.Case{
+		{
+			Name:  "Default",
+			Value: reflect.ValueOf(123),
+		},
+		{
+			Name:            "Nil",
+			Value:           reflect.ValueOf(nil),
+			IgnoreBenchmark: true,
+		},
+		{
+			Name:            "Unexported",
+			Value:           prettytest.Unexported(reflect.ValueOf(123)),
+			IgnoreBenchmark: true,
+		},
+		{
+			Name:  "SupportDisabled",
+			Value: reflect.ValueOf(123),
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.Support = nil
+			},
+		},
+		{
+			Name:  "Disabled",
+			Value: reflect.ValueOf(123),
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.Reflect.Value = nil
+			},
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
+		},
+		{
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.ValueWriters = ValueWriters{vw.Reflect.Value}
+			},
+			IgnoreBenchmark: true,
+		},
+	})
+	prettytest.AddCasesPrefix("Reflect/Type", []*prettytest.Case{
 		{
 			Name:  "String",
 			Value: reflect.TypeFor[string](),
@@ -116,7 +156,7 @@ func init() {
 			Name:  "Disabled",
 			Value: reflect.TypeFor[string](),
 			ConfigureWriter: func(vw *CommonWriter) {
-				vw.ReflectType = nil
+				vw.Reflect.Type = nil
 			},
 			IgnoreBenchmark: true,
 		},
