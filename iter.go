@@ -7,6 +7,44 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
+// IterWriter is a [ValueWriter] that handles [iter.Seq] and [iter.Seq2].
+//
+// It should be created with [NewIterWriter].
+type IterWriter struct {
+	Seq  *IterSeqWriter
+	Seq2 *IterSeq2Writer
+}
+
+// NewIterWriter creates a new [IterWriter] with default values.
+func NewIterWriter(vw ValueWriter) *IterWriter {
+	return &IterWriter{
+		Seq:  NewIterSeqWriter(vw),
+		Seq2: NewIterSeq2Writer(vw),
+	}
+}
+
+// WriteValue implements [ValueWriter].
+func (vw *IterWriter) WriteValue(st *State, v reflect.Value) bool {
+	if vw.Seq != nil && vw.Seq.WriteValue(st, v) {
+		return true
+	}
+	if vw.Seq2 != nil && vw.Seq2.WriteValue(st, v) {
+		return true
+	}
+	return false
+}
+
+// Supports implements [SupportChecker].
+func (vw *IterWriter) Supports(typ reflect.Type) ValueWriter {
+	if w := callSupportCheckerPointer(vw.Seq, typ); w != nil {
+		return w
+	}
+	if w := callSupportCheckerPointer(vw.Seq2, typ); w != nil {
+		return w
+	}
+	return nil
+}
+
 // IterSeqWriter is a [ValueWriter] that handles [iter.Seq].
 //
 // It should be created with [NewIterSeqWriter].

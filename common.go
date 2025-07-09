@@ -31,8 +31,7 @@ type CommonWriter struct {
 	Time             *TimeWriter
 	BytesHexDump     *BytesHexDumpWriter
 	MathBig          *MathBigWriter
-	IterSeq          *IterSeqWriter
-	IterSeq2         *IterSeq2Writer
+	Iter             *IterWriter
 	Range            *RangeWriter
 	WeakPointer      *WeakPointerWriter
 	ReflectValue     *ReflectValueWriter
@@ -59,8 +58,7 @@ func NewCommonWriter() *CommonWriter {
 	vw.Time = NewTimeWriter()
 	vw.BytesHexDump = NewBytesHexDumpWriter()
 	vw.MathBig = NewMathBigWriter()
-	vw.IterSeq = NewIterSeqWriter(vw)
-	vw.IterSeq2 = NewIterSeq2Writer(vw)
+	vw.Iter = NewIterWriter(vw)
 	vw.Range = NewRangeWriter(vw)
 	vw.WeakPointer = NewWeakPointerWriter(vw)
 	vw.ReflectValue = NewReflectValueWriter(vw)
@@ -203,10 +201,7 @@ func (vw *CommonWriter) writeValue(st *State, v reflect.Value) bool {
 	if vw.MathBig != nil && vw.MathBig.WriteValue(st, v) {
 		return true
 	}
-	if vw.IterSeq != nil && vw.IterSeq.WriteValue(st, v) {
-		return true
-	}
-	if vw.IterSeq2 != nil && vw.IterSeq2.WriteValue(st, v) {
+	if vw.Iter != nil && vw.Iter.WriteValue(st, v) {
 		return true
 	}
 	if vw.Range != nil && vw.Range.WriteValue(st, v) {
@@ -246,10 +241,7 @@ func (vw *CommonWriter) Supports(typ reflect.Type) ValueWriter {
 	if w := callSupportCheckerPointer(vw.MathBig, typ); w != nil {
 		return w
 	}
-	if w := callSupportCheckerPointer(vw.IterSeq, typ); w != nil {
-		return w
-	}
-	if w := callSupportCheckerPointer(vw.IterSeq2, typ); w != nil {
+	if w := callSupportCheckerPointer(vw.Iter, typ); w != nil {
 		return w
 	}
 	if w := callSupportCheckerPointer(vw.Range, typ); w != nil {
