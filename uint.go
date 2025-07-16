@@ -26,7 +26,7 @@ func NewUintWriter() *UintWriter {
 // WriteValue implements [ValueWriter].
 func (vw *UintWriter) WriteValue(st *State, v reflect.Value) bool {
 	switch v.Kind() { //nolint:exhaustive // Only handles uint.
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
 	default:
 		return false
 	}

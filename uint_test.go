@@ -1,6 +1,8 @@
 package pretty_test
 
 import (
+	"reflect"
+
 	. "github.com/pierrre/pretty"
 	"github.com/pierrre/pretty/internal/prettytest"
 )
@@ -26,6 +28,13 @@ func init() {
 		{
 			Name:  "64",
 			Value: uint64(123),
+		},
+		{
+			Name:  "Ptr",
+			Value: uintptr(123),
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.Kind.ValueWriters[reflect.Uintptr] = vw.Kind.Uint
+			},
 		},
 		{
 			Name:  "SupportDisabled",
