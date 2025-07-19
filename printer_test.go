@@ -57,6 +57,7 @@ func TestWriteErrError(t *testing.T) {
 	w := &testPanicWriter{}
 	err := WriteErr(w, "test")
 	assert.Error(t, err)
+	t.Log(String(err))
 	assertauto.AllocsPerRun(t, 100, func() {
 		t.Helper()
 		_ = WriteErr(w, "test")

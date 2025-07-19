@@ -6,6 +6,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/bufpool"
+	"github.com/pierrre/go-libs/panicutil"
 	"github.com/pierrre/pretty/internal/must"
 )
 
@@ -69,13 +70,8 @@ func (p *Printer) Write(w io.Writer, vi any) {
 func (p *Printer) WriteErr(w io.Writer, vi any) (err error) {
 	defer func() {
 		r := recover()
-		if r == nil {
-			return
-		}
-		var ok bool
-		err, ok = r.(error)
-		if !ok {
-			err = fmt.Errorf("panic: %v", r)
+		if r != nil {
+			err = panicutil.NewError(r)
 		}
 	}()
 	p.Write(w, vi)
