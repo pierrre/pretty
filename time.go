@@ -37,7 +37,7 @@ func (vw *TimeWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !v.CanInterface() {
 		return false
 	}
-	tm := v.Interface().(time.Time) //nolint:forcetypeassert // Check above.
+	tm, _ := v.Interface().(time.Time)
 	if vw.Location != nil {
 		tm = tm.In(vw.Location)
 	}
