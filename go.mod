@@ -10,4 +10,4 @@ require (
 	google.golang.org/protobuf v1.36.6
 )
 
-require github.com/pierrre/compare v1.4.13 // indirect
+require github.com/pierrre/compare v1.4.14 // indirect
