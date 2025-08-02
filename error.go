@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/reflectutil"
+	"github.com/pierrre/go-libs/runtimeutil"
 	"github.com/pierrre/go-libs/strconvio"
 	"github.com/pierrre/pretty/internal/indent"
 	"github.com/pierrre/pretty/internal/itfassert"
@@ -22,7 +23,7 @@ var errorImplementsCache = reflectutil.NewImplementsCacheFor[error]()
 type ErrorWriter struct {
 	ValueWriter
 	// Writers is a list of custom functions that are called when an error is written.
-	// Default: {[WriteVerboseError]}.
+	// Default: {[WriteVerboseError], [WriteStackFramesError]}.
 	Writers []func(*State, error)
 }
 
@@ -32,6 +33,7 @@ func NewErrorWriter(vw ValueWriter) *ErrorWriter {
 		ValueWriter: vw,
 		Writers: []func(*State, error){
 			WriteVerboseError,
+			WriteStackFramesError,
 		},
 	}
 }
@@ -108,6 +110,26 @@ func WriteVerboseError(st *State, err error) {
 	iw := indent.NewWriter(st.Writer, st.IndentString, st.IndentLevel, true)
 	v.ErrorVerbose(iw)
 	write.MustString(iw, ",\n")
+	iw.Release()
+	st.IndentLevel--
+}
+
+// StackFramesError is an interface that can be implemented by errors to provide stack frames.
+type StackFramesError interface {
+	StackFrames() []uintptr
+}
+
+// WriteStackFramesError writes the stack frames of an error that implements [StackFramesError].
+func WriteStackFramesError(st *State, err error) {
+	v, ok := err.(StackFramesError)
+	if !ok {
+		return
+	}
+	st.WriteIndent()
+	write.MustString(st.Writer, "StackFrames():\n")
+	st.IndentLevel++
+	iw := indent.NewWriter(st.Writer, st.IndentString, st.IndentLevel, false)
+	_, _ = runtimeutil.WriteFrames(iw, runtimeutil.GetCallersFrames(v.StackFrames()))
 	iw.Release()
 	st.IndentLevel--
 }

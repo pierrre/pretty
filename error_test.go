@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/pierrre/go-libs/runtimeutil"
 	. "github.com/pierrre/pretty"
 	"github.com/pierrre/pretty/internal/prettytest"
 	"github.com/pierrre/pretty/internal/write"
@@ -24,6 +25,13 @@ func init() {
 			Value: &testVerboseError{
 				error: errors.New("error"),
 			},
+		},
+		{
+			Name: "StackFrames",
+			Value: &stackFramesError{
+				callers: runtimeutil.GetCallers(0),
+			},
+			IgnoreResult: true,
 		},
 		{
 			Name:            "Nil",
@@ -68,4 +76,16 @@ func (e *testVerboseError) Unwrap() error {
 
 func (e *testVerboseError) ErrorVerbose(w io.Writer) {
 	write.MustString(w, "verbose a\nb\nc")
+}
+
+type stackFramesError struct {
+	callers []uintptr
+}
+
+func (e *stackFramesError) Error() string {
+	return "stack frames"
+}
+
+func (e *stackFramesError) StackFrames() []uintptr {
+	return e.callers
 }
