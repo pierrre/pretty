@@ -16,13 +16,17 @@ type StructWriter struct {
 	// FieldFilter filters the fields.
 	// Default: nil.
 	FieldFilter StructFieldFilter
+	// ShowFieldsType shows the type of the fields.
+	// Default: true.
+	ShowFieldsType bool
 }
 
 // NewStructWriter creates a new [StructWriter] with default values.
 func NewStructWriter(vw ValueWriter) *StructWriter {
 	return &StructWriter{
-		ValueWriter: vw,
-		FieldFilter: nil,
+		ValueWriter:    vw,
+		FieldFilter:    nil,
+		ShowFieldsType: true,
 	}
 }
 
@@ -47,7 +51,7 @@ func (vw *StructWriter) WriteValue(st *State, v reflect.Value) bool {
 		st.WriteIndent()
 		write.MustString(st.Writer, field.Name)
 		write.MustString(st.Writer, ": ")
-		st.KnownType = false // We want to show the types of fields and values.
+		st.KnownType = !vw.ShowFieldsType
 		must.Handle(vw.ValueWriter.WriteValue(st, v.Field(i)))
 		write.MustString(st.Writer, ",\n")
 	}

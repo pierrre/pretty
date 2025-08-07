@@ -32,6 +32,17 @@ func init() {
 			},
 		},
 		{
+			Name: "HideFieldsType",
+			Value: testStruct{
+				Foo:        123,
+				Bar:        123.456,
+				unexported: 123,
+			},
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.Kind.Struct.ShowFieldsType = false
+			},
+		},
+		{
 			Name: "SupportDisabled",
 			Value: testStruct{
 				Foo:        123,

@@ -1,0 +1,10 @@
+[github.com/pierrre/pretty_test.testStruct] {
+	Foo: 123,
+	Bar: 123.456,
+	unexported: 123,
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}
