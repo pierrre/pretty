@@ -39,8 +39,7 @@ func (vw *StructWriter) WriteValue(st *State, v reflect.Value) bool {
 	fields := reflectutil.GetStructFields(v.Type())
 	hasFields := false
 	st.IndentLevel++
-	for i := range fields.Len() {
-		field := fields.Get(i)
+	for i, field := range fields.Range {
 		if vw.FieldFilter != nil && !vw.FieldFilter(v, field) {
 			continue
 		}
