@@ -14,14 +14,19 @@ import (
 
 var messageImplementsCache = reflectutil.NewImplementsCacheFor[protoreflect.ProtoMessage]()
 
-// ConfigureDefault configures [pretty.DefaultWriter] with [ConfigureCommonValueWriter].
+// ConfigureDefault configures [pretty.DefaultWriter] with [ConfigureCommonWriterDefault].
 func ConfigureDefault() {
-	ConfigureCommonValueWriter(pretty.DefaultWriter)
+	ConfigureCommonWriterDefault(pretty.DefaultWriter)
 }
 
-// ConfigureCommonValueWriter configures a [pretty.CommonWriter] with a [MessageWriter].
-func ConfigureCommonValueWriter(vw *pretty.CommonWriter) {
-	vw.ValueWriters = append(vw.ValueWriters, NewMessageWriter(vw))
+// ConfigureCommonWriterDefault configures a [pretty.CommonWriter] with a default [MessageWriter].
+func ConfigureCommonWriterDefault(vw *pretty.CommonWriter) {
+	ConfigureCommonWriter(vw, NewMessageWriter(vw))
+}
+
+// ConfigureCommonWriter configures a [pretty.CommonWriter] with a [MessageWriter].
+func ConfigureCommonWriter(vw *pretty.CommonWriter, mw *MessageWriter) {
+	vw.ValueWriters = append(vw.ValueWriters, mw)
 }
 
 // MessageWriter is a [pretty.MessageWriter] that handles protobuf messages.
@@ -29,12 +34,16 @@ func ConfigureCommonValueWriter(vw *pretty.CommonWriter) {
 // It should be created with [NewMessageWriter].
 type MessageWriter struct {
 	pretty.ValueWriter
+	// ShowFieldsType shows the type of the fields.
+	// Default: true.
+	ShowFieldsType bool
 }
 
 // NewMessageWriter creates a new [MessageWriter].
 func NewMessageWriter(vw pretty.ValueWriter) *MessageWriter {
 	return &MessageWriter{
-		ValueWriter: vw,
+		ValueWriter:    vw,
+		ShowFieldsType: true,
 	}
 }
 
@@ -70,7 +79,7 @@ func (vw *MessageWriter) writeMessage(st *pretty.State, m protoreflect.Message) 
 		st.WriteIndent()
 		write.MustString(st.Writer, string(fd.Name()))
 		write.MustString(st.Writer, ": ")
-		st.KnownType = false // We want to show the types of fields and values.
+		st.KnownType = !vw.ShowFieldsType
 		must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(vw.getInterface(m.Get(fd), fd))))
 		write.MustString(st.Writer, ",\n")
 	}

@@ -1,0 +1,17 @@
+[*google.golang.org/protobuf/types/known/apipb.Api] {
+	name: (len=0) "",
+	methods: (len=0) {},
+	options: (len=0) {},
+	version: (len=0) "",
+	source_context: <nil>,
+	mixins: (len=0) {},
+	syntax: {
+		Number: [int32] 0,
+		Name: [string] (len=13) "SYNTAX_PROTO2",
+	},
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 7,
+}

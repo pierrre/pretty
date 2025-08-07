@@ -19,25 +19,25 @@ func init() {
 		{
 			Name:            "Nil",
 			Value:           (*wrapperspb.StringValue)(nil),
-			ConfigureWriter: ConfigureCommonValueWriter,
+			ConfigureWriter: ConfigureCommonWriterDefault,
 		},
 		{
 			Name:  "Unexported",
 			Value: prettytest.Unexported(wrapperspb.String("test")),
 			ConfigureWriter: func(vw *pretty.CommonWriter) {
-				ConfigureCommonValueWriter(vw)
+				ConfigureCommonWriterDefault(vw)
 				vw.CanInterface = nil
 			},
 		},
 		{
 			Name:            "String",
 			Value:           wrapperspb.String("test"),
-			ConfigureWriter: ConfigureCommonValueWriter,
+			ConfigureWriter: ConfigureCommonWriterDefault,
 		},
 		{
 			Name:            "Bytes",
 			Value:           wrapperspb.Bytes(bytes.Repeat([]byte("test"), 100)),
-			ConfigureWriter: ConfigureCommonValueWriter,
+			ConfigureWriter: ConfigureCommonWriterDefault,
 		},
 		{
 			Name: "List",
@@ -55,7 +55,7 @@ func init() {
 					},
 				},
 			},
-			ConfigureWriter: ConfigureCommonValueWriter,
+			ConfigureWriter: ConfigureCommonWriterDefault,
 		},
 		{
 			Name: "Struct",
@@ -65,12 +65,21 @@ func init() {
 					"test2": structpb.NewNumberValue(123),
 				},
 			},
-			ConfigureWriter: ConfigureCommonValueWriter,
+			ConfigureWriter: ConfigureCommonWriterDefault,
 		},
 		{
 			Name:            "Api",
 			Value:           &apipb.Api{},
-			ConfigureWriter: ConfigureCommonValueWriter,
+			ConfigureWriter: ConfigureCommonWriterDefault,
+		},
+		{
+			Name:  "HideFieldsType",
+			Value: &apipb.Api{},
+			ConfigureWriter: func(vw *pretty.CommonWriter) {
+				mw := NewMessageWriter(vw)
+				mw.ShowFieldsType = false
+				ConfigureCommonWriter(vw, mw)
+			},
 		},
 	})
 }
