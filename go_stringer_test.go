@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"time"
 
-	"github.com/pierrre/pretty"
 	. "github.com/pierrre/pretty"
 	"github.com/pierrre/pretty/internal/prettytest"
 )
@@ -14,7 +13,7 @@ func init() {
 		{
 			Name:  "Time",
 			Value: time.Time{},
-			ConfigureWriter: func(vw *pretty.CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Time = nil
 			},
 		},
@@ -32,7 +31,7 @@ func init() {
 		{
 			Name:  "Disabled",
 			Value: binary.LittleEndian,
-			ConfigureWriter: func(vw *pretty.CommonWriter) {
+			ConfigureWriter: func(vw *CommonWriter) {
 				vw.GoStringer = nil
 			},
 			IgnoreBenchmark: true,
