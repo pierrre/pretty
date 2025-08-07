@@ -5,13 +5,13 @@ import (
 	"testing"
 )
 
-// DefaultCommonWriter is the default [CommonWriter].
+// DefaultWriter is the default [CommonWriter].
 //
 // It is configured with [CommonWriter.ConfigureTest] and [testing.Testing].
-var DefaultCommonWriter = NewCommonWriter()
+var DefaultWriter = NewCommonWriter()
 
 func init() {
-	DefaultCommonWriter.ConfigureTest(testing.Testing())
+	DefaultWriter.ConfigureTest(testing.Testing())
 }
 
 // CommonWriter is a [ValueWriter] with common [ValueWriter].

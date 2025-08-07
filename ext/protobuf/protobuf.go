@@ -14,9 +14,9 @@ import (
 
 var messageImplementsCache = reflectutil.NewImplementsCacheFor[protoreflect.ProtoMessage]()
 
-// ConfigureDefault configures [pretty.DefaultCommonWriter] with [ConfigureCommonValueWriter].
+// ConfigureDefault configures [pretty.DefaultWriter] with [ConfigureCommonValueWriter].
 func ConfigureDefault() {
-	ConfigureCommonValueWriter(pretty.DefaultCommonWriter)
+	ConfigureCommonValueWriter(pretty.DefaultWriter)
 }
 
 // ConfigureCommonValueWriter configures a [pretty.CommonWriter] with a [MessageWriter].
