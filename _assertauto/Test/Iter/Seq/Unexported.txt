@@ -1,5 +1,5 @@
 [github.com/pierrre/pretty/internal/prettytest.unexported[iter.Seq[string]]] {
-	v: [iter.Seq[string]](func(func(string) bool)) github.com/pierrre/pretty_test.init.13.Values[...].func16,
+	v: [iter.Seq[string]](func(func(string) bool)) github.com/pierrre/pretty_test.init.14.Values[...].func16,
 }
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {

@@ -37,6 +37,7 @@ type CommonWriter struct {
 	Reflect          *ReflectWriter
 	Error            *ErrorWriter
 	BytesableHexDump *BytesableHexDumpWriter
+	GoStringer       *GoStringerWriter
 	Stringer         *StringerWriter
 	Kind             *KindWriter
 }
@@ -64,6 +65,7 @@ func NewCommonWriter() *CommonWriter {
 	vw.Error = NewErrorWriter(vw)
 	vw.BytesableHexDump = NewBytesableHexDumpWriter()
 	vw.Stringer = NewStringerWriter()
+	vw.GoStringer = NewGoStringerWriter()
 	vw.Kind = NewKindWriter(vw)
 	return vw
 }
@@ -217,6 +219,9 @@ func (vw *CommonWriter) writeValue(st *State, v reflect.Value) bool {
 	if vw.BytesableHexDump != nil && vw.BytesableHexDump.WriteValue(st, v) {
 		return true
 	}
+	if vw.GoStringer != nil && vw.GoStringer.WriteValue(st, v) {
+		return true
+	}
 	if vw.Stringer != nil && vw.Stringer.WriteValue(st, v) {
 		return true
 	}
@@ -252,6 +257,9 @@ func (vw *CommonWriter) Supports(typ reflect.Type) ValueWriter {
 		return w
 	}
 	if w := callSupportCheckerPointer(vw.BytesableHexDump, typ); w != nil {
+		return w
+	}
+	if w := callSupportCheckerPointer(vw.GoStringer, typ); w != nil {
 		return w
 	}
 	if w := callSupportCheckerPointer(vw.Stringer, typ); w != nil {

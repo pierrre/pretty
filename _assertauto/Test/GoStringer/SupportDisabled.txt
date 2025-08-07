@@ -1,4 +1,4 @@
-[iter.Seq2[int,string]](func(func(int, string) bool)) github.com/pierrre/pretty_test.init.14.All[...].func26
+[encoding/binary.littleEndian] => .GoString() => binary.LittleEndian
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,
