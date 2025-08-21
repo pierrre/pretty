@@ -9,6 +9,7 @@
 		Number: [int32] 0,
 		Name: [string] (len=13) "SYNTAX_PROTO2",
 	},
+	edition: (len=0) "",
 }
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
