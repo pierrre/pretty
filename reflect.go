@@ -73,7 +73,7 @@ func (vw *ReflectValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		write.MustString(st.Writer, "<unexported>")
 		return true
 	}
-	rv, _ := v.Interface().(reflect.Value)
+	rv, _ := reflect.TypeAssert[reflect.Value](v)
 	writeArrow(st.Writer)
 	if checkInvalidNil(st.Writer, rv) {
 		return true

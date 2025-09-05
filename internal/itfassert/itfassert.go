@@ -19,6 +19,5 @@ func Assert[T any](v reflect.Value) (T, bool) {
 		// Prevents calling methods on nil pointers.
 		return zero, false
 	}
-	vi, ok := v.Interface().(T)
-	return vi, ok
+	return reflect.TypeAssert[T](v)
 }
