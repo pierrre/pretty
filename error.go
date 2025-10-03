@@ -23,19 +23,20 @@ var errorImplementsCache = reflectutil.NewImplementsCacheFor[error]()
 type ErrorWriter struct {
 	ValueWriter
 	// Writers is a list of custom functions that are called when an error is written.
-	// Default: {[WriteVerboseError], [WriteStackFramesError]}.
+	// Default: {[ErrorWriter.WriteVerboseError], [ErrorWriter.WriteStackFramesError]}.
 	Writers []func(*State, error)
 }
 
 // NewErrorWriter creates a new [ErrorWriter] with default values.
 func NewErrorWriter(vw ValueWriter) *ErrorWriter {
-	return &ErrorWriter{
+	ew := &ErrorWriter{
 		ValueWriter: vw,
-		Writers: []func(*State, error){
-			WriteVerboseError,
-			WriteStackFramesError,
-		},
 	}
+	ew.Writers = []func(*State, error){
+		ew.WriteVerboseError,
+		ew.WriteStackFramesError,
+	}
+	return ew
 }
 
 // WriteValue implements [ValueWriter].
@@ -99,7 +100,7 @@ type VerboseError interface {
 }
 
 // WriteVerboseError writes the verbose error message of an error that implements [VerboseError].
-func WriteVerboseError(st *State, err error) {
+func (vw *ErrorWriter) WriteVerboseError(st *State, err error) {
 	v, ok := err.(VerboseError)
 	if !ok {
 		return
@@ -120,7 +121,7 @@ type StackFramesError interface {
 }
 
 // WriteStackFramesError writes the stack frames of an error that implements [StackFramesError].
-func WriteStackFramesError(st *State, err error) {
+func (vw *ErrorWriter) WriteStackFramesError(st *State, err error) {
 	v, ok := err.(StackFramesError)
 	if !ok {
 		return
