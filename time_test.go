@@ -8,13 +8,23 @@ import (
 	"github.com/pierrre/pretty/internal/prettytest"
 )
 
-var testTime = time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
+var (
+	testTimeTime     = time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
+	testTimeDuration = 12*time.Hour + 34*time.Minute + 56*time.Second + 789*time.Millisecond
+	testTimeLocation *time.Location
+)
 
 func init() {
-	prettytest.AddCasesPrefix("Time", []*prettytest.Case{
+	var err error
+	testTimeLocation, err = time.LoadLocation("Europe/Paris")
+	must.NoError(err)
+}
+
+func init() {
+	prettytest.AddCasesPrefix("Time/Time", []*prettytest.Case{
 		{
 			Name:  "Default",
-			Value: testTime,
+			Value: testTimeTime,
 		},
 		{
 			Name:            "Zero",
@@ -23,16 +33,14 @@ func init() {
 		},
 		{
 			Name:  "Location",
-			Value: testTime,
+			Value: testTimeTime,
 			ConfigureWriter: func(vw *CommonWriter) {
-				var err error
-				vw.Time.Location, err = time.LoadLocation("Europe/Paris")
-				must.NoError(err)
+				vw.Time.Time.Location = testTimeLocation
 			},
 		},
 		{
 			Name:  "Unexported",
-			Value: prettytest.Unexported(testTime),
+			Value: prettytest.Unexported(testTimeTime),
 			ConfigureWriter: func(vw *CommonWriter) {
 				vw.CanInterface = nil
 			},
@@ -40,21 +48,21 @@ func init() {
 		},
 		{
 			Name:            "UnexportedCanInterface",
-			Value:           prettytest.Unexported(&testTime),
+			Value:           prettytest.Unexported(&testTimeTime),
 			IgnoreBenchmark: true,
 		},
 		{
 			Name:  "SupportDisabled",
-			Value: testTime,
+			Value: testTimeTime,
 			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
 			},
 		},
 		{
 			Name:  "Disabled",
-			Value: testTime,
+			Value: testTimeTime,
 			ConfigureWriter: func(vw *CommonWriter) {
-				vw.Time = nil
+				vw.Time.Time = nil
 			},
 			IgnoreBenchmark: true,
 		},
@@ -62,7 +70,83 @@ func init() {
 			Name:  "Not",
 			Value: "test",
 			ConfigureWriter: func(vw *CommonWriter) {
-				vw.ValueWriters = ValueWriters{vw.Time}
+				vw.ValueWriters = ValueWriters{vw.Time.Time}
+			},
+			IgnoreBenchmark: true,
+		},
+	})
+	prettytest.AddCasesPrefix("Time/Duration", []*prettytest.Case{
+		{
+			Name:  "Default",
+			Value: testTimeDuration,
+		},
+		{
+			Name:  "SupportDisabled",
+			Value: testTimeDuration,
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.Support = nil
+			},
+		},
+		{
+			Name:  "Disabled",
+			Value: testTimeDuration,
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.Time.Duration = nil
+			},
+			IgnoreBenchmark: true,
+		},
+		{
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.ValueWriters = ValueWriters{vw.Time.Duration}
+			},
+			IgnoreBenchmark: true,
+		},
+	})
+	prettytest.AddCasesPrefix("Time/Location", []*prettytest.Case{
+		{
+			Name:  "Default",
+			Value: testTimeLocation,
+		},
+		{
+			Name:  "Nil",
+			Value: (*time.Location)(nil),
+		},
+		{
+			Name:  "Unexported",
+			Value: prettytest.Unexported(testTimeLocation),
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.CanInterface = nil
+			},
+			IgnoreResult:    true,
+			IgnoreBenchmark: true,
+		},
+		{
+			Name:            "UnexportedCanInterface",
+			Value:           prettytest.Unexported(&testTimeLocation),
+			IgnoreBenchmark: true,
+		},
+		{
+			Name:  "SupportDisabled",
+			Value: testTimeLocation,
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.Support = nil
+			},
+		},
+		{
+			Name:  "Disabled",
+			Value: testTimeLocation,
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.Time.Location = nil
+			},
+			IgnoreBenchmark: true,
+		},
+		{
+			Name:  "Not",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.ValueWriters = ValueWriters{vw.Time.Location}
 			},
 			IgnoreBenchmark: true,
 		},
