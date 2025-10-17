@@ -31,7 +31,7 @@ type SupportCheckerValueWriter struct {
 //
 // It should be created with [NewSupportWriter].
 type SupportWriter struct {
-	cache    syncutil.Map[reflect.Type, ValueWriterFunc]
+	cache    syncutil.Map[reflect.Type, valueWriterContainer]
 	Checkers []SupportChecker
 }
 
@@ -46,21 +46,27 @@ func (vw *SupportWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	typ := v.Type()
-	f, ok := vw.cache.Load(typ)
+	vwc, ok := vw.cache.Load(typ)
 	if !ok {
+		vwc = valueWriterContainer{}
 		for _, c := range vw.Checkers {
 			w := c.Supports(typ)
 			if w != nil {
-				f = w.WriteValue
+				vwc.vw = w
 				break
 			}
 		}
-		vw.cache.Store(typ, f)
+		vw.cache.Store(typ, vwc)
 	}
-	if f == nil {
+	w := vwc.vw
+	if w == nil {
 		return false
 	}
-	return f(st, v)
+	return w.WriteValue(st, v)
+}
+
+type valueWriterContainer struct {
+	vw ValueWriter
 }
 
 func supportsValueWriter(typ reflect.Type, vw ValueWriter) ValueWriter {
