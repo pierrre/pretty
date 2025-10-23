@@ -1,4 +1,4 @@
-[encoding/binary.littleEndian] => .GoString() => binary.LittleEndian
+[encoding/binary.littleEndian] => GoString() => binary.LittleEndian
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,

@@ -60,7 +60,7 @@ func (vw *StringerWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	writeArrowWrappedString(st.Writer, ".String() ")
+	writeArrowWrappedString(st.Writer, "String() ")
 	writeStringValue(st, s, vw.ShowLen, false, 0, vw.Quote, vw.MaxLen)
 	return true
 }

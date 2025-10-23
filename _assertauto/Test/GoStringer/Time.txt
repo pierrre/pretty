@@ -1,4 +1,4 @@
-[time.Time] => .GoString() => time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC)
+[time.Time] => GoString() => time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC)
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,

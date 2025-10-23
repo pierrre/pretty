@@ -1,4 +1,4 @@
-[*math/big.Float] => .String() => (len=7) "123.456"
+[*math/big.Float] => String() => (len=7) "123.456"
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,

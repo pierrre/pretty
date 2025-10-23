@@ -1,5 +1,5 @@
 [github.com/pierrre/pretty/internal/prettytest.unexported[*time.Time]] {
-	v: [*time.Time] => .GoString() => time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
+	v: [*time.Time] => GoString() => time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
 }
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {

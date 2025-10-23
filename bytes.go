@@ -126,7 +126,7 @@ func (vw *BytesableHexDumpWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	writeArrowWrappedString(st.Writer, ".Bytes() ")
+	writeArrowWrappedString(st.Writer, "Bytes() ")
 	if b == nil {
 		writeNil(st.Writer)
 		return true

@@ -1,4 +1,4 @@
-[*math/big.Int] => .Bytes() => (len=1)
+[*math/big.Int] => Bytes() => (len=1)
 	00000000  7b                                                |{|
 
 	========== assertauto ==========

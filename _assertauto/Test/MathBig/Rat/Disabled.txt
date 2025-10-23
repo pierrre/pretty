@@ -1,4 +1,4 @@
-[*math/big.Rat] => .String() => (len=7) "355/113"
+[*math/big.Rat] => String() => (len=7) "355/113"
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,

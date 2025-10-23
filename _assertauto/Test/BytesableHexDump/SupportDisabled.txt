@@ -1,4 +1,4 @@
-[*github.com/pierrre/pretty_test.testBytesable] => .Bytes() => (len=4)
+[*github.com/pierrre/pretty_test.testBytesable] => Bytes() => (len=4)
 	00000000  74 65 73 74                                       |test|
 
 	========== assertauto ==========

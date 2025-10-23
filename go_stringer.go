@@ -32,7 +32,7 @@ func (vw *GoStringerWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	s := gsr.GoString()
-	writeArrowWrappedString(st.Writer, ".GoString() ")
+	writeArrowWrappedString(st.Writer, "GoString() ")
 	write.MustString(st.Writer, s)
 	return true
 }

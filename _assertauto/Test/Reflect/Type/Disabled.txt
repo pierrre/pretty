@@ -1,4 +1,4 @@
-[*reflect.rtype] => .String() => (len=6) "string"
+[*reflect.rtype] => String() => (len=6) "string"
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,
