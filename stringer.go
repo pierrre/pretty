@@ -17,7 +17,7 @@ var stringerImplementsCache = reflectutil.NewImplementsCacheFor[fmt.Stringer]()
 // It should be created with [NewStringerWriter].
 type StringerWriter struct {
 	// ShowLen shows the len.
-	// Default: true.
+	// Default: false.
 	ShowLen bool
 	// Quote quotes the string.
 	// Default: true.
@@ -30,7 +30,7 @@ type StringerWriter struct {
 // NewStringerWriter creates a new [StringerWriter].
 func NewStringerWriter() *StringerWriter {
 	return &StringerWriter{
-		ShowLen: true,
+		ShowLen: false,
 		Quote:   true,
 		MaxLen:  0,
 	}

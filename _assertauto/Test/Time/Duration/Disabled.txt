@@ -1,4 +1,4 @@
-[time.Duration](int64) => String() => (len=13) "12h34m56.789s"
+[time.Duration](int64) => String() => "12h34m56.789s"
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,
