@@ -2,6 +2,8 @@ package pretty
 
 import (
 	"reflect"
+
+	"github.com/pierrre/go-libs/reflectutil"
 )
 
 // FilterWriter is a [ValueWriter] that calls the [ValueWriter] if the filter returns true.
@@ -36,14 +38,28 @@ func (vw *FilterWriter[VW]) Supports(typ reflect.Type) ValueWriter {
 	return res
 }
 
-// FilterTypes returns a new [FilterWriter] filter function that returns true if the type is in the given list.
+// FilterTypes returns a new [FilterWriter] filter function that returns true if the type is in the given list or if it implements any of the given interface types.
 func FilterTypes(typs ...reflect.Type) func(typ reflect.Type) bool {
 	set := make(map[reflect.Type]struct{}, len(typs))
+	var ics []*reflectutil.ImplementsCache
 	for _, typ := range typs {
-		set[typ] = struct{}{}
+		if _, ok := set[typ]; !ok {
+			set[typ] = struct{}{}
+			if typ.Kind() == reflect.Interface {
+				ics = append(ics, reflectutil.NewImplementsCache(typ))
+			}
+		}
 	}
 	return func(typ reflect.Type) bool {
 		_, ok := set[typ]
-		return ok
+		if ok {
+			return true
+		}
+		for _, ic := range ics {
+			if ic.ImplementedBy(typ) {
+				return true
+			}
+		}
+		return false
 	}
 }

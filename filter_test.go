@@ -26,6 +26,21 @@ func init() {
 			},
 		},
 		{
+			Name:  "MatchInterface",
+			Value: &testError{},
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.ValueWriters = []ValueWriter{
+					NewFilterWriter(
+						ValueWriterFunc(func(st *State, v reflect.Value) bool {
+							write.MustString(st.Writer, "aaaa")
+							return true
+						}),
+						FilterTypes(reflect.TypeFor[error]()),
+					),
+				}
+			},
+		},
+		{
 			Name:  "NoMatch",
 			Value: 123,
 			ConfigureWriter: func(vw *CommonWriter) {
