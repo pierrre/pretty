@@ -22,7 +22,7 @@ func init() {
 			Name:  "Truncated",
 			Value: &testStringer{s: "test"},
 			ConfigureWriter: func(vw *CommonWriter) {
-				vw.Stringer.MaxLen = 2
+				vw.Stringer.ValueWriter.MaxLen = 2
 			},
 			IgnoreBenchmark: true,
 		},

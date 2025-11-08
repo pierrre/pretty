@@ -88,7 +88,7 @@ func init() {
 			Name:  "Truncated",
 			Value: &testBytesable{b: []byte("test")},
 			ConfigureWriter: func(vw *CommonWriter) {
-				vw.BytesableHexDump.MaxLen = 2
+				vw.BytesableHexDump.ValueWriter.MaxLen = 2
 			},
 			IgnoreBenchmark: true,
 		},
@@ -107,7 +107,7 @@ func init() {
 			Name:  "ShowCap",
 			Value: &testBytesable{b: []byte("test")},
 			ConfigureWriter: func(vw *CommonWriter) {
-				vw.BytesableHexDump.ShowCap = true
+				vw.BytesableHexDump.ValueWriter.ShowCap = true
 			},
 			IgnoreResult:    true,
 			IgnoreBenchmark: true,
@@ -116,7 +116,7 @@ func init() {
 			Name:  "ShowAddr",
 			Value: &testBytesable{b: []byte("test")},
 			ConfigureWriter: func(vw *CommonWriter) {
-				vw.BytesableHexDump.ShowAddr = true
+				vw.BytesableHexDump.ValueWriter.ShowAddr = true
 			},
 			IgnoreResult:    true,
 			IgnoreBenchmark: true,

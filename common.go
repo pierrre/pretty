@@ -35,10 +35,10 @@ type CommonWriter struct {
 	Range            *RangeWriter
 	WeakPointer      *WeakPointerWriter
 	Reflect          *ReflectWriter
-	Error            *ErrorWriter
-	BytesableHexDump *BytesableHexDumpWriter
-	GoStringer       *GoStringerWriter
-	Stringer         *StringerWriter
+	Error            *FilterWriter[*ErrorWriter]
+	BytesableHexDump *FilterWriter[*BytesableHexDumpWriter]
+	GoStringer       *FilterWriter[*GoStringerWriter]
+	Stringer         *FilterWriter[*StringerWriter]
 	Kind             *KindWriter
 }
 
@@ -62,10 +62,10 @@ func NewCommonWriter() *CommonWriter {
 	vw.Range = NewRangeWriter(vw)
 	vw.WeakPointer = NewWeakPointerWriter(vw)
 	vw.Reflect = NewReflectWriter(vw)
-	vw.Error = NewErrorWriter(vw)
-	vw.BytesableHexDump = NewBytesableHexDumpWriter()
-	vw.Stringer = NewStringerWriter()
-	vw.GoStringer = NewGoStringerWriter()
+	vw.Error = NewFilterWriter(NewErrorWriter(vw), nil)
+	vw.BytesableHexDump = NewFilterWriter(NewBytesableHexDumpWriter(), nil)
+	vw.Stringer = NewFilterWriter(NewStringerWriter(), nil)
+	vw.GoStringer = NewFilterWriter(NewGoStringerWriter(), nil)
 	vw.Kind = NewKindWriter(vw)
 	return vw
 }
@@ -82,10 +82,10 @@ func (vw *CommonWriter) SetShowLen(show bool) {
 		vw.BytesHexDump.ShowLen = show
 	}
 	if vw.BytesableHexDump != nil {
-		vw.BytesableHexDump.ShowLen = show
+		vw.BytesableHexDump.ValueWriter.ShowLen = show
 	}
 	if vw.Stringer != nil {
-		vw.Stringer.ShowLen = show
+		vw.Stringer.ValueWriter.ShowLen = show
 	}
 }
 
@@ -99,7 +99,7 @@ func (vw *CommonWriter) SetShowCap(show bool) {
 		vw.BytesHexDump.ShowCap = show
 	}
 	if vw.BytesableHexDump != nil {
-		vw.BytesableHexDump.ShowCap = show
+		vw.BytesableHexDump.ValueWriter.ShowCap = show
 	}
 }
 
@@ -120,7 +120,7 @@ func (vw *CommonWriter) SetShowAddr(show bool) {
 		vw.BytesHexDump.ShowAddr = show
 	}
 	if vw.BytesableHexDump != nil {
-		vw.BytesableHexDump.ShowAddr = show
+		vw.BytesableHexDump.ValueWriter.ShowAddr = show
 	}
 }
 

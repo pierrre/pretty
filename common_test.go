@@ -15,8 +15,8 @@ func TestCommonValueWriterSetShowLen(t *testing.T) {
 	assert.True(t, vw.Kind.Slice.ShowLen)
 	assert.True(t, vw.Kind.String.ShowLen)
 	assert.True(t, vw.BytesHexDump.ShowLen)
-	assert.True(t, vw.BytesableHexDump.ShowLen)
-	assert.True(t, vw.Stringer.ShowLen)
+	assert.True(t, vw.BytesableHexDump.ValueWriter.ShowLen)
+	assert.True(t, vw.Stringer.ValueWriter.ShowLen)
 }
 
 func TestCommonValueWriterSetShowIndexes(t *testing.T) {

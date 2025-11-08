@@ -26,3 +26,13 @@ func NewFilterWriter[VW ValueWriter](vw VW, f func(v reflect.Value) bool) *Filte
 func (vw *FilterWriter[VW]) WriteValue(st *State, v reflect.Value) bool {
 	return (vw.Filter == nil || vw.Filter(v)) && vw.ValueWriter.WriteValue(st, v)
 }
+
+// Supports implements [SupportChecker].
+func (vw *FilterWriter[VW]) Supports(typ reflect.Type) ValueWriter {
+	var res ValueWriter
+	if vw.Filter == nil {
+		// We can implement the "supports" logic only if there is no filter.
+		res = supportsValueWriter(typ, vw.ValueWriter)
+	}
+	return res
+}
