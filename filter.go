@@ -35,3 +35,15 @@ func (vw *FilterWriter[VW]) Supports(typ reflect.Type) ValueWriter {
 	}
 	return res
 }
+
+// FilterTypes returns a new [FilterWriter] filter function that returns true if the type is in the given list.
+func FilterTypes(typs ...reflect.Type) func(typ reflect.Type) bool {
+	set := make(map[reflect.Type]struct{}, len(typs))
+	for _, typ := range typs {
+		set[typ] = struct{}{}
+	}
+	return func(typ reflect.Type) bool {
+		_, ok := set[typ]
+		return ok
+	}
+}
