@@ -31,10 +31,10 @@ type CommonWriter struct {
 	Time             *TimeWriter
 	BytesHexDump     *BytesHexDumpWriter
 	MathBig          *MathBigWriter
+	Reflect          *ReflectWriter
+	WeakPointer      *WeakPointerWriter
 	Iter             *IterWriter
 	Range            *RangeWriter
-	WeakPointer      *WeakPointerWriter
-	Reflect          *ReflectWriter
 	Error            *FilterWriter[*ErrorWriter]
 	BytesableHexDump *FilterWriter[*BytesableHexDumpWriter]
 	GoStringer       *FilterWriter[*GoStringerWriter]
@@ -58,10 +58,10 @@ func NewCommonWriter() *CommonWriter {
 	vw.Time = NewTimeWriter()
 	vw.BytesHexDump = NewBytesHexDumpWriter()
 	vw.MathBig = NewMathBigWriter()
+	vw.Reflect = NewReflectWriter(vw)
+	vw.WeakPointer = NewWeakPointerWriter(vw)
 	vw.Iter = NewIterWriter(vw)
 	vw.Range = NewRangeWriter(vw)
-	vw.WeakPointer = NewWeakPointerWriter(vw)
-	vw.Reflect = NewReflectWriter(vw)
 	vw.Error = NewFilterWriter(NewErrorWriter(vw), nil)
 	vw.BytesableHexDump = NewFilterWriter(NewBytesableHexDumpWriter(), nil)
 	vw.Stringer = NewFilterWriter(NewStringerWriter(), nil)
@@ -201,16 +201,16 @@ func (vw *CommonWriter) writeValue(st *State, v reflect.Value) bool {
 	if vw.MathBig != nil && vw.MathBig.WriteValue(st, v) {
 		return true
 	}
-	if vw.Iter != nil && vw.Iter.WriteValue(st, v) {
-		return true
-	}
-	if vw.Range != nil && vw.Range.WriteValue(st, v) {
+	if vw.Reflect != nil && vw.Reflect.WriteValue(st, v) {
 		return true
 	}
 	if vw.WeakPointer != nil && vw.WeakPointer.WriteValue(st, v) {
 		return true
 	}
-	if vw.Reflect != nil && vw.Reflect.WriteValue(st, v) {
+	if vw.Iter != nil && vw.Iter.WriteValue(st, v) {
+		return true
+	}
+	if vw.Range != nil && vw.Range.WriteValue(st, v) {
 		return true
 	}
 	if vw.Error != nil && vw.Error.WriteValue(st, v) {
@@ -241,16 +241,16 @@ func (vw *CommonWriter) Supports(typ reflect.Type) ValueWriter {
 	if w := callSupportCheckerPointer(vw.MathBig, typ); w != nil {
 		return w
 	}
-	if w := callSupportCheckerPointer(vw.Iter, typ); w != nil {
-		return w
-	}
-	if w := callSupportCheckerPointer(vw.Range, typ); w != nil {
+	if w := callSupportCheckerPointer(vw.Reflect, typ); w != nil {
 		return w
 	}
 	if w := callSupportCheckerPointer(vw.WeakPointer, typ); w != nil {
 		return w
 	}
-	if w := callSupportCheckerPointer(vw.Reflect, typ); w != nil {
+	if w := callSupportCheckerPointer(vw.Iter, typ); w != nil {
+		return w
+	}
+	if w := callSupportCheckerPointer(vw.Range, typ); w != nil {
 		return w
 	}
 	if w := callSupportCheckerPointer(vw.Error, typ); w != nil {
