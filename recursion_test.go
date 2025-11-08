@@ -64,8 +64,8 @@ func init() {
 				rvw := NewRecursionWriter(vw)
 				rvw.ShowAddr = false
 				vw.Recursion = nil
-				vw.ValueWriters = ValueWriters{NewFilterWriter(rvw, func(v reflect.Value) bool {
-					return v.Kind() == reflect.Pointer
+				vw.ValueWriters = ValueWriters{NewFilterWriter(rvw, func(typ reflect.Type) bool {
+					return typ.Kind() == reflect.Pointer
 				})}
 			},
 		},

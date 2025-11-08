@@ -17,8 +17,9 @@ func init() {
 			}(),
 			ConfigureWriter: func(vw *CommonWriter) {
 				vw.CanInterface = nil
-				vw.ValueWriters = ValueWriters{NewFilterWriter(NewCanInterfaceWriter(vw), func(v reflect.Value) bool {
-					return !v.CanInterface()
+				ciw := NewCanInterfaceWriter(vw)
+				vw.ValueWriters = ValueWriters{ValueWriterFunc(func(st *State, v reflect.Value) bool {
+					return !v.CanInterface() && ciw.WriteValue(st, v)
 				})}
 				vw.Recursion = nil
 			},

@@ -20,8 +20,8 @@ func init() {
 							write.MustString(st.Writer, "aaaa")
 							return true
 						}),
-						func(v reflect.Value) bool {
-							return v.Type() == reflect.TypeFor[string]()
+						func(typ reflect.Type) bool {
+							return typ == reflect.TypeFor[string]()
 						},
 					),
 				}
@@ -36,8 +36,8 @@ func init() {
 						ValueWriterFunc(func(st *State, v reflect.Value) bool {
 							panic("should not be called")
 						}),
-						func(v reflect.Value) bool {
-							return v.Type() == reflect.TypeFor[string]()
+						func(typ reflect.Type) bool {
+							return typ == reflect.TypeFor[string]()
 						},
 					),
 				}

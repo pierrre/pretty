@@ -39,8 +39,8 @@ func init() {
 			Value: [1]any{123},
 			ConfigureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = nil
-				vw.ValueWriters = ValueWriters{NewFilterWriter(NewUnwrapInterfaceWriter(vw), func(v reflect.Value) bool {
-					return v.Kind() == reflect.Interface
+				vw.ValueWriters = ValueWriters{NewFilterWriter(NewUnwrapInterfaceWriter(vw), func(typ reflect.Type) bool {
+					return typ.Kind() == reflect.Interface
 				})}
 			},
 		},
@@ -49,8 +49,8 @@ func init() {
 			Value: [1]any{},
 			ConfigureWriter: func(vw *CommonWriter) {
 				vw.UnwrapInterface = nil
-				vw.ValueWriters = ValueWriters{NewFilterWriter(NewUnwrapInterfaceWriter(vw), func(v reflect.Value) bool {
-					return v.Kind() == reflect.Interface
+				vw.ValueWriters = ValueWriters{NewFilterWriter(NewUnwrapInterfaceWriter(vw), func(typ reflect.Type) bool {
+					return typ.Kind() == reflect.Interface
 				})}
 			},
 		},

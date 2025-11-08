@@ -9,13 +9,13 @@ import (
 // It should be created with [NewFilterWriter].
 type FilterWriter[VW ValueWriter] struct {
 	ValueWriter VW
-	// Filter filters values.
+	// Filter filters types.
 	// The value is handled if it returns true or if it is nil.
-	Filter func(v reflect.Value) bool
+	Filter func(typ reflect.Type) bool
 }
 
 // NewFilterWriter creates a new [FilterWriter].
-func NewFilterWriter[VW ValueWriter](vw VW, f func(v reflect.Value) bool) *FilterWriter[VW] {
+func NewFilterWriter[VW ValueWriter](vw VW, f func(typ reflect.Type) bool) *FilterWriter[VW] {
 	return &FilterWriter[VW]{
 		ValueWriter: vw,
 		Filter:      f,
@@ -24,14 +24,13 @@ func NewFilterWriter[VW ValueWriter](vw VW, f func(v reflect.Value) bool) *Filte
 
 // WriteValue implements [ValueWriter].
 func (vw *FilterWriter[VW]) WriteValue(st *State, v reflect.Value) bool {
-	return (vw.Filter == nil || vw.Filter(v)) && vw.ValueWriter.WriteValue(st, v)
+	return (vw.Filter == nil || vw.Filter(v.Type())) && vw.ValueWriter.WriteValue(st, v)
 }
 
 // Supports implements [SupportChecker].
 func (vw *FilterWriter[VW]) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
-	if vw.Filter == nil {
-		// We can implement the "supports" logic only if there is no filter.
+	if vw.Filter == nil || vw.Filter(typ) {
 		res = supportsValueWriter(typ, vw.ValueWriter)
 	}
 	return res
