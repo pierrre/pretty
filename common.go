@@ -34,7 +34,7 @@ type CommonWriter struct {
 	Reflect          *ReflectWriter
 	WeakPointer      *WeakPointerWriter
 	Iter             *IterWriter
-	Range            *RangeWriter
+	Range            *FilterWriter[*RangeWriter]
 	Error            *FilterWriter[*ErrorWriter]
 	BytesableHexDump *FilterWriter[*BytesableHexDumpWriter]
 	GoStringer       *FilterWriter[*GoStringerWriter]
@@ -61,7 +61,7 @@ func NewCommonWriter() *CommonWriter {
 	vw.Reflect = NewReflectWriter(vw)
 	vw.WeakPointer = NewWeakPointerWriter(vw)
 	vw.Iter = NewIterWriter(vw)
-	vw.Range = NewRangeWriter(vw)
+	vw.Range = NewFilterWriter(NewRangeWriter(vw), nil)
 	vw.Error = NewFilterWriter(NewErrorWriter(vw), nil)
 	vw.BytesableHexDump = NewFilterWriter(NewBytesableHexDumpWriter(), nil)
 	vw.Stringer = NewFilterWriter(NewStringerWriter(), nil)

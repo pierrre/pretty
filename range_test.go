@@ -43,7 +43,7 @@ func init() {
 				return m
 			}(),
 			ConfigureWriter: func(vw *pretty.CommonWriter) {
-				vw.Range.MaxLen = 1
+				vw.Range.ValueWriter.MaxLen = 1
 			},
 			IgnoreResult: true,
 		},
