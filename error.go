@@ -22,19 +22,23 @@ var errorImplementsCache = reflectutil.NewImplementsCacheFor[error]()
 // It should be created with [NewErrorWriter].
 type ErrorWriter struct {
 	ValueWriter
+	// ShowVerbose indicates whether to show verbose error messages of errors implementing [VerboseError].
+	// Default: true.
+	ShowVerbose bool
+	// ShowStack indicates whether to show stack frames of errors implementing [StackFramesError].
+	// Default: true.
+	ShowStack bool
 	// Writers is a list of custom functions that are called when an error is written.
-	// Default: {[ErrorWriter.WriteVerboseError], [ErrorWriter.WriteStackFramesError]}.
-	Writers []func(*State, error)
+	// Default: nil.
+	Writers []func(st *State, err error)
 }
 
 // NewErrorWriter creates a new [ErrorWriter] with default values.
 func NewErrorWriter(vw ValueWriter) *ErrorWriter {
 	ew := &ErrorWriter{
 		ValueWriter: vw,
-	}
-	ew.Writers = []func(*State, error){
-		ew.WriteVerboseError,
-		ew.WriteStackFramesError,
+		ShowVerbose: true,
+		ShowStack:   true,
 	}
 	return ew
 }
@@ -54,6 +58,12 @@ func (vw *ErrorWriter) WriteValue(st *State, v reflect.Value) bool {
 	write.MustString(st.Writer, "Error(): ")
 	write.Must(strconvio.WriteQuote(st.Writer, err.Error()))
 	write.MustString(st.Writer, ",\n")
+	if vw.ShowVerbose {
+		vw.WriteVerboseError(st, err)
+	}
+	if vw.ShowStack {
+		vw.WriteStackFramesError(st, err)
+	}
 	for _, w := range vw.Writers {
 		w(st, err)
 	}

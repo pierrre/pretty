@@ -34,6 +34,18 @@ func init() {
 			IgnoreResult: true,
 		},
 		{
+			Name: "Writers",
+			Value: &testVerboseError{
+				error: errors.New("error"),
+			},
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.Error.ValueWriter.ShowVerbose = false
+				vw.Error.ValueWriter.Writers = []func(*State, error){
+					vw.Error.ValueWriter.WriteVerboseError,
+				}
+			},
+		},
+		{
 			Name:            "Nil",
 			Value:           (*testError)(nil),
 			IgnoreBenchmark: true,

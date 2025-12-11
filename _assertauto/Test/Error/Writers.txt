@@ -1,0 +1,14 @@
+[*github.com/pierrre/pretty_test.testVerboseError] {
+	Error(): "test",
+	ErrorVerbose(): verbose a
+		b
+		c,
+	Unwrap(): [*errors.errorString] {
+		Error(): "error",
+	},
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}
