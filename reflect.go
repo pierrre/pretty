@@ -220,7 +220,7 @@ func (vw *ReflectTypeWriter) writeTypeKey(st *State, typ reflect.Type) {
 }
 
 func (vw *ReflectTypeWriter) writeTypeElem(st *State, typ reflect.Type) {
-	switch typ.Kind() { //nolint:exhaustive // Kinds supported by Elem().
+	switch typ.Kind() {
 	case reflect.Array, reflect.Chan, reflect.Map, reflect.Pointer, reflect.Slice:
 	default:
 		return
