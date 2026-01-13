@@ -30,7 +30,7 @@ func NewComplexWriter() *ComplexWriter {
 // WriteValue implements [ValueWriter].
 func (vw *ComplexWriter) WriteValue(st *State, v reflect.Value) bool {
 	var bitSize int
-	switch v.Kind() {
+	switch v.Kind() { //nolint:exhaustive // Only handles complex.
 	case reflect.Complex64:
 		bitSize = 64
 	case reflect.Complex128:
@@ -45,7 +45,7 @@ func (vw *ComplexWriter) WriteValue(st *State, v reflect.Value) bool {
 // Supports implements [SupportChecker].
 func (vw *ComplexWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
-	switch typ.Kind() {
+	switch typ.Kind() { //nolint:exhaustive // Only handles complex.
 	case reflect.Complex64, reflect.Complex128:
 		res = vw
 	}
