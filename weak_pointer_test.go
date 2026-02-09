@@ -35,10 +35,8 @@ func init() {
 			}(),
 		},
 		{
-			Name: "Unexported",
-			Value: func() any {
-				return prettytest.Unexported(weak.Make[string](nil))
-			}(),
+			Name:            "Unexported",
+			Value:           prettytest.Unexported(weak.Make[string](nil)),
 			IgnoreBenchmark: true,
 		},
 		{

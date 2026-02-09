@@ -32,6 +32,7 @@ type CommonWriter struct {
 	BytesHexDump     *BytesHexDumpWriter
 	MathBig          *MathBigWriter
 	Reflect          *ReflectWriter
+	Unique           *UniqueWriter
 	WeakPointer      *WeakPointerWriter
 	Iter             *IterWriter
 	Range            *FilterWriter[*RangeWriter]
@@ -59,6 +60,7 @@ func NewCommonWriter() *CommonWriter {
 	vw.BytesHexDump = NewBytesHexDumpWriter()
 	vw.MathBig = NewMathBigWriter()
 	vw.Reflect = NewReflectWriter(vw)
+	vw.Unique = NewUniqueWriter(vw)
 	vw.WeakPointer = NewWeakPointerWriter(vw)
 	vw.Iter = NewIterWriter(vw)
 	vw.Range = NewFilterWriter(NewRangeWriter(vw), nil)
@@ -204,6 +206,9 @@ func (vw *CommonWriter) writeValue(st *State, v reflect.Value) bool {
 	if vw.Reflect != nil && vw.Reflect.WriteValue(st, v) {
 		return true
 	}
+	if vw.Unique != nil && vw.Unique.WriteValue(st, v) {
+		return true
+	}
 	if vw.WeakPointer != nil && vw.WeakPointer.WriteValue(st, v) {
 		return true
 	}
@@ -242,6 +247,9 @@ func (vw *CommonWriter) Supports(typ reflect.Type) ValueWriter {
 		return w
 	}
 	if w := callSupportCheckerPointer(vw.Reflect, typ); w != nil {
+		return w
+	}
+	if w := callSupportCheckerPointer(vw.Unique, typ); w != nil {
 		return w
 	}
 	if w := callSupportCheckerPointer(vw.WeakPointer, typ); w != nil {
