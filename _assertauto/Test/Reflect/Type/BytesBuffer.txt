@@ -55,6 +55,15 @@
 				[]uint8,
 			),
 		},
+		Peek: {
+			In: (
+				int,
+			),
+			Out: (
+				[]uint8,
+				error,
+			),
+		},
 		Read: {
 			In: (
 				[]uint8,
