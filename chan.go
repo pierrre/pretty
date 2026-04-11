@@ -23,8 +23,8 @@ type ChanWriter struct {
 	// Default: false.
 	ShowAddr bool
 	// ShowElems shows the elements.
-	// It reads the elements from the channel and put them back.
-	// If the channel is closed, it doesn't put the elements back to the channel.
+	// It reads elements from the channel and puts them back.
+	// If the channel is closed, it does not put elements back into the channel.
 	// It only works with bidirectional channels.
 	// Default: false.
 	ShowElems bool

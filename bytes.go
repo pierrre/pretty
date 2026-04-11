@@ -72,7 +72,7 @@ type Bytesable interface {
 
 var bytesableImplementsCache = reflectutil.NewImplementsCacheFor[Bytesable]()
 
-// BytesableHexDumpWriter is a [ValueWriter] that handles [Bytesable] and writes thems with [hex.Dumper].
+// BytesableHexDumpWriter is a [ValueWriter] that handles [Bytesable] and writes them with [hex.Dumper].
 //
 // If [Bytesable.Bytes] panics, [BytesableHexDumpWriter.WriteValue] returns false.
 //
