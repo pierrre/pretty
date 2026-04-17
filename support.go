@@ -7,7 +7,7 @@ import (
 )
 
 // SupportChecker checks if a [reflect.Type] is supported.
-// If the [reflect.Type] is supported, it returns a non nil [ValueWriter].
+// If the [reflect.Type] is supported, it returns a non-nil [ValueWriter].
 type SupportChecker interface {
 	Supports(typ reflect.Type) ValueWriter
 }

@@ -23,7 +23,7 @@ type MapWriter struct {
 	// SortKeys sorts the keys.
 	// Default: false.
 	SortKeys bool
-	// ShowKeysInfos shows keys infos.
+	// ShowKeysInfos shows key information.
 	// Default: false.
 	ShowKeysInfos bool
 	// MaxLen is the maximum length of the map.

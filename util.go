@@ -8,8 +8,8 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// Vars returns a slices of variadic arguments.
-// It allows to call a [Printer] with the result of a function returning multiple values.
+// Vars returns a slice of variadic arguments.
+// It allows calling a [Printer] with the result of a function returning multiple values.
 func Vars(vs ...any) []any {
 	return vs
 }

@@ -13,7 +13,7 @@ import (
 // It should be created with [NewRangeWriter].
 type RangeWriter struct {
 	ValueWriter
-	// ShowKeysInfos shows keys infos.
+	// ShowKeysInfos shows key information.
 	// Default: false.
 	ShowKeysInfos bool
 	// MaxLen is the maximum length of the iterator.

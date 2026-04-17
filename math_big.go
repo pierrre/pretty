@@ -8,7 +8,7 @@ import (
 	"github.com/pierrre/pretty/internal/write"
 )
 
-// MathBigWriter is a [ValueWriter] thats handles values from the [math/big] package.
+// MathBigWriter is a [ValueWriter] that handles values from the [math/big] package.
 //
 // It should be created with [NewMathBigWriter].
 type MathBigWriter struct {

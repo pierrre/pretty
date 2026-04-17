@@ -55,7 +55,7 @@ type IterSeqWriter struct {
 	MaxLen int
 }
 
-// NewIterSeqWriter creates a new [IterSeq2Writer] with default values.
+// NewIterSeqWriter creates a new [IterSeqWriter] with default values.
 func NewIterSeqWriter(vw ValueWriter) *IterSeqWriter {
 	return &IterSeqWriter{
 		ValueWriter: vw,
@@ -117,7 +117,7 @@ func (vw *IterSeqWriter) Supports(typ reflect.Type) ValueWriter {
 // It should be created with [NewIterSeq2Writer].
 type IterSeq2Writer struct {
 	ValueWriter
-	// ShowKeysInfos shows keys infos.
+	// ShowKeysInfos shows key information.
 	// Default: false.
 	ShowKeysInfos bool
 	// MaxLen is the maximum length of the iterator.

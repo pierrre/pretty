@@ -29,7 +29,7 @@ func ConfigureCommonWriter(vw *pretty.CommonWriter, mw *MessageWriter) {
 	vw.ValueWriters = append(vw.ValueWriters, mw)
 }
 
-// MessageWriter is a [pretty.MessageWriter] that handles protobuf messages.
+// MessageWriter is a [pretty.ValueWriter] that handles protobuf messages.
 //
 // It should be created with [NewMessageWriter].
 type MessageWriter struct {

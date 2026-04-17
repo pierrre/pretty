@@ -14,7 +14,7 @@ func init() {
 	DefaultWriter.ConfigureTest(testing.Testing())
 }
 
-// CommonWriter is a [ValueWriter] with common [ValueWriter].
+// CommonWriter is a [ValueWriter] with common [ValueWriter]s.
 //
 // Any [ValueWriter] can be configured, and can be set to nil in order to disable it.
 //

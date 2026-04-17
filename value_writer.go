@@ -11,7 +11,7 @@ import (
 //
 // Implementations must check [reflect.Value.CanInterface] before using [reflect.Value.Interface].
 //
-// Implentations can assume that the value is valid.
+// Implementations can assume that the value is valid.
 type ValueWriter interface {
 	WriteValue(st *State, v reflect.Value) bool
 }
