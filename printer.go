@@ -5,7 +5,7 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/pierrre/go-libs/bufpool"
+	"github.com/pierrre/go-libs/bytesutil"
 	"github.com/pierrre/go-libs/panicutil"
 	"github.com/pierrre/pretty/internal/must"
 )
@@ -80,16 +80,16 @@ func (p *Printer) WriteErr(w io.Writer, vi any) (err error) {
 	return nil
 }
 
-var bufPool = &bufpool.Pool{
+var bytesWriterPool = &bytesutil.WriterPool{
 	MaxCap: -1,
 }
 
 // String returns the value as a string.
 func (p *Printer) String(vi any) string {
-	buf := bufPool.Get()
-	defer bufPool.Put(buf)
-	p.Write(buf, vi)
-	return buf.String()
+	bw := bytesWriterPool.Get()
+	defer bytesWriterPool.Put(bw)
+	p.Write(bw, vi)
+	return bw.String()
 }
 
 // Formatter returns a [fmt.Formatter] for the value.
