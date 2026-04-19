@@ -5,8 +5,6 @@ import (
 
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/syncutil"
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // MapWriter is a [ValueWriter] that handles map values.
@@ -48,7 +46,7 @@ func (vw *MapWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Map {
 		return false
 	}
-	if checkNil(st.Writer, v) {
+	if checkNil(st, v) {
 		return true
 	}
 	l := v.Len()
@@ -58,9 +56,9 @@ func (vw *MapWriter) WriteValue(st *State, v reflect.Value) bool {
 		showAddr: vw.ShowAddr,
 		addr:     uintptr(v.UnsafePointer()),
 	}.writeWithTrailingSpace(st)
-	write.MustString(st.Writer, "{")
+	st.Writer.AppendByte('{')
 	if l > 0 {
-		write.MustString(st.Writer, "\n")
+		st.Writer.AppendByte('\n')
 		st.IndentLevel++
 		if vw.SortKeys {
 			vw.writeSorted(st, v)
@@ -70,7 +68,7 @@ func (vw *MapWriter) WriteValue(st *State, v reflect.Value) bool {
 		st.IndentLevel--
 		st.WriteIndent()
 	}
-	write.MustString(st.Writer, "}")
+	st.Writer.AppendByte('}')
 	return true
 }
 
@@ -148,17 +146,17 @@ func (vw *MapWriter) writeUnsortedUnexported(st *State, v reflect.Value) {
 func (vw *MapWriter) writeEntry(st *State, key reflect.Value, value reflect.Value, i int) bool {
 	st.WriteIndent()
 	if vw.MaxLen > 0 && i >= vw.MaxLen {
-		writeTruncated(st.Writer)
-		write.MustString(st.Writer, "\n")
+		writeTruncated(st)
+		st.Writer.AppendByte('\n')
 		return false
 	}
 	showInfos := st.ShowInfos
 	st.ShowInfos = vw.ShowKeysInfos
-	must.Handle(vw.ValueWriter.WriteValue(st, key))
+	vw.ValueWriter.WriteValue(st, key)
 	st.ShowInfos = showInfos
-	write.MustString(st.Writer, ": ")
-	must.Handle(vw.ValueWriter.WriteValue(st, value))
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString(": ")
+	vw.ValueWriter.WriteValue(st, value)
+	st.Writer.AppendString(",\n")
 	return true
 }
 

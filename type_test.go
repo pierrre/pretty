@@ -6,7 +6,6 @@ import (
 
 	. "github.com/pierrre/pretty"
 	"github.com/pierrre/pretty/internal/prettytest"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 func init() {
@@ -213,7 +212,7 @@ func init() {
 			Value: "test",
 			ConfigureWriter: func(vw *CommonWriter) {
 				vw.ByType[reflect.TypeFor[string]()] = ValueWriterFunc(func(st *State, v reflect.Value) bool {
-					write.MustString(st.Writer, "custom")
+					st.Writer.AppendString("custom")
 					return true
 				})
 			},
@@ -230,7 +229,7 @@ func init() {
 			Value: "test",
 			ConfigureWriter: func(vw *CommonWriter) {
 				cvw := ValueWriterFunc(func(st *State, v reflect.Value) bool {
-					write.MustString(st.Writer, "custom")
+					st.Writer.AppendString("custom")
 					return true
 				})
 				btvw := NewByTypeWriters()

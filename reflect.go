@@ -2,12 +2,10 @@ package pretty
 
 import (
 	"reflect"
+	"strconv"
 
 	"github.com/pierrre/go-libs/reflectutil"
-	"github.com/pierrre/go-libs/strconvio"
 	"github.com/pierrre/pretty/internal/itfassert"
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // ReflectWriter is a [ValueWriter] that handles [reflect.Value] and [reflect.Type].
@@ -70,16 +68,16 @@ func (vw *ReflectValueWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	if !v.CanInterface() {
-		write.MustString(st.Writer, "<unexported>")
+		st.Writer.AppendString("<unexported>")
 		return true
 	}
 	rv, _ := reflect.TypeAssert[reflect.Value](v)
-	writeArrow(st.Writer)
-	if checkInvalidNil(st.Writer, rv) {
+	writeArrow(st)
+	if checkInvalidNil(st, rv) {
 		return true
 	}
 	st.KnownType = false // We want to show the type of the value.
-	must.Handle(vw.ValueWriter.WriteValue(st, rv))
+	vw.ValueWriter.WriteValue(st, rv)
 	return true
 }
 
@@ -111,13 +109,13 @@ func (vw *ReflectTypeWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	write.MustString(st.Writer, "reflect.Type ")
+	st.Writer.AppendString("reflect.Type ")
 	vw.writeType(st, typ)
 	return true
 }
 
 func (vw *ReflectTypeWriter) writeType(st *State, typ reflect.Type) {
-	write.MustString(st.Writer, "{\n")
+	st.Writer.AppendString("{\n")
 	st.IndentLevel++
 	vw.writeTypeFullName(st, typ)
 	vw.writeTypePkgPath(st, typ)
@@ -135,14 +133,14 @@ func (vw *ReflectTypeWriter) writeType(st *State, typ reflect.Type) {
 	vw.writeTypeMethods(st, typ)
 	st.IndentLevel--
 	st.WriteIndent()
-	write.MustString(st.Writer, "}")
+	st.Writer.AppendByte('}')
 }
 
 func (vw *ReflectTypeWriter) writeTypeFullName(st *State, typ reflect.Type) {
 	st.WriteIndent()
-	write.MustString(st.Writer, "FullName: ")
-	write.MustString(st.Writer, reflectutil.TypeFullName(typ))
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString("FullName: ")
+	st.Writer.AppendString(reflectutil.TypeFullName(typ))
+	st.Writer.AppendString(",\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypePkgPath(st *State, typ reflect.Type) {
@@ -151,9 +149,9 @@ func (vw *ReflectTypeWriter) writeTypePkgPath(st *State, typ reflect.Type) {
 		return
 	}
 	st.WriteIndent()
-	write.MustString(st.Writer, "PkgPath: ")
-	write.MustString(st.Writer, pkgPath)
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString("PkgPath: ")
+	st.Writer.AppendString(pkgPath)
+	st.Writer.AppendString(",\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypeName(st *State, typ reflect.Type) {
@@ -162,30 +160,30 @@ func (vw *ReflectTypeWriter) writeTypeName(st *State, typ reflect.Type) {
 		return
 	}
 	st.WriteIndent()
-	write.MustString(st.Writer, "Name: ")
-	write.MustString(st.Writer, name)
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString("Name: ")
+	st.Writer.AppendString(name)
+	st.Writer.AppendString(",\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypeString(st *State, typ reflect.Type) {
 	st.WriteIndent()
-	write.MustString(st.Writer, "String: ")
-	write.MustString(st.Writer, typ.String())
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString("String: ")
+	st.Writer.AppendString(typ.String())
+	st.Writer.AppendString(",\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypeKind(st *State, typ reflect.Type) {
 	st.WriteIndent()
-	write.MustString(st.Writer, "Kind: ")
-	write.MustString(st.Writer, typ.Kind().String())
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString("Kind: ")
+	st.Writer.AppendString(typ.Kind().String())
+	st.Writer.AppendString(",\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypeSize(st *State, typ reflect.Type) {
 	st.WriteIndent()
-	write.MustString(st.Writer, "Size: ")
-	write.Must(strconvio.WriteUint(st.Writer, uint64(typ.Size()), 10))
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString("Size: ")
+	st.Writer = strconv.AppendUint(st.Writer, uint64(typ.Size()), 10)
+	st.Writer.AppendString(",\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypeUnderlying(st *State, typ reflect.Type) {
@@ -194,9 +192,9 @@ func (vw *ReflectTypeWriter) writeTypeUnderlying(st *State, typ reflect.Type) {
 		return
 	}
 	st.WriteIndent()
-	write.MustString(st.Writer, "Underlying: ")
+	st.Writer.AppendString("Underlying: ")
 	vw.writeType(st, uTyp)
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString(",\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypeLen(st *State, typ reflect.Type) {
@@ -204,9 +202,9 @@ func (vw *ReflectTypeWriter) writeTypeLen(st *State, typ reflect.Type) {
 		return
 	}
 	st.WriteIndent()
-	write.MustString(st.Writer, "Len: ")
-	write.Must(strconvio.WriteInt(st.Writer, int64(typ.Len()), 10))
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString("Len: ")
+	st.Writer = strconv.AppendInt(st.Writer, int64(typ.Len()), 10)
+	st.Writer.AppendString(",\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypeKey(st *State, typ reflect.Type) {
@@ -214,9 +212,9 @@ func (vw *ReflectTypeWriter) writeTypeKey(st *State, typ reflect.Type) {
 		return
 	}
 	st.WriteIndent()
-	write.MustString(st.Writer, "Key: ")
+	st.Writer.AppendString("Key: ")
 	vw.writeType(st, typ.Key())
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString(",\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypeElem(st *State, typ reflect.Type) {
@@ -226,9 +224,9 @@ func (vw *ReflectTypeWriter) writeTypeElem(st *State, typ reflect.Type) {
 		return
 	}
 	st.WriteIndent()
-	write.MustString(st.Writer, "Elem: ")
+	st.Writer.AppendString("Elem: ")
 	vw.writeType(st, typ.Elem())
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString(",\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypeChan(st *State, typ reflect.Type) {
@@ -236,9 +234,9 @@ func (vw *ReflectTypeWriter) writeTypeChan(st *State, typ reflect.Type) {
 		return
 	}
 	st.WriteIndent()
-	write.MustString(st.Writer, "ChanDir: ")
-	write.MustString(st.Writer, typ.ChanDir().String())
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString("ChanDir: ")
+	st.Writer.AppendString(typ.ChanDir().String())
+	st.Writer.AppendString(",\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypeStruct(st *State, typ reflect.Type) {
@@ -250,18 +248,18 @@ func (vw *ReflectTypeWriter) writeTypeStruct(st *State, typ reflect.Type) {
 		return
 	}
 	st.WriteIndent()
-	write.MustString(st.Writer, "Fields: {\n")
+	st.Writer.AppendString("Fields: {\n")
 	st.IndentLevel++
 	for _, f := range fields.Range {
 		st.WriteIndent()
-		write.MustString(st.Writer, f.Name)
-		write.MustString(st.Writer, " ")
-		write.MustString(st.Writer, reflectutil.TypeFullName(f.Type))
-		write.MustString(st.Writer, ",\n")
+		st.Writer.AppendString(f.Name)
+		st.Writer.AppendString(" ")
+		st.Writer.AppendString(reflectutil.TypeFullName(f.Type))
+		st.Writer.AppendString(",\n")
 	}
 	st.IndentLevel--
 	st.WriteIndent()
-	write.MustString(st.Writer, "},\n")
+	st.Writer.AppendString("},\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypeFunc(st *State, typ reflect.Type, ignoreReceiver bool) {
@@ -277,8 +275,8 @@ func (vw *ReflectTypeWriter) writeTypeFuncParameters(st *State, name string, cou
 		return
 	}
 	st.WriteIndent()
-	write.MustString(st.Writer, name)
-	write.MustString(st.Writer, ": (\n")
+	st.Writer.AppendString(name)
+	st.Writer.AppendString(": (\n")
 	st.IndentLevel++
 	for i := range count {
 		if ignoreFirst && i == 0 {
@@ -286,12 +284,12 @@ func (vw *ReflectTypeWriter) writeTypeFuncParameters(st *State, name string, cou
 		}
 		typ := get(i)
 		st.WriteIndent()
-		write.MustString(st.Writer, reflectutil.TypeFullName(typ))
-		write.MustString(st.Writer, ",\n")
+		st.Writer.AppendString(reflectutil.TypeFullName(typ))
+		st.Writer.AppendString(",\n")
 	}
 	st.IndentLevel--
 	st.WriteIndent()
-	write.MustString(st.Writer, "),\n")
+	st.Writer.AppendString("),\n")
 }
 
 func (vw *ReflectTypeWriter) writeTypeMethods(st *State, typ reflect.Type) {
@@ -301,21 +299,21 @@ func (vw *ReflectTypeWriter) writeTypeMethods(st *State, typ reflect.Type) {
 	}
 	ignoreReceiver := typ.Kind() != reflect.Interface
 	st.WriteIndent()
-	write.MustString(st.Writer, "Methods: {\n")
+	st.Writer.AppendString("Methods: {\n")
 	st.IndentLevel++
 	for _, m := range methods.Range {
 		st.WriteIndent()
-		write.MustString(st.Writer, m.Name)
-		write.MustString(st.Writer, ": {\n")
+		st.Writer.AppendString(m.Name)
+		st.Writer.AppendString(": {\n")
 		st.IndentLevel++
 		vw.writeTypeFunc(st, m.Type, ignoreReceiver)
 		st.IndentLevel--
 		st.WriteIndent()
-		write.MustString(st.Writer, "},\n")
+		st.Writer.AppendString("},\n")
 	}
 	st.IndentLevel--
 	st.WriteIndent()
-	write.MustString(st.Writer, "},\n")
+	st.Writer.AppendString("},\n")
 }
 
 // Supports implements [SupportChecker].

@@ -5,7 +5,6 @@ import (
 	"slices"
 
 	"github.com/pierrre/go-libs/reflectutil"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // RecursionWriter is a [ValueWriter] that prevents recursion.
@@ -53,12 +52,12 @@ func (vw *RecursionWriter) checkRecursion(st *State, v reflect.Value) (visitedAd
 		st.Visited = append(st.Visited, e)
 		return true, false
 	}
-	write.MustString(st.Writer, "<recursion>")
+	st.Writer.AppendString("<recursion>")
 	if vw.ShowAddr {
-		write.MustString(st.Writer, " ")
-		write.MustString(st.Writer, reflectutil.TypeFullName(e.Type))
-		write.MustString(st.Writer, " ")
-		writeUintptr(st.Writer, e.Addr)
+		st.Writer.AppendByte(' ')
+		st.Writer.AppendString(reflectutil.TypeFullName(e.Type))
+		st.Writer.AppendByte(' ')
+		writeUintptr(st, e.Addr)
 	}
 	return false, true
 }

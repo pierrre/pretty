@@ -7,8 +7,6 @@ import (
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/pretty"
 	"github.com/pierrre/pretty/internal/itfassert"
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
@@ -62,7 +60,7 @@ func (vw *MessageWriter) WriteValue(st *pretty.State, v reflect.Value) bool {
 }
 
 func (vw *MessageWriter) writeMessage(st *pretty.State, m protoreflect.Message) {
-	write.MustString(st.Writer, "{")
+	st.Writer.AppendByte('{')
 	fs := m.Descriptor().Fields()
 	l := fs.Len()
 	hasFields := false
@@ -73,21 +71,21 @@ func (vw *MessageWriter) writeMessage(st *pretty.State, m protoreflect.Message) 
 			continue
 		}
 		if !hasFields {
-			write.MustString(st.Writer, "\n")
+			st.Writer.AppendByte('\n')
 			hasFields = true
 		}
 		st.WriteIndent()
-		write.MustString(st.Writer, string(fd.Name()))
-		write.MustString(st.Writer, ": ")
+		st.Writer.AppendString(string(fd.Name()))
+		st.Writer.AppendString(": ")
 		st.KnownType = !vw.ShowFieldsType
-		must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(vw.getInterface(m.Get(fd), fd))))
-		write.MustString(st.Writer, ",\n")
+		vw.ValueWriter.WriteValue(st, reflect.ValueOf(vw.getInterface(m.Get(fd), fd)))
+		st.Writer.AppendString(",\n")
 	}
 	st.IndentLevel--
 	if hasFields {
 		st.WriteIndent()
 	}
-	write.MustString(st.Writer, "}")
+	st.Writer.AppendByte('}')
 }
 
 func (vw *MessageWriter) getInterface(v protoreflect.Value, fd protoreflect.FieldDescriptor) any {

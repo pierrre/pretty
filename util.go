@@ -1,11 +1,7 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
-
-	"github.com/pierrre/go-libs/syncutil"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // Vars returns a slice of variadic arguments.
@@ -14,25 +10,18 @@ func Vars(vs ...any) []any {
 	return vs
 }
 
-func writeArrow(w io.Writer) {
-	write.MustString(w, "=> ")
+func writeArrow(st *State) {
+	st.Writer.AppendString("=> ")
 }
 
-func writeArrowWrappedString(w io.Writer, s string) {
-	writeArrow(w)
-	write.MustString(w, s)
-	writeArrow(w)
+func writeArrowWrappedString(st *State, s string) {
+	writeArrow(st)
+	st.Writer.AppendString(s)
+	writeArrow(st)
 }
 
-func writeTruncated(w io.Writer) {
-	write.MustString(w, "<truncated>")
-}
-
-var bytesPool = syncutil.Pool[*[]byte]{
-	New: func() *[]byte {
-		b := make([]byte, 1024)
-		return &b
-	},
+func writeTruncated(st *State) {
+	st.Writer.AppendString("<truncated>")
 }
 
 func callSupportCheckerPointer[P interface {

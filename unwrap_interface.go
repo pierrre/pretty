@@ -26,7 +26,7 @@ func (vw *UnwrapInterfaceWriter) WriteValue(st *State, v reflect.Value) bool {
 
 func (vw *UnwrapInterfaceWriter) unwrapInterface(st *State, v reflect.Value) (_ reflect.Value, isNil bool) {
 	if v.Kind() == reflect.Interface {
-		if checkNil(st.Writer, v) {
+		if checkNil(st, v) {
 			return reflect.Value{}, true
 		}
 		v = v.Elem()

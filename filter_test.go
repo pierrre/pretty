@@ -5,7 +5,6 @@ import (
 
 	. "github.com/pierrre/pretty"
 	"github.com/pierrre/pretty/internal/prettytest"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 func init() {
@@ -17,7 +16,7 @@ func init() {
 				vw.ValueWriters = []ValueWriter{
 					NewFilterWriter(
 						ValueWriterFunc(func(st *State, v reflect.Value) bool {
-							write.MustString(st.Writer, "aaaa")
+							st.Writer.AppendString("aaaa")
 							return true
 						}),
 						FilterTypes(reflect.TypeFor[string]()),
@@ -32,7 +31,7 @@ func init() {
 				vw.ValueWriters = []ValueWriter{
 					NewFilterWriter(
 						ValueWriterFunc(func(st *State, v reflect.Value) bool {
-							write.MustString(st.Writer, "aaaa")
+							st.Writer.AppendString("aaaa")
 							return true
 						}),
 						FilterTypes(reflect.TypeFor[error]()),
@@ -61,7 +60,7 @@ func init() {
 				vw.ValueWriters = []ValueWriter{
 					NewFilterWriter(
 						ValueWriterFunc(func(st *State, v reflect.Value) bool {
-							write.MustString(st.Writer, "aaaa")
+							st.Writer.AppendString("aaaa")
 							return true
 						}),
 						nil,

@@ -2,10 +2,7 @@ package pretty
 
 import (
 	"reflect"
-
-	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
+	"strconv"
 )
 
 // ChanWriter is a [ValueWriter] that handles chan values.
@@ -54,7 +51,7 @@ func (vw *ChanWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Chan {
 		return false
 	}
-	if checkNil(st.Writer, v) {
+	if checkNil(st, v) {
 		return true
 	}
 	infos{
@@ -78,39 +75,39 @@ func (vw *ChanWriter) writeElems(st *State, v reflect.Value) {
 		l = vw.MaxLen
 		truncated = true
 	}
-	write.MustString(st.Writer, "{")
+	st.Writer.AppendByte('{')
 	if l > 0 {
-		write.MustString(st.Writer, "\n")
+		st.Writer.AppendByte('\n')
 		st.IndentLevel++
 		for i := range l {
 			vw.writeElem(st, v, i)
 		}
 		if truncated {
 			st.WriteIndent()
-			writeTruncated(st.Writer)
-			write.MustString(st.Writer, "\n")
+			writeTruncated(st)
+			st.Writer.AppendByte('\n')
 		}
 		st.IndentLevel--
 		st.WriteIndent()
 	}
-	write.MustString(st.Writer, "}")
+	st.Writer.AppendByte('}')
 }
 
 func (vw *ChanWriter) writeElem(st *State, v reflect.Value, i int) {
 	st.WriteIndent()
 	if vw.ShowIndexes {
-		write.Must(strconvio.WriteInt(st.Writer, int64(i), 10))
-		write.MustString(st.Writer, ": ")
+		st.Writer = strconv.AppendInt(st.Writer, int64(i), 10)
+		st.Writer.AppendString(": ")
 	}
 	e, _ := v.Recv()
-	must.Handle(vw.ValueWriter.WriteValue(st, e))
+	vw.ValueWriter.WriteValue(st, e)
 	func() {
 		defer func() {
 			_ = recover()
 		}()
 		v.Send(e)
 	}()
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString(",\n")
 }
 
 // Supports implements [SupportChecker].

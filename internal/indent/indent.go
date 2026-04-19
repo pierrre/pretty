@@ -6,7 +6,6 @@ import (
 	"io"
 
 	"github.com/pierrre/go-libs/syncutil"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 const (
@@ -34,27 +33,21 @@ func getBytes(str string, level int) []byte {
 	return b
 }
 
-// Write writes an indentation string to a [io.Writer].
-func Write(w io.Writer, str string, level int) (int, error) {
+// Append appends an indentation string to a []byte and returns the result.
+func Append(dst []byte, str string, level int) []byte {
 	if level <= 0 {
-		return 0, nil
+		return dst
 	}
 	if level == 1 {
-		return write.String(w, str) //nolint:wrapcheck // The error is not wrapped.
+		return append(dst, str...)
 	}
-	return w.Write(getBytes(str, level)) //nolint:wrapcheck // The error is not wrapped.
-}
-
-// MustWrite writes an indentation string to a [io.Writer] and panics if an error occurs.
-func MustWrite(w io.Writer, str string, level int) {
-	write.Must(Write(w, str, level))
+	return append(dst, getBytes(str, level)...)
 }
 
 // Writer is a [io.Writer] that indents.
 type Writer struct {
 	writer   io.Writer
-	string   string
-	level    int
+	bytes    []byte
 	indented bool
 }
 
@@ -68,8 +61,7 @@ var writerPool = syncutil.Pool[*Writer]{
 func NewWriter(w io.Writer, str string, level int, indented bool) *Writer {
 	iw := writerPool.Get()
 	iw.writer = w
-	iw.string = str
-	iw.level = level
+	iw.bytes = getBytes(str, level)
 	iw.indented = indented
 	return iw
 }
@@ -78,10 +70,12 @@ func NewWriter(w io.Writer, str string, level int, indented bool) *Writer {
 func (iw *Writer) Write(p []byte) (n int, err error) {
 	for len(p) > 0 {
 		if !iw.indented {
-			nn, err := Write(iw.writer, iw.string, iw.level)
-			n += nn
-			if err != nil {
-				return n, err
+			if len(iw.bytes) != 0 {
+				nn, err := iw.writer.Write(iw.bytes)
+				n += nn
+				if err != nil {
+					return n, err //nolint:wrapcheck // The error is not wrapped.
+				}
 			}
 			iw.indented = true
 		}
@@ -107,8 +101,7 @@ func (iw *Writer) Write(p []byte) (n int, err error) {
 // It must not be used after calling this method.
 func (iw *Writer) Release() {
 	iw.writer = nil
-	iw.string = ""
-	iw.level = 0
+	iw.bytes = nil
 	iw.indented = false
 	writerPool.Put(iw)
 }

@@ -2,9 +2,7 @@ package pretty
 
 import (
 	"reflect"
-
-	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal/write"
+	"strconv"
 )
 
 // BoolWriter is a [ValueWriter] that handles bool values.
@@ -22,7 +20,7 @@ func (vw *BoolWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Bool {
 		return false
 	}
-	write.Must(strconvio.WriteBool(st.Writer, v.Bool()))
+	st.Writer = strconv.AppendBool(st.Writer, v.Bool())
 	return true
 }
 

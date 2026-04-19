@@ -5,8 +5,6 @@ import (
 	"strings"
 
 	"github.com/pierrre/go-libs/reflectutil"
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // WeakPointerWriter is a [ValueWriter] that handles [weak.Pointer].
@@ -36,16 +34,16 @@ func (vw *WeakPointerWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	if v.IsZero() {
-		writeNil(st.Writer)
+		writeNil(st)
 		return true
 	}
 	m, _ := reflectutil.GetMethods(typ).GetByName("Value")
 	p := m.Func.Call([]reflect.Value{v})[0]
 	if p.IsNil() {
-		write.MustString(st.Writer, "<garbage collected>")
+		st.Writer.AppendString("<garbage collected>")
 		return true
 	}
-	must.Handle(vw.ValueWriter.WriteValue(st, p))
+	vw.ValueWriter.WriteValue(st, p)
 	return true
 }
 

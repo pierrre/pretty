@@ -2,9 +2,7 @@ package pretty
 
 import (
 	"reflect"
-
-	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal/write"
+	"strconv"
 )
 
 // ComplexWriter is a [ValueWriter] that handles complex values.
@@ -38,7 +36,7 @@ func (vw *ComplexWriter) WriteValue(st *State, v reflect.Value) bool {
 	default:
 		return false
 	}
-	write.Must(strconvio.WriteComplex(st.Writer, v.Complex(), vw.Format, vw.Precision, bitSize))
+	st.Writer = appendComplex(st.Writer, v.Complex(), vw.Format, vw.Precision, bitSize)
 	return true
 }
 
@@ -50,4 +48,20 @@ func (vw *ComplexWriter) Supports(typ reflect.Type) ValueWriter {
 		res = vw
 	}
 	return res
+}
+
+func appendComplex(dst []byte, c complex128, fmt byte, prec, bitSize int) []byte {
+	bitSize >>= 1 // complex64 uses float32 internally
+	dst = append(dst, '(')
+	dst = strconv.AppendFloat(dst, real(c), fmt, prec, bitSize)
+	i := len(dst)
+	dst = strconv.AppendFloat(dst, imag(c), fmt, prec, bitSize)
+	// Check if imaginary part has a sign. If not, add one.
+	if dst[i] != '+' && dst[i] != '-' {
+		dst = append(dst, 0)
+		copy(dst[i+1:], dst[i:])
+		dst[i] = '+'
+	}
+	dst = append(dst, "i)"...)
+	return dst
 }

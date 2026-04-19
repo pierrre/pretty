@@ -2,8 +2,6 @@ package pretty
 
 import (
 	"reflect"
-
-	"github.com/pierrre/pretty/internal/must"
 )
 
 // PointerWriter is a [ValueWriter] that handles pointer values.
@@ -29,15 +27,15 @@ func (vw *PointerWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Pointer {
 		return false
 	}
-	if checkNil(st.Writer, v) {
+	if checkNil(st, v) {
 		return true
 	}
 	infos{
 		showAddr: vw.ShowAddr,
 		addr:     uintptr(v.UnsafePointer()),
 	}.writeWithTrailingSpace(st)
-	writeArrow(st.Writer)
-	must.Handle(vw.ValueWriter.WriteValue(st, v.Elem()))
+	writeArrow(st)
+	vw.ValueWriter.WriteValue(st, v.Elem())
 	return true
 }
 

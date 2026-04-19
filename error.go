@@ -3,14 +3,12 @@ package pretty
 import (
 	"io"
 	"reflect"
+	"strconv"
 
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/runtimeutil"
-	"github.com/pierrre/go-libs/strconvio"
 	"github.com/pierrre/pretty/internal/indent"
 	"github.com/pierrre/pretty/internal/itfassert"
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 var errorImplementsCache = reflectutil.NewImplementsCacheFor[error]()
@@ -52,12 +50,12 @@ func (vw *ErrorWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	write.MustString(st.Writer, "{\n")
+	st.Writer.AppendString("{\n")
 	st.IndentLevel++
 	st.WriteIndent()
-	write.MustString(st.Writer, "Error(): ")
-	write.Must(strconvio.WriteQuote(st.Writer, err.Error()))
-	write.MustString(st.Writer, ",\n")
+	st.Writer.AppendString("Error(): ")
+	st.Writer = strconv.AppendQuote(st.Writer, err.Error())
+	st.Writer.AppendString(",\n")
 	if vw.ShowVerbose {
 		vw.WriteVerboseError(st, err)
 	}
@@ -72,24 +70,24 @@ func (vw *ErrorWriter) WriteValue(st *State, v reflect.Value) bool {
 		e := err.Unwrap()
 		if e != nil {
 			st.WriteIndent()
-			write.MustString(st.Writer, "Unwrap(): ")
+			st.Writer.AppendString("Unwrap(): ")
 			st.KnownType = false // We want to show the type of the unwrapped error.
-			must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(e)))
-			write.MustString(st.Writer, ",\n")
+			vw.ValueWriter.WriteValue(st, reflect.ValueOf(e))
+			st.Writer.AppendString(",\n")
 		}
 	case interface{ Unwrap() []error }:
 		errs := err.Unwrap()
 		if len(errs) > 0 {
 			st.WriteIndent()
-			write.MustString(st.Writer, "Unwrap(): ")
+			st.Writer.AppendString("Unwrap(): ")
 			st.KnownType = false // We want to show the type of the unwrapped errors.
-			must.Handle(vw.ValueWriter.WriteValue(st, reflect.ValueOf(errs)))
-			write.MustString(st.Writer, ",\n")
+			vw.ValueWriter.WriteValue(st, reflect.ValueOf(errs))
+			st.Writer.AppendString(",\n")
 		}
 	}
 	st.IndentLevel--
 	st.WriteIndent()
-	write.MustString(st.Writer, "}")
+	st.Writer.AppendByte('}')
 	return true
 }
 
@@ -116,12 +114,12 @@ func (vw *ErrorWriter) WriteVerboseError(st *State, err error) {
 		return
 	}
 	st.WriteIndent()
-	write.MustString(st.Writer, "ErrorVerbose(): ")
+	st.Writer.AppendString("ErrorVerbose(): ")
 	st.IndentLevel++
-	iw := indent.NewWriter(st.Writer, st.IndentString, st.IndentLevel, true)
+	iw := indent.NewWriter(&st.Writer, st.IndentString, st.IndentLevel, true)
 	v.ErrorVerbose(iw)
-	write.MustString(iw, ",\n")
 	iw.Release()
+	st.Writer.AppendString(",\n")
 	st.IndentLevel--
 }
 
@@ -137,9 +135,9 @@ func (vw *ErrorWriter) WriteStackFramesError(st *State, err error) {
 		return
 	}
 	st.WriteIndent()
-	write.MustString(st.Writer, "StackFrames():\n")
+	st.Writer.AppendString("StackFrames():\n")
 	st.IndentLevel++
-	iw := indent.NewWriter(st.Writer, st.IndentString, st.IndentLevel, false)
+	iw := indent.NewWriter(&st.Writer, st.IndentString, st.IndentLevel, false)
 	_, _ = runtimeutil.WriteFrames(iw, runtimeutil.GetCallersFrames(v.StackFrames()))
 	iw.Release()
 	st.IndentLevel--

@@ -2,9 +2,7 @@ package pretty
 
 import (
 	"reflect"
-
-	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal/write"
+	"strconv"
 )
 
 // IntWriter is a [ValueWriter] that handles int values.
@@ -30,7 +28,7 @@ func (vw *IntWriter) WriteValue(st *State, v reflect.Value) bool {
 	default:
 		return false
 	}
-	write.Must(strconvio.WriteInt(st.Writer, v.Int(), vw.Base))
+	st.Writer = strconv.AppendInt(st.Writer, v.Int(), vw.Base)
 	return true
 }
 

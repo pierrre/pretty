@@ -2,9 +2,7 @@ package pretty
 
 import (
 	"reflect"
-
-	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal/write"
+	"strconv"
 )
 
 // UintWriter is a [ValueWriter] that handles uint values.
@@ -30,7 +28,7 @@ func (vw *UintWriter) WriteValue(st *State, v reflect.Value) bool {
 	default:
 		return false
 	}
-	write.Must(strconvio.WriteUint(st.Writer, v.Uint(), vw.Base))
+	st.Writer = strconv.AppendUint(st.Writer, v.Uint(), vw.Base)
 	return true
 }
 
