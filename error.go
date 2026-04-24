@@ -114,12 +114,12 @@ func (vw *ErrorWriter) WriteVerboseError(st *State, err error) {
 		return
 	}
 	st.WriteIndent()
-	st.Writer.AppendString("ErrorVerbose(): ")
+	st.Writer.AppendString("ErrorVerbose():\n")
 	st.IndentLevel++
-	iw := indent.NewWriter(&st.Writer, st.IndentString, st.IndentLevel, true)
+	iw := indent.NewWriter(&st.Writer, st.IndentString, st.IndentLevel, false)
 	v.ErrorVerbose(iw)
 	iw.Release()
-	st.Writer.AppendString(",\n")
+	st.Writer.AppendString("\n")
 	st.IndentLevel--
 }
 

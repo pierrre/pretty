@@ -1,8 +1,9 @@
 [*github.com/pierrre/pretty_test.testVerboseError] {
 	Error(): "test",
-	ErrorVerbose(): verbose a
+	ErrorVerbose():
+		verbose a
 		b
-		c,
+		c
 	Unwrap(): [*errors.errorString] {
 		Error(): "error",
 	},
