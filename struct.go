@@ -37,9 +37,9 @@ func (vw *StructWriter) WriteValue(st *State, v reflect.Value) bool {
 	fields := reflectutil.GetStructFields(v.Type())
 	hasFields := false
 	st.IndentLevel++
-	for i, field := range fields.Range {
+	fields.Range(func(i int, field reflect.StructField) bool {
 		if vw.FieldFilter != nil && !vw.FieldFilter(v, field) {
-			continue
+			return true
 		}
 		if !hasFields {
 			st.Writer.AppendByte('\n')
@@ -51,7 +51,8 @@ func (vw *StructWriter) WriteValue(st *State, v reflect.Value) bool {
 		st.KnownType = !vw.ShowFieldsType
 		vw.ValueWriter.WriteValue(st, v.Field(i))
 		st.Writer.AppendString(",\n")
-	}
+		return true
+	})
 	st.IndentLevel--
 	if hasFields {
 		st.WriteIndent()

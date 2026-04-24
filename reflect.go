@@ -250,13 +250,14 @@ func (vw *ReflectTypeWriter) writeTypeStruct(st *State, typ reflect.Type) {
 	st.WriteIndent()
 	st.Writer.AppendString("Fields: {\n")
 	st.IndentLevel++
-	for _, f := range fields.Range {
+	fields.Range(func(_ int, f reflect.StructField) bool {
 		st.WriteIndent()
 		st.Writer.AppendString(f.Name)
 		st.Writer.AppendString(" ")
 		st.Writer.AppendString(reflectutil.TypeFullName(f.Type))
 		st.Writer.AppendString(",\n")
-	}
+		return true
+	})
 	st.IndentLevel--
 	st.WriteIndent()
 	st.Writer.AppendString("},\n")
@@ -301,7 +302,7 @@ func (vw *ReflectTypeWriter) writeTypeMethods(st *State, typ reflect.Type) {
 	st.WriteIndent()
 	st.Writer.AppendString("Methods: {\n")
 	st.IndentLevel++
-	for _, m := range methods.Range {
+	methods.Range(func(_ int, m reflect.Method) bool {
 		st.WriteIndent()
 		st.Writer.AppendString(m.Name)
 		st.Writer.AppendString(": {\n")
@@ -310,7 +311,8 @@ func (vw *ReflectTypeWriter) writeTypeMethods(st *State, typ reflect.Type) {
 		st.IndentLevel--
 		st.WriteIndent()
 		st.Writer.AppendString("},\n")
-	}
+		return true
+	})
 	st.IndentLevel--
 	st.WriteIndent()
 	st.Writer.AppendString("},\n")

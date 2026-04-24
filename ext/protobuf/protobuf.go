@@ -115,9 +115,10 @@ func (vw *MessageWriter) getList(l protoreflect.List, fd protoreflect.FieldDescr
 func (vw *MessageWriter) getMap(m protoreflect.Map, fd protoreflect.FieldDescriptor) any {
 	// TODO create typed map
 	res := make(map[any]any, m.Len())
-	for key, value := range m.Range {
+	m.Range(func(key protoreflect.MapKey, value protoreflect.Value) bool {
 		res[vw.getInterface(key.Value(), fd.MapKey())] = vw.getInterface(value, fd.MapValue())
-	}
+		return true
+	})
 	return res
 }
 
