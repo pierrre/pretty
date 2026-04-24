@@ -1,11 +1,8 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
-
-	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal/write"
+	"strconv"
 )
 
 // UintptrWriter is a [ValueWriter] that handles uintptr values.
@@ -23,7 +20,7 @@ func (vw *UintptrWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Uintptr {
 		return false
 	}
-	writeUintptr(st.Writer, uintptr(v.Uint()))
+	writeUintptr(st, uintptr(v.Uint()))
 	return true
 }
 
@@ -36,7 +33,7 @@ func (vw *UintptrWriter) Supports(typ reflect.Type) ValueWriter {
 	return res
 }
 
-func writeUintptr(w io.Writer, p uintptr) {
-	write.MustString(w, "0x")
-	write.Must(strconvio.WriteUint(w, uint64(p), 16))
+func writeUintptr(st *State, p uintptr) {
+	st.Writer.AppendString("0x")
+	st.Writer = strconv.AppendUint(st.Writer, uint64(p), 16)
 }

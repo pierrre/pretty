@@ -3,7 +3,6 @@ package pretty
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"reflect"
 )
 
@@ -67,7 +66,7 @@ func ExampleFormatter() {
 
 func ExampleValueWriter() {
 	vw := ValueWriterFunc(func(st *State, v reflect.Value) bool {
-		_, _ = io.WriteString(st.Writer, "example")
+		st.Writer.AppendString("example")
 		return true
 	})
 	p := NewPrinter(vw)

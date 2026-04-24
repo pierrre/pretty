@@ -1,8 +1,7 @@
 package pretty
 
 import (
-	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal/write"
+	"strconv"
 )
 
 type infos struct {
@@ -21,35 +20,34 @@ func (i infos) write(st *State) bool {
 	if !i.showLen && !i.showCap && !i.showAddr {
 		return false
 	}
-	w := st.Writer
-	write.MustString(w, "(")
+	st.Writer.AppendByte('(')
 	wrote := false
 	if i.showLen {
-		write.MustString(w, "len=")
-		write.Must(strconvio.WriteInt(w, int64(i.len), 10))
+		st.Writer.AppendString("len=")
+		st.Writer = strconv.AppendInt(st.Writer, int64(i.len), 10)
 		wrote = true
 	}
 	if i.showCap {
 		if wrote {
-			write.MustString(w, " ")
+			st.Writer.AppendByte(' ')
 		}
-		write.MustString(w, "cap=")
-		write.Must(strconvio.WriteInt(w, int64(i.cap), 10))
+		st.Writer.AppendString("cap=")
+		st.Writer = strconv.AppendInt(st.Writer, int64(i.cap), 10)
 		wrote = true
 	}
 	if i.showAddr {
 		if wrote {
-			write.MustString(w, " ")
+			st.Writer.AppendByte(' ')
 		}
-		write.MustString(w, "addr=")
-		writeUintptr(w, i.addr)
+		st.Writer.AppendString("addr=")
+		writeUintptr(st, i.addr)
 	}
-	write.MustString(w, ")")
+	st.Writer.AppendByte(')')
 	return true
 }
 
 func (i infos) writeWithTrailingSpace(st *State) {
 	if i.write(st) {
-		write.MustString(st.Writer, " ")
+		st.Writer.AppendByte(' ')
 	}
 }

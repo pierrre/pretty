@@ -2,9 +2,6 @@ package pretty
 
 import (
 	"reflect"
-
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // IterWriter is a [ValueWriter] that handles [iter.Seq] and [iter.Seq2].
@@ -74,24 +71,24 @@ func (vw *IterSeqWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !v.CanInterface() {
 		return false
 	}
-	if checkNil(st.Writer, v) {
+	if checkNil(st, v) {
 		return true
 	}
-	write.MustString(st.Writer, "{")
+	st.Writer.AppendByte('{')
 	st.IndentLevel++
 	i := 0
 	v.Seq()(func(v reflect.Value) bool {
 		if i == 0 {
-			write.MustString(st.Writer, "\n")
+			st.Writer.AppendByte('\n')
 		}
 		st.WriteIndent()
 		if vw.MaxLen > 0 && i >= vw.MaxLen {
-			writeTruncated(st.Writer)
-			write.MustString(st.Writer, "\n")
+			writeTruncated(st)
+			st.Writer.AppendByte('\n')
 			return false
 		}
-		must.Handle(vw.ValueWriter.WriteValue(st, v))
-		write.MustString(st.Writer, ",\n")
+		vw.ValueWriter.WriteValue(st, v)
+		st.Writer.AppendString(",\n")
 		i++
 		return true
 	})
@@ -99,7 +96,7 @@ func (vw *IterSeqWriter) WriteValue(st *State, v reflect.Value) bool {
 	if i != 0 {
 		st.WriteIndent()
 	}
-	write.MustString(st.Writer, "}")
+	st.Writer.AppendByte('}')
 	return true
 }
 
@@ -145,29 +142,29 @@ func (vw *IterSeq2Writer) WriteValue(st *State, v reflect.Value) bool {
 	if !v.CanInterface() {
 		return false
 	}
-	if checkNil(st.Writer, v) {
+	if checkNil(st, v) {
 		return true
 	}
-	write.MustString(st.Writer, "{")
+	st.Writer.AppendByte('{')
 	st.IndentLevel++
 	i := 0
 	v.Seq2()(func(k, v reflect.Value) bool {
 		if i == 0 {
-			write.MustString(st.Writer, "\n")
+			st.Writer.AppendByte('\n')
 		}
 		st.WriteIndent()
 		if vw.MaxLen > 0 && i >= vw.MaxLen {
-			writeTruncated(st.Writer)
-			write.MustString(st.Writer, "\n")
+			writeTruncated(st)
+			st.Writer.AppendByte('\n')
 			return false
 		}
 		showInfos := st.ShowInfos
 		st.ShowInfos = vw.ShowKeysInfos
-		must.Handle(vw.ValueWriter.WriteValue(st, k))
+		vw.ValueWriter.WriteValue(st, k)
 		st.ShowInfos = showInfos
-		write.MustString(st.Writer, ": ")
-		must.Handle(vw.ValueWriter.WriteValue(st, v))
-		write.MustString(st.Writer, ",\n")
+		st.Writer.AppendString(": ")
+		vw.ValueWriter.WriteValue(st, v)
+		st.Writer.AppendString(",\n")
 		i++
 		return true
 	})
@@ -175,7 +172,7 @@ func (vw *IterSeq2Writer) WriteValue(st *State, v reflect.Value) bool {
 	if i != 0 {
 		st.WriteIndent()
 	}
-	write.MustString(st.Writer, "}")
+	st.Writer.AppendByte('}')
 	return true
 }
 

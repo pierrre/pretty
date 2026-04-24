@@ -3,8 +3,6 @@ package pretty
 import (
 	"reflect"
 	"time"
-
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // TimeWriter is a [ValueWriter] that handles [time.Time], [time.Duration] and [time.Location].
@@ -87,10 +85,7 @@ func (vw *TimeTimeWriter) WriteValue(st *State, v reflect.Value) bool {
 	if vw.Location != nil {
 		tm = tm.In(vw.Location)
 	}
-	bp := bytesPool.Get()
-	*bp = tm.AppendFormat((*bp)[:0], vw.Format)
-	write.Must(st.Writer.Write(*bp))
-	bytesPool.Put(bp)
+	st.Writer = tm.AppendFormat(st.Writer, vw.Format)
 	return true
 }
 
@@ -121,7 +116,7 @@ func (vw *TimeDurationWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	d := time.Duration(v.Int())
-	write.MustString(st.Writer, d.String())
+	st.Writer.AppendString(d.String())
 	return true
 }
 
@@ -158,7 +153,7 @@ func (vw *TimeLocationWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	loc, _ := reflect.TypeAssert[*time.Location](v)
-	write.MustString(st.Writer, loc.String())
+	st.Writer.AppendString(loc.String())
 	return true
 }
 

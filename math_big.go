@@ -4,8 +4,6 @@ import (
 	"reflect"
 
 	"github.com/pierrre/pretty/internal/itfassert"
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // MathBigWriter is a [ValueWriter] that handles values from the [math/big] package.
@@ -76,10 +74,7 @@ func (vw *MathBigIntWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	bp := bytesPool.Get()
-	*bp = i.Append((*bp)[:0], vw.Base)
-	write.Must(st.Writer.Write(*bp))
-	bytesPool.Put(bp)
+	st.Writer = i.Append(st.Writer, vw.Base)
 	return true
 }
 
@@ -139,10 +134,7 @@ func (vw *MathBigFloatWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	bp := bytesPool.Get()
-	*bp = i.Append((*bp)[:0], vw.Format, vw.Precision)
-	write.Must(st.Writer.Write(*bp))
-	bytesPool.Put(bp)
+	st.Writer = i.Append(st.Writer, vw.Format, vw.Precision)
 	return true
 }
 
@@ -183,12 +175,7 @@ func (vw *MathBigRatWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	bp := bytesPool.Get()
-	var err error
-	*bp, err = i.AppendText((*bp)[:0])
-	must.NoError(err)
-	write.Must(st.Writer.Write(*bp))
-	bytesPool.Put(bp)
+	st.Writer, _ = i.AppendText(st.Writer)
 	return true
 }
 

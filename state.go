@@ -1,9 +1,9 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
 
+	"github.com/pierrre/go-libs/bytesutil"
 	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/pretty/internal/indent"
 )
@@ -12,7 +12,7 @@ import (
 //
 // Functions must restore the original state when they return.
 type State struct {
-	Writer       io.Writer
+	Writer       bytesutil.Writer
 	Depth        int
 	IndentString string
 	IndentLevel  int
@@ -27,9 +27,8 @@ var statePool = syncutil.Pool[*State]{
 	},
 }
 
-func newState(w io.Writer, indentString string) *State {
+func newState(indentString string) *State {
 	st := statePool.Get()
-	st.Writer = w
 	st.Depth = 0
 	st.IndentString = indentString
 	st.IndentLevel = 0
@@ -39,13 +38,13 @@ func newState(w io.Writer, indentString string) *State {
 	return st
 }
 
-// WriteIndent writes the current indentation to the [io.Writer].
+// WriteIndent writes the current indentation to the writer.
 func (st *State) WriteIndent() {
-	indent.MustWrite(st.Writer, st.IndentString, st.IndentLevel)
+	st.Writer = indent.Append(st.Writer, st.IndentString, st.IndentLevel)
 }
 
 func (st *State) release() {
-	st.Writer = nil
+	st.Writer.Reset()
 	statePool.Put(st)
 }
 

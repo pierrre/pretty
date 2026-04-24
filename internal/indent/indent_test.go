@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/pierrre/assert"
@@ -13,7 +12,7 @@ import (
 )
 
 var (
-	writeTestCases = []struct {
+	appendTestCases = []struct {
 		name   string
 		string string
 	}{
@@ -26,19 +25,19 @@ var (
 			string: "    ",
 		},
 	}
-	testWriteLevels = []int{0, 1, 2, 10, 100, 1000, 1001}
+	appendTestLevel = []int{0, 1, 2, 10, 100, 1000, 1001}
 )
 
-func TestWrite(t *testing.T) {
-	for _, tc := range writeTestCases {
+func TestAppend(t *testing.T) {
+	for _, tc := range appendTestCases {
 		t.Run(tc.name, func(t *testing.T) {
-			for _, level := range testWriteLevels {
+			for _, level := range appendTestLevel {
 				t.Run(strconv.Itoa(level), func(t *testing.T) {
-					buf := new(bytes.Buffer)
-					MustWrite(buf, tc.string, level)
-					assert.Equal(t, buf.String(), strings.Repeat(tc.string, level))
+					var dst []byte
+					dst = Append(dst, tc.string, level)
+					assert.BytesEqual(t, dst, bytes.Repeat([]byte(tc.string), level))
 					assert.AllocsPerRun(t, 100, func() {
-						MustWrite(io.Discard, tc.string, level)
+						dst = Append(dst[:0], tc.string, level)
 					}, 0)
 				})
 			}
@@ -46,13 +45,14 @@ func TestWrite(t *testing.T) {
 	}
 }
 
-func BenchmarkWrite(b *testing.B) {
-	for _, tc := range writeTestCases {
+func BenchmarkAppend(b *testing.B) {
+	for _, tc := range appendTestCases {
 		b.Run(tc.name, func(b *testing.B) {
-			for _, level := range testWriteLevels {
+			for _, level := range appendTestLevel {
 				b.Run(strconv.Itoa(level), func(b *testing.B) {
+					var dst []byte
 					for b.Loop() {
-						MustWrite(io.Discard, tc.string, level)
+						dst = Append(dst[:0], tc.string, level)
 					}
 				})
 			}
@@ -61,11 +61,12 @@ func BenchmarkWrite(b *testing.B) {
 }
 
 func BenchmarkWriteParallel(b *testing.B) {
-	for _, tc := range writeTestCases {
+	for _, tc := range appendTestCases {
 		b.Run(tc.name, func(b *testing.B) {
 			b.RunParallel(func(pb *testing.PB) {
+				var dst []byte
 				for pb.Next() {
-					MustWrite(io.Discard, tc.string, 10)
+					dst = Append(dst[:0], tc.string, 10)
 				}
 			})
 		})

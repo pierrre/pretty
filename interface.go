@@ -2,8 +2,6 @@ package pretty
 
 import (
 	"reflect"
-
-	"github.com/pierrre/pretty/internal/must"
 )
 
 // InterfaceWriter is a [ValueWriter] that handles interface values.
@@ -25,12 +23,12 @@ func (vw *InterfaceWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Interface {
 		return false
 	}
-	if checkNil(st.Writer, v) {
+	if checkNil(st, v) {
 		return true
 	}
-	writeArrow(st.Writer)
+	writeArrow(st)
 	st.KnownType = false // We want to show the type of the value.
-	must.Handle(vw.ValueWriter.WriteValue(st, v.Elem()))
+	vw.ValueWriter.WriteValue(st, v.Elem())
 	return true
 }
 

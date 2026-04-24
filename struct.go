@@ -4,8 +4,6 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/reflectutil"
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // StructWriter is a [ValueWriter] that handles struct values.
@@ -35,7 +33,7 @@ func (vw *StructWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Struct {
 		return false
 	}
-	write.MustString(st.Writer, "{")
+	st.Writer.AppendByte('{')
 	fields := reflectutil.GetStructFields(v.Type())
 	hasFields := false
 	st.IndentLevel++
@@ -44,21 +42,21 @@ func (vw *StructWriter) WriteValue(st *State, v reflect.Value) bool {
 			continue
 		}
 		if !hasFields {
-			write.MustString(st.Writer, "\n")
+			st.Writer.AppendByte('\n')
 			hasFields = true
 		}
 		st.WriteIndent()
-		write.MustString(st.Writer, field.Name)
-		write.MustString(st.Writer, ": ")
+		st.Writer.AppendString(field.Name)
+		st.Writer.AppendString(": ")
 		st.KnownType = !vw.ShowFieldsType
-		must.Handle(vw.ValueWriter.WriteValue(st, v.Field(i)))
-		write.MustString(st.Writer, ",\n")
+		vw.ValueWriter.WriteValue(st, v.Field(i))
+		st.Writer.AppendString(",\n")
 	}
 	st.IndentLevel--
 	if hasFields {
 		st.WriteIndent()
 	}
-	write.MustString(st.Writer, "}")
+	st.Writer.AppendByte('}')
 	return true
 }
 

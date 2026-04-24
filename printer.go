@@ -5,9 +5,7 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/pierrre/go-libs/bytesutil"
 	"github.com/pierrre/go-libs/panicutil"
-	"github.com/pierrre/pretty/internal/must"
 )
 
 // Write writes the value to the [io.Writer] with [DefaultPrinter].
@@ -59,16 +57,15 @@ func NewPrinter(vw ValueWriter) *Printer {
 // It panics if there is a write error.
 // For error handling, see [Printer.WriteErr].
 func (p *Printer) Write(w io.Writer, vi any) {
-	v := reflect.ValueOf(vi)
-	if checkInvalidNil(w, v) {
-		return
+	err := p.writeTo(w, vi)
+	if err != nil {
+		panic(err)
 	}
-	st := newState(w, p.Indent)
-	defer st.release()
-	must.Handle(p.ValueWriter.WriteValue(st, v))
 }
 
 // WriteErr writes the value to the [io.Writer] and returns an error if it occurs.
+//
+// It recovers from panics and returns them as errors.
 func (p *Printer) WriteErr(w io.Writer, vi any) (err error) {
 	defer func() {
 		r := recover()
@@ -76,20 +73,37 @@ func (p *Printer) WriteErr(w io.Writer, vi any) (err error) {
 			err = panicutil.NewError(r)
 		}
 	}()
-	p.Write(w, vi)
-	return nil
+	return p.writeTo(w, vi)
 }
 
-var bytesWriterPool = &bytesutil.WriterPool{
-	MaxCap: -1,
+func (p *Printer) writeTo(w io.Writer, vi any) error {
+	st := newState(p.Indent)
+	defer st.release()
+	p.write(st, vi)
+	n, err := w.Write(st.Writer)
+	if err != nil {
+		return err //nolint:wrapcheck // No need to wrap error.
+	}
+	if n != len(st.Writer) {
+		return io.ErrShortWrite
+	}
+	return nil
 }
 
 // String returns the value as a string.
 func (p *Printer) String(vi any) string {
-	bw := bytesWriterPool.Get()
-	defer bytesWriterPool.Put(bw)
-	p.Write(bw, vi)
-	return bw.String()
+	st := newState(p.Indent)
+	defer st.release()
+	p.write(st, vi)
+	return st.Writer.String()
+}
+
+func (p *Printer) write(st *State, vi any) {
+	v := reflect.ValueOf(vi)
+	if checkInvalidNil(st, v) {
+		return
+	}
+	p.ValueWriter.WriteValue(st, v)
 }
 
 // Formatter returns a [fmt.Formatter] for the value.

@@ -1,10 +1,7 @@
 package pretty
 
 import (
-	"io"
 	"reflect"
-
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // InvalidWriter is a [ValueWriter] that handles invalid values.
@@ -22,14 +19,14 @@ func (vw *InvalidWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.IsValid() {
 		return false
 	}
-	write.MustString(st.Writer, "<invalid>")
+	st.Writer.AppendString("<invalid>")
 	return true
 }
 
-func checkInvalidNil(w io.Writer, v reflect.Value) bool {
+func checkInvalidNil(st *State, v reflect.Value) bool {
 	if v.IsValid() {
 		return false
 	}
-	writeNil(w)
+	writeNil(st)
 	return true
 }

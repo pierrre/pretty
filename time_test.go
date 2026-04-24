@@ -4,7 +4,6 @@ import (
 	"time"
 
 	. "github.com/pierrre/pretty"
-	"github.com/pierrre/pretty/internal/must"
 	"github.com/pierrre/pretty/internal/prettytest"
 )
 
@@ -17,7 +16,9 @@ var (
 func init() {
 	var err error
 	testTimeLocation, err = time.LoadLocation("Europe/Paris")
-	must.NoError(err)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func init() {

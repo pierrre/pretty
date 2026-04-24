@@ -9,8 +9,6 @@ import (
 	"github.com/pierrre/go-libs/syncutil"
 	"github.com/pierrre/pretty/internal/indent"
 	"github.com/pierrre/pretty/internal/itfassert"
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 var bytesType = reflect.TypeFor[[]byte]()
@@ -48,7 +46,7 @@ func (vw *BytesHexDumpWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Slice || v.Type() != bytesType {
 		return false
 	}
-	if checkNil(st.Writer, v) {
+	if checkNil(st, v) {
 		return true
 	}
 	b := v.Bytes()
@@ -126,9 +124,9 @@ func (vw *BytesableHexDumpWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	writeArrowWrappedString(st.Writer, "Bytes() ")
+	writeArrowWrappedString(st, "Bytes() ")
 	if b == nil {
-		writeNil(st.Writer)
+		writeNil(st)
 		return true
 	}
 	writeBytesHexDumpCommon(st, reflect.ValueOf(b), b, vw.ShowLen, vw.ShowCap, vw.ShowAddr, vw.MaxLen)
@@ -158,19 +156,19 @@ func writeBytesHexDumpCommon(st *State, v reflect.Value, b []byte, showLen bool,
 		b = b[:maxLen]
 		truncated = true
 	}
-	write.MustString(st.Writer, "\n")
+	st.Writer.AppendByte('\n')
 	st.IndentLevel++
-	iw := indent.NewWriter(st.Writer, st.IndentString, st.IndentLevel, false)
+	iw := indent.NewWriter(&st.Writer, st.IndentString, st.IndentLevel, false)
 	e := getHexDumperPoolEntry(iw)
 	d := e.dumper
-	write.Must(d.Write(b))
-	must.NoError(d.Close())
+	_, _ = d.Write(b)
+	_ = d.Close()
 	releaseHexDumperPoolEntry(e)
 	iw.Release()
 	if truncated {
 		st.WriteIndent()
-		writeTruncated(st.Writer)
-		write.MustString(st.Writer, "\n")
+		writeTruncated(st)
+		st.Writer.AppendByte('\n')
 	}
 	st.IndentLevel--
 	st.WriteIndent()

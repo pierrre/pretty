@@ -2,10 +2,7 @@ package pretty
 
 import (
 	"reflect"
-
-	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
+	"strconv"
 )
 
 // ArrayWriter is a [ValueWriter] that handles array values.
@@ -55,26 +52,26 @@ func writeArray(st *State, v reflect.Value, showIndexes bool, maxLen int, vw Val
 		l = maxLen
 		truncated = true
 	}
-	write.MustString(st.Writer, "{")
+	st.Writer.AppendByte('{')
 	if l > 0 {
-		write.MustString(st.Writer, "\n")
+		st.Writer.AppendByte('\n')
 		st.IndentLevel++
 		for i := range l {
 			st.WriteIndent()
 			if showIndexes {
-				write.Must(strconvio.WriteInt(st.Writer, int64(i), 10))
-				write.MustString(st.Writer, ": ")
+				st.Writer = strconv.AppendInt(st.Writer, int64(i), 10)
+				st.Writer.AppendString(": ")
 			}
-			must.Handle(vw.WriteValue(st, v.Index(i)))
-			write.MustString(st.Writer, ",\n")
+			vw.WriteValue(st, v.Index(i))
+			st.Writer.AppendString(",\n")
 		}
 		if truncated {
 			st.WriteIndent()
-			writeTruncated(st.Writer)
-			write.MustString(st.Writer, "\n")
+			writeTruncated(st)
+			st.Writer.AppendByte('\n')
 		}
 		st.IndentLevel--
 		st.WriteIndent()
 	}
-	write.MustString(st.Writer, "}")
+	st.Writer.AppendByte('}')
 }

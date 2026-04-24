@@ -4,8 +4,6 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/reflectutil"
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // TypeWriter is a [ValueWriter] that writes the type of the value.
@@ -33,7 +31,7 @@ func NewTypeWriter(vw ValueWriter) *TypeWriter {
 // WriteValue implements [ValueWriter].
 func (vw *TypeWriter) WriteValue(st *State, v reflect.Value) bool {
 	knownType := vw.writeType(st, v)
-	must.Handle(vw.ValueWriter.WriteValue(st, v))
+	vw.ValueWriter.WriteValue(st, v)
 	vw.postType(st, knownType)
 	return true
 }
@@ -41,18 +39,18 @@ func (vw *TypeWriter) WriteValue(st *State, v reflect.Value) bool {
 func (vw *TypeWriter) writeType(st *State, v reflect.Value) (knownType bool) {
 	if !st.KnownType || vw.ShowKnownTypes {
 		typ := v.Type()
-		write.MustString(st.Writer, "[")
-		write.MustString(st.Writer, reflectutil.TypeFullName(typ))
-		write.MustString(st.Writer, "]")
+		st.Writer.AppendByte('[')
+		st.Writer.AppendString(reflectutil.TypeFullName(typ))
+		st.Writer.AppendByte(']')
 		if vw.ShowUnderlyingType {
 			uTyp := reflectutil.GetUnderlyingType(typ)
 			if uTyp != typ {
-				write.MustString(st.Writer, "(")
-				write.MustString(st.Writer, reflectutil.TypeFullName(uTyp))
-				write.MustString(st.Writer, ")")
+				st.Writer.AppendByte('(')
+				st.Writer.AppendString(reflectutil.TypeFullName(uTyp))
+				st.Writer.AppendByte(')')
 			}
 		}
-		write.MustString(st.Writer, " ")
+		st.Writer.AppendByte(' ')
 	}
 	knownType = st.KnownType
 	st.KnownType = true // The type is known, because we showed it.

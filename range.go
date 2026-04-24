@@ -4,8 +4,6 @@ import (
 	"reflect"
 
 	"github.com/pierrre/go-libs/reflectutil"
-	"github.com/pierrre/pretty/internal/must"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // RangeWriter is a [ValueWriter] that handles values that implement the "Range" [iter.Seq2] method such as [sync.Map].
@@ -36,33 +34,33 @@ func (vw *RangeWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	if v.Kind() == reflect.Pointer && checkNil(st.Writer, v) {
+	if v.Kind() == reflect.Pointer && checkNil(st, v) {
 		return true
 	}
 	if !v.CanInterface() {
 		return false
 	}
-	writeArrowWrappedString(st.Writer, "Range() ")
-	write.MustString(st.Writer, "{")
+	writeArrowWrappedString(st, "Range() ")
+	st.Writer.AppendByte('{')
 	st.IndentLevel++
 	i := 0
 	m.Func.Call([]reflect.Value{v, reflect.MakeFunc(m.Type.In(1), func(args []reflect.Value) []reflect.Value {
 		if i == 0 {
-			write.MustString(st.Writer, "\n")
+			st.Writer.AppendByte('\n')
 		}
 		st.WriteIndent()
 		if vw.MaxLen > 0 && i >= vw.MaxLen {
-			writeTruncated(st.Writer)
-			write.MustString(st.Writer, "\n")
+			writeTruncated(st)
+			st.Writer.AppendByte('\n')
 			return rangeReturnFalse
 		}
 		showInfos := st.ShowInfos
 		st.ShowInfos = vw.ShowKeysInfos
-		must.Handle(vw.ValueWriter.WriteValue(st, args[0]))
+		vw.ValueWriter.WriteValue(st, args[0])
 		st.ShowInfos = showInfos
-		write.MustString(st.Writer, ": ")
-		must.Handle(vw.ValueWriter.WriteValue(st, args[1]))
-		write.MustString(st.Writer, ",\n")
+		st.Writer.AppendString(": ")
+		vw.ValueWriter.WriteValue(st, args[1])
+		st.Writer.AppendString(",\n")
 		i++
 		return rangeReturnTrue
 	})})
@@ -70,7 +68,7 @@ func (vw *RangeWriter) WriteValue(st *State, v reflect.Value) bool {
 	if i != 0 {
 		st.WriteIndent()
 	}
-	write.MustString(st.Writer, "}")
+	st.Writer.AppendByte('}')
 	return true
 }
 

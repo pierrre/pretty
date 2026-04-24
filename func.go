@@ -5,7 +5,6 @@ import (
 	"runtime"
 
 	"github.com/pierrre/go-libs/syncutil"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 // FuncWriter is a [ValueWriter] that handles function values.
@@ -29,7 +28,7 @@ func (vw *FuncWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Func {
 		return false
 	}
-	if checkNil(st.Writer, v) {
+	if checkNil(st, v) {
 		return true
 	}
 	p := uintptr(v.UnsafePointer())
@@ -37,7 +36,7 @@ func (vw *FuncWriter) WriteValue(st *State, v reflect.Value) bool {
 		showAddr: vw.ShowAddr,
 		addr:     p,
 	}.writeWithTrailingSpace(st)
-	write.MustString(st.Writer, getFuncName(p))
+	st.Writer.AppendString(getFuncName(p))
 	return true
 }
 

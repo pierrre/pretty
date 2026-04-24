@@ -2,6 +2,7 @@ package pretty_test
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"testing"
@@ -41,6 +42,21 @@ func TestWrite(t *testing.T) {
 	})
 }
 
+func TestWritePanic(t *testing.T) {
+	w := writerFunc(func(p []byte) (n int, err error) {
+		return 0, errors.New("error")
+	})
+	assert.Panics(t, func() {
+		Write(w, "test")
+	})
+	assertauto.AllocsPerRun(t, 100, func() {
+		t.Helper()
+		assert.Panics(t, func() {
+			Write(w, "test")
+		})
+	})
+}
+
 func TestWriteErr(t *testing.T) {
 	buf := new(bytes.Buffer)
 	err := WriteErr(buf, "test")
@@ -54,7 +70,9 @@ func TestWriteErr(t *testing.T) {
 }
 
 func TestWriteErrError(t *testing.T) {
-	w := &testPanicWriter{}
+	w := writerFunc(func(p []byte) (n int, err error) {
+		return 0, errors.New("error")
+	})
 	err := WriteErr(w, "test")
 	assert.Error(t, err)
 	t.Log(String(err))
@@ -64,10 +82,31 @@ func TestWriteErrError(t *testing.T) {
 	})
 }
 
-type testPanicWriter struct{}
+func TestWriterErrShortWrite(t *testing.T) {
+	w := writerFunc(func(p []byte) (n int, err error) {
+		return len(p) - 1, nil
+	})
+	err := WriteErr(w, "test")
+	assert.ErrorIs(t, err, io.ErrShortWrite)
+}
 
-func (w *testPanicWriter) Write(p []byte) (int, error) {
-	panic("test")
+func TestWriterErrPanic(t *testing.T) {
+	w := writerFunc(func(p []byte) (n int, err error) {
+		panic("panic")
+	})
+	err := WriteErr(w, "test")
+	assert.Error(t, err)
+	t.Log(String(err))
+	assertauto.AllocsPerRun(t, 100, func() {
+		t.Helper()
+		_ = WriteErr(w, "test")
+	})
+}
+
+type writerFunc func(p []byte) (n int, err error)
+
+func (f writerFunc) Write(p []byte) (n int, err error) {
+	return f(p)
 }
 
 func TestString(t *testing.T) {

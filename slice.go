@@ -43,7 +43,7 @@ func (vw *SliceWriter) WriteValue(st *State, v reflect.Value) bool {
 	if v.Kind() != reflect.Slice {
 		return false
 	}
-	if checkNil(st.Writer, v) {
+	if checkNil(st, v) {
 		return true
 	}
 	infos{

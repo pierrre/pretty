@@ -2,9 +2,7 @@ package pretty
 
 import (
 	"reflect"
-
-	"github.com/pierrre/go-libs/strconvio"
-	"github.com/pierrre/pretty/internal/write"
+	"strconv"
 )
 
 // FloatWriter is a [ValueWriter] that handles float values.
@@ -38,7 +36,7 @@ func (vw *FloatWriter) WriteValue(st *State, v reflect.Value) bool {
 	default:
 		return false
 	}
-	write.Must(strconvio.WriteFloat(st.Writer, v.Float(), vw.Format, vw.Precision, bitSize))
+	st.Writer = strconv.AppendFloat(st.Writer, v.Float(), vw.Format, vw.Precision, bitSize)
 	return true
 }
 

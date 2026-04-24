@@ -6,9 +6,9 @@ import (
 	"io"
 
 	"github.com/pierrre/go-libs/runtimeutil"
+	"github.com/pierrre/go-libs/unsafeio"
 	. "github.com/pierrre/pretty"
 	"github.com/pierrre/pretty/internal/prettytest"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 func init() {
@@ -87,7 +87,7 @@ func (e *testVerboseError) Unwrap() error {
 }
 
 func (e *testVerboseError) ErrorVerbose(w io.Writer) {
-	write.MustString(w, "verbose a\nb\nc")
+	_, _ = unsafeio.WriteString(w, "verbose a\nb\nc")
 }
 
 type stackFramesError struct {

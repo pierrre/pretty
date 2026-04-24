@@ -6,7 +6,6 @@ import (
 
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/pretty/internal/itfassert"
-	"github.com/pierrre/pretty/internal/write"
 )
 
 var goStringerImplementsCache = reflectutil.NewImplementsCacheFor[fmt.GoStringer]()
@@ -32,8 +31,8 @@ func (vw *GoStringerWriter) WriteValue(st *State, v reflect.Value) bool {
 		return false
 	}
 	s := gsr.GoString()
-	writeArrowWrappedString(st.Writer, "GoString() ")
-	write.MustString(st.Writer, s)
+	writeArrowWrappedString(st, "GoString() ")
+	st.Writer.AppendString(s)
 	return true
 }
 
