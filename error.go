@@ -138,7 +138,7 @@ func (vw *ErrorWriter) WriteStackFramesError(st *State, err error) {
 	st.Writer.AppendString("StackFrames():\n")
 	st.IndentLevel++
 	iw := indent.NewWriter(&st.Writer, st.IndentString, st.IndentLevel, false)
-	_, _ = runtimeutil.WriteFrames(iw, runtimeutil.GetCallersFrames(v.StackFrames()))
+	_, _ = runtimeutil.WriteCallersFrames(iw, v.StackFrames())
 	iw.Release()
 	st.IndentLevel--
 }
