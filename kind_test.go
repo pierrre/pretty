@@ -19,5 +19,12 @@ func init() {
 				})
 			},
 		},
+		{
+			Name:  "Disabled",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.Kind = nil
+			},
+		},
 	})
 }

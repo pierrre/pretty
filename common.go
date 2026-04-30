@@ -225,7 +225,10 @@ func (vw *CommonWriter) writeValue(st *State, v reflect.Value) bool {
 	if vw.Stringer != nil && vw.Stringer.WriteValue(st, v) {
 		return true
 	}
-	return vw.Kind.WriteValue(st, v)
+	if vw.Kind != nil && vw.Kind.WriteValue(st, v) {
+		return true
+	}
+	return false
 }
 
 // Supports implements [SupportChecker].
