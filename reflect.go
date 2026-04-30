@@ -255,6 +255,11 @@ func (vw *ReflectTypeWriter) writeTypeStruct(st *State, typ reflect.Type) {
 		st.Writer.AppendString(f.Name)
 		st.Writer.AppendString(" ")
 		st.Writer.AppendString(reflectutil.TypeFullName(f.Type))
+		if f.Tag != "" {
+			st.Writer.AppendString(" `")
+			st.Writer.AppendString(string(f.Tag))
+			st.Writer.AppendString("`")
+		}
 		st.Writer.AppendString(",\n")
 		return true
 	})

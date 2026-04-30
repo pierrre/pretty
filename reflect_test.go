@@ -86,10 +86,10 @@ func init() {
 		{
 			Name: "Struct",
 			Value: reflect.TypeFor[struct {
-				String string
-				Int    int
-				Float  float64
-				Bool   bool
+				String string  `test:"string"`
+				Int    int     `test:"int"`
+				Float  float64 `test:"float"`
+				Bool   bool    `test:"bool"`
 			}](),
 		},
 		{

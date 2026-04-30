@@ -1,13 +1,13 @@
 [*reflect.rtype] reflect.Type {
-	FullName: struct { String string; Int int; Float float64; Bool bool },
-	String: struct { String string; Int int; Float float64; Bool bool },
+	FullName: struct { String string "test:\"string\""; Int int "test:\"int\""; Float float64 "test:\"float\""; Bool bool "test:\"bool\"" },
+	String: struct { String string "test:\"string\""; Int int "test:\"int\""; Float float64 "test:\"float\""; Bool bool "test:\"bool\"" },
 	Kind: struct,
 	Size: 40,
 	Fields: {
-		String string,
-		Int int,
-		Float float64,
-		Bool bool,
+		String string `test:"string"`,
+		Int int `test:"int"`,
+		Float float64 `test:"float"`,
+		Bool bool `test:"bool"`,
 	},
 }
 	========== assertauto ==========
