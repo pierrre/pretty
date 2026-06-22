@@ -36,7 +36,7 @@ func (vw *UintWriter) WriteValue(st *State, v reflect.Value) bool {
 func (vw *UintWriter) Supports(typ reflect.Type) ValueWriter {
 	var res ValueWriter
 	switch typ.Kind() { //nolint:exhaustive // Only handles uint.
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
 		res = vw
 	}
 	return res
