@@ -24,5 +24,4 @@ func TestCommonValueWriterSetShowIndexes(t *testing.T) {
 	vw.SetShowIndexes(true)
 	assert.True(t, vw.Kind.Array.ShowIndexes)
 	assert.True(t, vw.Kind.Slice.ShowIndexes)
-	assert.True(t, vw.Kind.Chan.ShowIndexes)
 }

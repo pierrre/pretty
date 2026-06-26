@@ -129,7 +129,6 @@ func (vw *CommonWriter) SetShowIndexes(show bool) {
 	if vw.Kind != nil {
 		vw.Kind.Array.ShowIndexes = show
 		vw.Kind.Slice.ShowIndexes = show
-		vw.Kind.Chan.ShowIndexes = show
 	}
 }
 

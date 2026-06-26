@@ -1,4 +1,4 @@
-[chan int] (len=1) 
+[chan int] (len=1)
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {
 	Runs: [int] 100,
