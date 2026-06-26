@@ -175,7 +175,7 @@ func (vw *MathBigRatWriter) WriteValue(st *State, v reflect.Value) bool {
 	if !ok {
 		return false
 	}
-	st.Writer, _ = i.AppendText(st.Writer)
+	st.Writer, _ = i.AppendText(st.Writer) // The implementation never returns an error.
 	return true
 }
 
