@@ -29,7 +29,7 @@ type KindWriter struct {
 	Struct        *StructWriter
 	UnsafePointer *UnsafePointerWriter
 
-	// ValueWriters is the list of [ValueWriter] indexed by [reflect.Kind].
+	// ValueWriters is the list of [ValueWriter]s indexed by [reflect.Kind].
 	ValueWriters [kindsCount]ValueWriter
 }
 

@@ -15,7 +15,7 @@ var errorImplementsCache = reflectutil.NewImplementsCacheFor[error]()
 
 // ErrorWriter is a [ValueWriter] that handles errors.
 //
-// It writes the error's message, then the custom function, then the unwrapped error(s) if any.
+// It writes the error's message, then the custom functions, then the unwrapped error(s) if any.
 //
 // It should be created with [NewErrorWriter].
 type ErrorWriter struct {
@@ -102,7 +102,7 @@ func (vw *ErrorWriter) Supports(typ reflect.Type) ValueWriter {
 
 // VerboseError is an interface that can be implemented by errors to provide a verbose error message.
 type VerboseError interface {
-	// ErrorVerbose writes the error verbose message.
+	// ErrorVerbose writes the verbose error message.
 	// It must only write the verbose message of the error, not the error chain.
 	ErrorVerbose(w io.Writer)
 }

@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-// ValueWriter writes a [reflect.Value] to a [io.Writer].
+// ValueWriter writes a [reflect.Value] to an [io.Writer].
 //
 // It returns true if it handles the value, false otherwise.
 // If it returns false, it must not write anything.
@@ -24,7 +24,7 @@ func (f ValueWriterFunc) WriteValue(st *State, v reflect.Value) bool {
 	return f(st, v)
 }
 
-// ValueWriters is a list of [ValueWriter].
+// ValueWriters is a list of [ValueWriter]s.
 //
 // They are tried in order until one handles the value.
 type ValueWriters []ValueWriter

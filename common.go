@@ -70,7 +70,7 @@ func NewCommonWriter() *CommonWriter {
 	return vw
 }
 
-// SetShowLen sets ShowLen on all [ValueWriter] that supports it.
+// SetShowLen sets ShowLen on all [ValueWriter]s that support it.
 func (vw *CommonWriter) SetShowLen(show bool) {
 	if vw.Kind != nil {
 		vw.Kind.Chan.ShowLen = show
@@ -89,7 +89,7 @@ func (vw *CommonWriter) SetShowLen(show bool) {
 	}
 }
 
-// SetShowCap sets ShowCap on all [ValueWriter] that supports it.
+// SetShowCap sets ShowCap on all [ValueWriter]s that support it.
 func (vw *CommonWriter) SetShowCap(show bool) {
 	if vw.Kind != nil {
 		vw.Kind.Chan.ShowCap = show
@@ -103,7 +103,7 @@ func (vw *CommonWriter) SetShowCap(show bool) {
 	}
 }
 
-// SetShowAddr sets ShowAddr on all [ValueWriter] that supports it.
+// SetShowAddr sets ShowAddr on all [ValueWriter]s that support it.
 func (vw *CommonWriter) SetShowAddr(show bool) {
 	if vw.Recursion != nil {
 		vw.Recursion.ShowAddr = show
@@ -124,7 +124,7 @@ func (vw *CommonWriter) SetShowAddr(show bool) {
 	}
 }
 
-// SetShowIndexes sets ShowIndexes on all [ValueWriter] that supports it.
+// SetShowIndexes sets ShowIndexes on all [ValueWriter]s that support it.
 func (vw *CommonWriter) SetShowIndexes(show bool) {
 	if vw.Kind != nil {
 		vw.Kind.Array.ShowIndexes = show

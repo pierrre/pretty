@@ -44,7 +44,7 @@ func Append(dst []byte, str string, level int) []byte {
 	return append(dst, getBytes(str, level)...)
 }
 
-// Writer is a [io.Writer] that indents.
+// Writer is an [io.Writer] that indents.
 type Writer struct {
 	writer   io.Writer
 	bytes    []byte
