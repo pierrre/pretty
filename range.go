@@ -19,7 +19,7 @@ type RangeWriter struct {
 	MaxLen int
 }
 
-// NewRangeWriter creates a new [RangeWriter] with the given [IterSeq2Writer].
+// NewRangeWriter creates a new [RangeWriter] with the given [ValueWriter].
 func NewRangeWriter(vw ValueWriter) *RangeWriter {
 	return &RangeWriter{
 		ValueWriter:   vw,

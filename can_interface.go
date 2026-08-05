@@ -13,7 +13,7 @@ type CanInterfaceWriter struct {
 	ValueWriter
 }
 
-// NewCanInterfaceWriter creates a new CanInterfaceValueWriter.
+// NewCanInterfaceWriter creates a new [CanInterfaceWriter].
 func NewCanInterfaceWriter(vw ValueWriter) *CanInterfaceWriter {
 	return &CanInterfaceWriter{
 		ValueWriter: vw,
