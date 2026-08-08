@@ -20,6 +20,11 @@ func init() {
 			IgnoreBenchmark: true,
 		},
 		{
+			Name:            "Empty",
+			Value:           []byte{},
+			IgnoreBenchmark: true,
+		},
+		{
 			Name:  "Truncated",
 			Value: []byte("test"),
 			ConfigureWriter: func(vw *CommonWriter) {
