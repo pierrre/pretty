@@ -31,8 +31,8 @@ func NewTypeWriter(vw ValueWriter) *TypeWriter {
 // WriteValue implements [ValueWriter].
 func (vw *TypeWriter) WriteValue(st *State, v reflect.Value) bool {
 	knownType := vw.writeType(st, v)
+	defer vw.postType(st, knownType)
 	vw.ValueWriter.WriteValue(st, v)
-	vw.postType(st, knownType)
 	return true
 }
 

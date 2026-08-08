@@ -31,11 +31,10 @@ func (vw *RecursionWriter) WriteValue(st *State, v reflect.Value) bool {
 	if recursionDetected {
 		return true
 	}
-	ok := vw.ValueWriter.WriteValue(st, v)
 	if visitedAdded {
-		vw.postRecursion(st)
+		defer vw.postRecursion(st)
 	}
-	return ok
+	return vw.ValueWriter.WriteValue(st, v)
 }
 
 func (vw *RecursionWriter) checkRecursion(st *State, v reflect.Value) (visitedAdded bool, recursionDetected bool) {

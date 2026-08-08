@@ -28,9 +28,8 @@ func (vw *MaxDepthWriter) WriteValue(st *State, v reflect.Value) bool {
 	if maxReached {
 		return true
 	}
-	ok := vw.ValueWriter.WriteValue(st, v)
-	vw.postMaxDepth(st)
-	return ok
+	defer vw.postMaxDepth(st)
+	return vw.ValueWriter.WriteValue(st, v)
 }
 
 func (vw *MaxDepthWriter) checkMaxDepth(st *State) (maxReached bool) {
