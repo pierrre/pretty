@@ -11,6 +11,9 @@ import (
 // State represents the state of the [Printer].
 //
 // Functions must restore the original state when they return.
+//
+// KnownType is an exception: [TypeWriter] saves and restores it, but other writers (e.g. [StructWriter], [InterfaceWriter], [ErrorWriter]) set it without restoring, as a hint to the next [TypeWriter] in the chain.
+// This is intentional and relies on TypeWriter wrapping the inner writer to re-establish the correct value.
 type State struct {
 	Writer       bytesutil.Writer
 	Depth        int
