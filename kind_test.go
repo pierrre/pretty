@@ -20,6 +20,13 @@ func init() {
 			},
 		},
 		{
+			Name:  "KindDisabled",
+			Value: "test",
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.Kind.ValueWriters[reflect.String] = nil
+			},
+		},
+		{
 			Name:  "Disabled",
 			Value: "test",
 			ConfigureWriter: func(vw *CommonWriter) {
