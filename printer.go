@@ -126,9 +126,8 @@ type formatter struct {
 
 // Format implements [fmt.Formatter].
 //
-// It writes the value to the [fmt.State]. Errors (including recovered
-// panics from [Printer.WriteErr]) are discarded, as [fmt.Formatter.Format]
-// has no error return.
+// It writes the value to the [fmt.State].
+// Errors (including recovered panics from [Printer.WriteErr]) are discarded, as [fmt.Formatter.Format] has no error return.
 func (ft *formatter) Format(f fmt.State, verb rune) {
 	_ = ft.printer.WriteErr(f, ft.value)
 }
