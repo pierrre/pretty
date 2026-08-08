@@ -59,7 +59,7 @@ func NewPrinter(vw ValueWriter) *Printer {
 
 // Write writes the value to the [io.Writer].
 //
-// It panics if there is a write error.
+// It panics if there is a write error, or if the [ValueWriter] panics.
 // For error handling, see [Printer.WriteErr].
 func (p *Printer) Write(w io.Writer, vi any) {
 	err := p.writeTo(w, vi)
@@ -124,6 +124,11 @@ type formatter struct {
 	value   any
 }
 
+// Format implements [fmt.Formatter].
+//
+// It writes the value to the [fmt.State]. Errors (including recovered
+// panics from [Printer.WriteErr]) are discarded, as [fmt.Formatter.Format]
+// has no error return.
 func (ft *formatter) Format(f fmt.State, verb rune) {
 	_ = ft.printer.WriteErr(f, ft.value)
 }
