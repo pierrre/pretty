@@ -15,6 +15,15 @@ type MathBigWriter struct {
 	Rat   *MathBigRatWriter
 }
 
+// NewMathBigWriter creates a new [MathBigWriter] with default values.
+func NewMathBigWriter() *MathBigWriter {
+	return &MathBigWriter{
+		Int:   NewMathBigIntWriter(),
+		Float: NewMathBigFloatWriter(),
+		Rat:   NewMathBigRatWriter(),
+	}
+}
+
 // WriteValue implements [ValueWriter].
 func (vw *MathBigWriter) WriteValue(st *State, v reflect.Value) bool {
 	if vw.Int != nil && vw.Int.WriteValue(st, v) {
@@ -88,15 +97,6 @@ func (vw *MathBigIntWriter) Supports(typ reflect.Type) ValueWriter {
 		}
 	}
 	return res
-}
-
-// NewMathBigWriter creates a new [MathBigWriter] with default values.
-func NewMathBigWriter() *MathBigWriter {
-	return &MathBigWriter{
-		Float: NewMathBigFloatWriter(),
-		Int:   NewMathBigIntWriter(),
-		Rat:   NewMathBigRatWriter(),
-	}
 }
 
 // MathBigFloatWriter is a [ValueWriter] that handles [math/big.Float] values.
