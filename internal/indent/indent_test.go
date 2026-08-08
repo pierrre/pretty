@@ -89,7 +89,7 @@ var testWriterValues = []struct {
 }{
 	{
 		b:         []byte("aa"),
-		expectedN: 3,
+		expectedN: 2,
 	},
 	{
 		b:         []byte("bb\n"),
@@ -97,11 +97,11 @@ var testWriterValues = []struct {
 	},
 	{
 		b:         []byte("c\nc"),
-		expectedN: 5,
+		expectedN: 3,
 	},
 	{
 		b:         []byte("\ndd"),
-		expectedN: 4,
+		expectedN: 3,
 	},
 }
 

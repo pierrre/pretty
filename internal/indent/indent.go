@@ -20,6 +20,7 @@ var (
 )
 
 func getBytes(str string, level int) []byte {
+	level = max(level, 0)
 	l := len(str) * level
 	if str == Default && level <= defaultBytesLevel {
 		return defaultBytes[:l]
@@ -67,12 +68,13 @@ func NewWriter(w io.Writer, str string, level int, indented bool) *Writer {
 }
 
 // Write implements [io.Writer].
+//
+// The returned n is the number of bytes consumed from p (excluding indentation), as required by the [io.Writer] contract.
 func (iw *Writer) Write(p []byte) (n int, err error) {
 	for len(p) > 0 {
 		if !iw.indented {
 			if len(iw.bytes) != 0 {
-				nn, err := iw.writer.Write(iw.bytes)
-				n += nn
+				_, err := iw.writer.Write(iw.bytes)
 				if err != nil {
 					return n, err //nolint:wrapcheck // The error is not wrapped.
 				}
