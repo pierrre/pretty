@@ -53,10 +53,10 @@ func Test(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {
 			p := tc.newPrinter()
-			if !tc.IgnoreResult {
-				assertauto.Equal(t, tc.Value, assertauto.ValueStringer(p.String))
-			}
 			s := p.String(tc.Value)
+			if !tc.IgnoreResult {
+				assertauto.Equal(t, tc.Value, assertauto.ValueStringer(func(any) string { return s }))
+			}
 			t.Log(s)
 			if !tc.IgnoreAllocs {
 				allocs, _ := assertauto.AllocsPerRun(t, 100, func() {
