@@ -2,16 +2,20 @@ package pretty
 
 import (
 	"reflect"
+	"sync/atomic"
 	"testing"
 )
 
 // DefaultWriter is the default [CommonWriter].
 //
+// It is created with [NewCommonWriter].
 // It is configured with [CommonWriter.ConfigureTest] and [testing.Testing].
-var DefaultWriter = NewCommonWriter()
+var DefaultWriter atomic.Pointer[CommonWriter]
 
 func init() {
-	DefaultWriter.ConfigureTest(testing.Testing())
+	vw := NewCommonWriter()
+	vw.ConfigureTest(testing.Testing())
+	DefaultWriter.Store(vw)
 }
 
 // CommonWriter is a [ValueWriter] with common [ValueWriter]s.

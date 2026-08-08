@@ -17,7 +17,7 @@ func init() {
 	prettytest.AddCasesPrefix("Printer", []*prettytest.Case{
 		{
 			Name:         "Default",
-			Value:        DefaultPrinter,
+			Value:        DefaultPrinter.Load(),
 			IgnoreResult: true,
 		},
 	})

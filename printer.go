@@ -4,34 +4,39 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+	"sync/atomic"
 
 	"github.com/pierrre/go-libs/panicutil"
 )
 
 // Write writes the value to the [io.Writer] with [DefaultPrinter].
 func Write(w io.Writer, vi any) {
-	DefaultPrinter.Write(w, vi)
+	DefaultPrinter.Load().Write(w, vi)
 }
 
 // WriteErr writes the value to the [io.Writer] with [DefaultPrinter], and returns an error if it occurs.
 func WriteErr(w io.Writer, vi any) error {
-	return DefaultPrinter.WriteErr(w, vi)
+	return DefaultPrinter.Load().WriteErr(w, vi)
 }
 
 // String returns the value as a string with [DefaultPrinter].
 func String(vi any) string {
-	return DefaultPrinter.String(vi)
+	return DefaultPrinter.Load().String(vi)
 }
 
 // Formatter returns a [fmt.Formatter] for the value with [DefaultPrinter].
 func Formatter(vi any) fmt.Formatter {
-	return DefaultPrinter.Formatter(vi)
+	return DefaultPrinter.Load().Formatter(vi)
 }
 
 // DefaultPrinter is the default [Printer].
 //
 // It uses [DefaultWriter].
-var DefaultPrinter = NewPrinter(DefaultWriter)
+var DefaultPrinter atomic.Pointer[Printer]
+
+func init() {
+	DefaultPrinter.Store(NewPrinter(DefaultWriter.Load()))
+}
 
 // Printer pretty-prints values.
 //
