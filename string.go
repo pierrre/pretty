@@ -18,7 +18,8 @@ type StringWriter struct {
 	// Quote quotes the string.
 	// Default: true.
 	Quote bool
-	// MaxLen is the maximum length of the string.
+	// MaxLen is the maximum length of the string, in bytes.
+	// If the string exceeds this length, it is truncated.
 	// Default: 0 (no limit).
 	MaxLen int
 }

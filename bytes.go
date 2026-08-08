@@ -26,7 +26,8 @@ type BytesHexDumpWriter struct {
 	// ShowAddr shows the address.
 	// Default: false.
 	ShowAddr bool
-	// MaxLen is the maximum length of the bytes.
+	// MaxLen is the maximum length of the bytes, in bytes.
+	// If the byte slice exceeds this length, it is truncated.
 	// Default: 0 (no limit).
 	MaxLen int
 }
@@ -85,7 +86,8 @@ type BytesableHexDumpWriter struct {
 	// ShowAddr shows the address.
 	// Default: false.
 	ShowAddr bool
-	// MaxLen is the maximum length of the bytes.
+	// MaxLen is the maximum length of the bytes, in bytes.
+	// If the byte slice exceeds this length, it is truncated.
 	// Default: 0 (no limit).
 	MaxLen int
 }
