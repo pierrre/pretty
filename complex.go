@@ -9,10 +9,10 @@ import (
 //
 // It should be created with [NewComplexWriter].
 type ComplexWriter struct {
-	// Format is the format used to format the complex.
+	// Format is the format used to format the complex value.
 	// Default: 'g'.
 	Format byte
-	// Precision is the precision used to format the complex.
+	// Precision is the precision used to format the complex value.
 	// Default: -1.
 	Precision int
 }
