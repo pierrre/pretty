@@ -22,7 +22,10 @@ type State struct {
 	Visited      map[VisitedEntry]struct{}
 	KnownType    bool
 	ShowInfos    bool
+	visitedLarge bool
 }
+
+const stateVisitedKeepMax = 8
 
 var statePool = syncutil.Pool[*State]{
 	New: func() *State {
@@ -38,6 +41,7 @@ func newState(indentString string) *State {
 	clear(st.Visited)
 	st.KnownType = false
 	st.ShowInfos = true
+	st.visitedLarge = false
 	return st
 }
 
@@ -48,6 +52,9 @@ func (st *State) WriteIndent() {
 
 func (st *State) release() {
 	st.Writer.Reset()
+	if st.visitedLarge {
+		st.Visited = nil
+	}
 	statePool.Put(st)
 }
 

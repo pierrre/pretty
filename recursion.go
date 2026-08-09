@@ -51,6 +51,9 @@ func (vw *RecursionWriter) checkRecursion(st *State, v reflect.Value) (e Visited
 			st.Visited = make(map[VisitedEntry]struct{})
 		}
 		st.Visited[e] = struct{}{}
+		if !st.visitedLarge && len(st.Visited) > stateVisitedKeepMax {
+			st.visitedLarge = true
+		}
 		return e, true, false
 	}
 	st.Writer.AppendString("<recursion>")
