@@ -11,15 +11,25 @@ Go pretty print library.
 - [Configuration](https://pkg.go.dev/github.com/pierrre/pretty#CommonWriter):
   - [Indentation](https://pkg.go.dev/github.com/pierrre/pretty#Printer.Indent)
   - [Max depth](https://pkg.go.dev/github.com/pierrre/pretty#MaxDepthWriter)
+  - [Unwrap interfaces](https://pkg.go.dev/github.com/pierrre/pretty#UnwrapInterfaceWriter)
+  - [Recursion protection](https://pkg.go.dev/github.com/pierrre/pretty#RecursionWriter)
+  - [Type filtering](https://pkg.go.dev/github.com/pierrre/pretty#FilterWriter)
   - [String](https://pkg.go.dev/github.com/pierrre/pretty#StringWriter)
   - [Slice](https://pkg.go.dev/github.com/pierrre/pretty#SliceWriter)
   - [Map](https://pkg.go.dev/github.com/pierrre/pretty#MapWriter)
-- [Modular design](https://pkg.go.dev/github.com/pierrre/pretty#ValueWriter) (you can replace everything with your own implementation)
+- [Modular design](https://pkg.go.dev/github.com/pierrre/pretty#ValueWriter) (you can replace everything with your own implementation):
+  - [`time`](https://pkg.go.dev/github.com/pierrre/pretty#TimeWriter)
   - [`error`](https://pkg.go.dev/github.com/pierrre/pretty#ErrorWriter)
   - [`[]byte` hex dump](https://pkg.go.dev/github.com/pierrre/pretty#BytesHexDumpWriter)
+  - [`math/big`](https://pkg.go.dev/github.com/pierrre/pretty#MathBigWriter)
+  - [`reflect`](https://pkg.go.dev/github.com/pierrre/pretty#ReflectWriter)
+  - [`weak.Pointer`](https://pkg.go.dev/github.com/pierrre/pretty#WeakPointerWriter)
+  - [`iter.Seq` / `iter.Seq2`](https://pkg.go.dev/github.com/pierrre/pretty#IterWriter)
+  - [`Range` method (e.g. `sync.Map`)](https://pkg.go.dev/github.com/pierrre/pretty#RangeWriter)
   - [`fmt.Stringer`](https://pkg.go.dev/github.com/pierrre/pretty#StringerWriter)
+  - [`fmt.GoStringer`](https://pkg.go.dev/github.com/pierrre/pretty#GoStringerWriter)
+- [Extensions](https://pkg.go.dev/github.com/pierrre/pretty/ext/):
   - [`protobuf`](https://pkg.go.dev/github.com/pierrre/pretty/ext/protobuf/#example-package)
-- [No infinite recursion](https://pkg.go.dev/github.com/pierrre/pretty#RecursionWriter)
 - Fast and (almost) no memory allocation
 
 ## Usage
