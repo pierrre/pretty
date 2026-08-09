@@ -47,6 +47,10 @@ type Printer struct {
 	// Indent is the string used to indent.
 	// Default: "\t".
 	Indent string
+	// MaxRunes is the maximum number of runes of the output.
+	// If the output exceeds this limit, it is truncated.
+	// Default: 0 (no limit).
+	MaxRunes int
 }
 
 // NewPrinter creates a new [Printer].
@@ -84,7 +88,9 @@ func (p *Printer) WriteErr(w io.Writer, vi any) (err error) {
 func (p *Printer) writeTo(w io.Writer, vi any) error {
 	st := newState(p.Indent)
 	defer st.release()
+	st.MaxRunes = p.MaxRunes
 	p.write(st, vi)
+	st.truncateMaxRunes()
 	n, err := w.Write(st.Writer)
 	if err != nil {
 		return err //nolint:wrapcheck // No need to wrap error.
@@ -99,7 +105,9 @@ func (p *Printer) writeTo(w io.Writer, vi any) error {
 func (p *Printer) String(vi any) string {
 	st := newState(p.Indent)
 	defer st.release()
+	st.MaxRunes = p.MaxRunes
 	p.write(st, vi)
+	st.truncateMaxRunes()
 	return st.Writer.String()
 }
 
