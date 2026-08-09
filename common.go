@@ -159,12 +159,12 @@ func (vw *CommonWriter) WriteValue(st *State, v reflect.Value) bool {
 		}
 	}
 	if vw.Recursion != nil {
-		recursionVisitedAdded, recursionDetected := vw.Recursion.checkRecursion(st, v)
+		recursionEntry, recursionVisitedAdded, recursionDetected := vw.Recursion.checkRecursion(st, v)
 		if recursionDetected {
 			return true
 		}
 		if recursionVisitedAdded {
-			defer vw.Recursion.postRecursion(st)
+			defer vw.Recursion.postRecursion(st, recursionEntry)
 		}
 	}
 	if vw.MaxDepth != nil {
