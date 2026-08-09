@@ -69,5 +69,22 @@ func init() {
 				})}
 			},
 		},
+		{
+			Name: "DeepNested",
+			Value: func() any {
+				type node struct {
+					Next *node
+				}
+				n := &node{}
+				cur := n
+				for range 1000 {
+					cur.Next = &node{}
+					cur = cur.Next
+				}
+				return n
+			}(),
+			IgnoreResult: true,
+			IgnoreAllocs: true,
+		},
 	})
 }

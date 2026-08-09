@@ -2,7 +2,6 @@ package pretty
 
 import (
 	"reflect"
-	"slices"
 
 	"github.com/pierrre/go-libs/reflectutil"
 )
@@ -27,29 +26,32 @@ func NewRecursionWriter(vw ValueWriter) *RecursionWriter {
 
 // WriteValue implements [ValueWriter].
 func (vw *RecursionWriter) WriteValue(st *State, v reflect.Value) bool {
-	visitedAdded, recursionDetected := vw.checkRecursion(st, v)
+	e, visitedAdded, recursionDetected := vw.checkRecursion(st, v)
 	if recursionDetected {
 		return true
 	}
 	if visitedAdded {
-		defer vw.postRecursion(st)
+		defer vw.postRecursion(st, e)
 	}
 	return vw.ValueWriter.WriteValue(st, v)
 }
 
-func (vw *RecursionWriter) checkRecursion(st *State, v reflect.Value) (visitedAdded bool, recursionDetected bool) {
+func (vw *RecursionWriter) checkRecursion(st *State, v reflect.Value) (e VisitedEntry, visitedAdded bool, recursionDetected bool) {
 	switch v.Kind() { //nolint:exhaustive // Only handles pointer kinds.
 	case reflect.Pointer, reflect.Map, reflect.Slice:
 	default:
-		return false, false
+		return VisitedEntry{}, false, false
 	}
-	e := VisitedEntry{
+	e = VisitedEntry{
 		Type: v.Type(),
 		Addr: uintptr(v.UnsafePointer()),
 	}
-	if !slices.Contains(st.Visited, e) {
-		st.Visited = append(st.Visited, e)
-		return true, false
+	if _, ok := st.Visited[e]; !ok {
+		if st.Visited == nil {
+			st.Visited = make(map[VisitedEntry]struct{})
+		}
+		st.Visited[e] = struct{}{}
+		return e, true, false
 	}
 	st.Writer.AppendString("<recursion>")
 	if vw.ShowAddr {
@@ -58,11 +60,9 @@ func (vw *RecursionWriter) checkRecursion(st *State, v reflect.Value) (visitedAd
 		st.Writer.AppendByte(' ')
 		writeUintptr(st, e.Addr)
 	}
-	return false, true
+	return VisitedEntry{}, false, true
 }
 
-func (vw *RecursionWriter) postRecursion(st *State) {
-	i := len(st.Visited) - 1
-	st.Visited[i] = VisitedEntry{}
-	st.Visited = st.Visited[:i]
+func (vw *RecursionWriter) postRecursion(st *State, e VisitedEntry) {
+	delete(st.Visited, e)
 }
