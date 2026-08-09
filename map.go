@@ -2,6 +2,7 @@ package pretty
 
 import (
 	"reflect"
+	"sync/atomic"
 
 	"github.com/pierrre/go-libs/reflectutil"
 	"github.com/pierrre/go-libs/syncutil"
@@ -91,7 +92,12 @@ func (vw *MapWriter) writeUnsorted(st *State, v reflect.Value) {
 	}
 }
 
-var reflectValuePools syncutil.Map[reflect.Type, *syncutil.Pool[*reflect.Value]]
+const reflectValuePoolsMaxCount = 256
+
+var (
+	reflectValuePools      syncutil.Map[reflect.Type, *syncutil.Pool[*reflect.Value]]
+	reflectValuePoolsCount atomic.Int64
+)
 
 func getReflectValuePool(typ reflect.Type) *syncutil.Pool[*reflect.Value] {
 	pool, ok := reflectValuePools.Load(typ)
@@ -104,7 +110,13 @@ func getReflectValuePool(typ reflect.Type) *syncutil.Pool[*reflect.Value] {
 			return &v
 		},
 	}
-	pool, _ = reflectValuePools.LoadOrStore(typ, pool)
+	pool, loaded := reflectValuePools.LoadOrStore(typ, pool)
+	if !loaded {
+		if reflectValuePoolsCount.Add(1) > reflectValuePoolsMaxCount {
+			reflectValuePools.Clear()
+			reflectValuePoolsCount.Store(0)
+		}
+	}
 	return pool
 }
 
