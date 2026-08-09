@@ -46,11 +46,11 @@ func (vw *RecursionWriter) checkRecursion(st *State, v reflect.Value) (e Visited
 		Type: v.Type(),
 		Addr: uintptr(v.UnsafePointer()),
 	}
-	if _, ok := st.visited[e]; !ok {
-		if st.visited == nil {
-			st.visited = make(map[VisitedEntry]struct{})
+	if _, ok := st.Visited[e]; !ok {
+		if st.Visited == nil {
+			st.Visited = make(map[VisitedEntry]struct{})
 		}
-		st.visited[e] = struct{}{}
+		st.Visited[e] = struct{}{}
 		return e, true, false
 	}
 	st.Writer.AppendString("<recursion>")
@@ -64,5 +64,5 @@ func (vw *RecursionWriter) checkRecursion(st *State, v reflect.Value) (e Visited
 }
 
 func (vw *RecursionWriter) postRecursion(st *State, e VisitedEntry) {
-	delete(st.visited, e)
+	delete(st.Visited, e)
 }
