@@ -20,6 +20,7 @@ type State struct {
 	IndentString string
 	IndentLevel  int
 	Visited      []VisitedEntry
+	visited      map[VisitedEntry]struct{}
 	KnownType    bool
 	ShowInfos    bool
 }
@@ -36,6 +37,7 @@ func newState(indentString string) *State {
 	st.IndentString = indentString
 	st.IndentLevel = 0
 	st.Visited = st.Visited[:0]
+	clear(st.visited)
 	st.KnownType = false
 	st.ShowInfos = true
 	return st

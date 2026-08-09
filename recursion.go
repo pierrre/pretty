@@ -2,7 +2,6 @@ package pretty
 
 import (
 	"reflect"
-	"slices"
 
 	"github.com/pierrre/go-libs/reflectutil"
 )
@@ -47,7 +46,11 @@ func (vw *RecursionWriter) checkRecursion(st *State, v reflect.Value) (visitedAd
 		Type: v.Type(),
 		Addr: uintptr(v.UnsafePointer()),
 	}
-	if !slices.Contains(st.Visited, e) {
+	if _, ok := st.visited[e]; !ok {
+		if st.visited == nil {
+			st.visited = make(map[VisitedEntry]struct{})
+		}
+		st.visited[e] = struct{}{}
 		st.Visited = append(st.Visited, e)
 		return true, false
 	}
@@ -63,6 +66,8 @@ func (vw *RecursionWriter) checkRecursion(st *State, v reflect.Value) (visitedAd
 
 func (vw *RecursionWriter) postRecursion(st *State) {
 	i := len(st.Visited) - 1
+	e := st.Visited[i]
+	delete(st.visited, e)
 	st.Visited[i] = VisitedEntry{}
 	st.Visited = st.Visited[:i]
 }
