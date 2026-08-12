@@ -13,14 +13,14 @@ func init() {
 			Name: "Default",
 			Value: func() unsafe.Pointer {
 				i := 123
-				return unsafe.Pointer(&i) //nolint:gosec // It's OK.
+				return unsafe.Pointer(&i)
 			}(),
 			IgnoreResult: true,
 		},
 		{
 			Name: "Nil",
 			Value: func() unsafe.Pointer {
-				return unsafe.Pointer(nil) //nolint:gosec // It's OK.
+				return unsafe.Pointer(nil)
 			}(),
 			IgnoreBenchmark: true,
 		},
@@ -28,7 +28,7 @@ func init() {
 			Name: "SupportDisabled",
 			Value: func() unsafe.Pointer {
 				i := 123
-				return unsafe.Pointer(&i) //nolint:gosec // It's OK.
+				return unsafe.Pointer(&i)
 			}(),
 			ConfigureWriter: func(vw *CommonWriter) {
 				vw.Support = nil
