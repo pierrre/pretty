@@ -3,7 +3,7 @@
 	String: *bytes.Buffer,
 	Kind: ptr,
 	Size: 8,
-	Elem: {
+	Elem: reflect.Type {
 		FullName: bytes.Buffer,
 		PkgPath: bytes,
 		Name: Buffer,

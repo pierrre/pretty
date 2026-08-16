@@ -1,0 +1,21 @@
+[*reflect.rtype] reflect.Type {
+	FullName: github.com/pierrre/pretty_test.P,
+	PkgPath: github.com/pierrre/pretty_test,
+	Name: P,
+	String: pretty_test.P,
+	Kind: ptr,
+	Size: 8,
+	Underlying: reflect.Type {
+		FullName: *github.com/pierrre/pretty_test.P,
+		String: *pretty_test.P,
+		Kind: ptr,
+		Size: 8,
+		Elem: <recursion>,
+	},
+	Elem: <recursion>,
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 0,
+}

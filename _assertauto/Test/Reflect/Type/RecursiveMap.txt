@@ -1,30 +1,32 @@
 [*reflect.rtype] reflect.Type {
-	FullName: github.com/pierrre/pretty_test.CustomSlice,
+	FullName: github.com/pierrre/pretty_test.M,
 	PkgPath: github.com/pierrre/pretty_test,
-	Name: CustomSlice,
-	String: pretty_test.CustomSlice,
-	Kind: slice,
-	Size: 24,
+	Name: M,
+	String: pretty_test.M,
+	Kind: map,
+	Size: 8,
 	Underlying: reflect.Type {
-		FullName: []string,
-		String: []string,
-		Kind: slice,
-		Size: 24,
-		Elem: reflect.Type {
+		FullName: map[string]github.com/pierrre/pretty_test.M,
+		String: map[string]pretty_test.M,
+		Kind: map,
+		Size: 8,
+		Key: reflect.Type {
 			FullName: string,
 			Name: string,
 			String: string,
 			Kind: string,
 			Size: 16,
 		},
+		Elem: <recursion>,
 	},
-	Elem: reflect.Type {
+	Key: reflect.Type {
 		FullName: string,
 		Name: string,
 		String: string,
 		Kind: string,
 		Size: 16,
 	},
+	Elem: <recursion>,
 }
 	========== assertauto ==========
 [github.com/pierrre/assert/assertauto.allocsPerRun] {

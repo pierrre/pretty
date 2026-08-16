@@ -3,7 +3,7 @@
 	String: chan<- int,
 	Kind: chan,
 	Size: 8,
-	Elem: {
+	Elem: reflect.Type {
 		FullName: int,
 		Name: int,
 		String: int,

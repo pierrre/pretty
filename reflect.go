@@ -20,7 +20,7 @@ type ReflectWriter struct {
 func NewReflectWriter(vw ValueWriter) *ReflectWriter {
 	return &ReflectWriter{
 		Value: NewReflectValueWriter(vw),
-		Type:  NewReflectTypeWriter(),
+		Type:  NewReflectTypeWriter(vw),
 	}
 }
 
@@ -93,11 +93,15 @@ func (vw *ReflectValueWriter) Supports(typ reflect.Type) ValueWriter {
 var reflectTypeImplementsCache = reflectutil.NewImplementsCacheFor[reflect.Type]()
 
 // ReflectTypeWriter is a [ValueWriter] that handles [reflect.Type].
-type ReflectTypeWriter struct{}
+type ReflectTypeWriter struct {
+	ValueWriter
+}
 
 // NewReflectTypeWriter returns a new [ReflectTypeWriter].
-func NewReflectTypeWriter() *ReflectTypeWriter {
-	return &ReflectTypeWriter{}
+func NewReflectTypeWriter(vw ValueWriter) *ReflectTypeWriter {
+	return &ReflectTypeWriter{
+		ValueWriter: vw,
+	}
 }
 
 // WriteValue implements [ValueWriter].
@@ -193,7 +197,7 @@ func (vw *ReflectTypeWriter) writeTypeUnderlying(st *State, typ reflect.Type) {
 	}
 	st.WriteIndent()
 	st.Writer.AppendString("Underlying: ")
-	vw.writeType(st, uTyp)
+	vw.ValueWriter.WriteValue(st, reflect.ValueOf(uTyp))
 	st.Writer.AppendString(",\n")
 }
 
@@ -213,7 +217,7 @@ func (vw *ReflectTypeWriter) writeTypeKey(st *State, typ reflect.Type) {
 	}
 	st.WriteIndent()
 	st.Writer.AppendString("Key: ")
-	vw.writeType(st, typ.Key())
+	vw.ValueWriter.WriteValue(st, reflect.ValueOf(typ.Key()))
 	st.Writer.AppendString(",\n")
 }
 
@@ -225,7 +229,7 @@ func (vw *ReflectTypeWriter) writeTypeElem(st *State, typ reflect.Type) {
 	}
 	st.WriteIndent()
 	st.Writer.AppendString("Elem: ")
-	vw.writeType(st, typ.Elem())
+	vw.ValueWriter.WriteValue(st, reflect.ValueOf(typ.Elem()))
 	st.Writer.AppendString(",\n")
 }
 

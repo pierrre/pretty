@@ -134,6 +134,34 @@ func init() {
 			}(),
 		},
 		{
+			Name: "RecursivePointer",
+			Value: func() reflect.Type {
+				type P *P
+				return reflect.TypeFor[P]()
+			}(),
+		},
+		{
+			Name: "RecursiveSlice",
+			Value: func() reflect.Type {
+				type S []S
+				return reflect.TypeFor[S]()
+			}(),
+		},
+		{
+			Name: "RecursiveMap",
+			Value: func() reflect.Type {
+				type M map[string]M
+				return reflect.TypeFor[M]()
+			}(),
+		},
+		{
+			Name: "RecursiveChan",
+			Value: func() reflect.Type {
+				type C chan C
+				return reflect.TypeFor[C]()
+			}(),
+		},
+		{
 			Name:  "BytesBuffer",
 			Value: reflect.TypeFor[*bytes.Buffer](),
 		},

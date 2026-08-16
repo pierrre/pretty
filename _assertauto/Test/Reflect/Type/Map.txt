@@ -3,14 +3,14 @@
 	String: map[string]int,
 	Kind: map,
 	Size: 8,
-	Key: {
+	Key: reflect.Type {
 		FullName: string,
 		Name: string,
 		String: string,
 		Kind: string,
 		Size: 16,
 	},
-	Elem: {
+	Elem: reflect.Type {
 		FullName: int,
 		Name: int,
 		String: int,

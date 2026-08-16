@@ -5,12 +5,12 @@
 	String: pretty_test.CustomPointer,
 	Kind: ptr,
 	Size: 8,
-	Underlying: {
+	Underlying: reflect.Type {
 		FullName: *string,
 		String: *string,
 		Kind: ptr,
 		Size: 8,
-		Elem: {
+		Elem: reflect.Type {
 			FullName: string,
 			Name: string,
 			String: string,
@@ -18,7 +18,7 @@
 			Size: 16,
 		},
 	},
-	Elem: {
+	Elem: reflect.Type {
 		FullName: string,
 		Name: string,
 		String: string,

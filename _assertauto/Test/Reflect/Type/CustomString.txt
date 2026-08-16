@@ -5,7 +5,7 @@
 	String: pretty_test.CustomString,
 	Kind: string,
 	Size: 16,
-	Underlying: {
+	Underlying: reflect.Type {
 		FullName: string,
 		Name: string,
 		String: string,

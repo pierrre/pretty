@@ -3,7 +3,7 @@
 	String: *string,
 	Kind: ptr,
 	Size: 8,
-	Elem: {
+	Elem: reflect.Type {
 		FullName: string,
 		Name: string,
 		String: string,

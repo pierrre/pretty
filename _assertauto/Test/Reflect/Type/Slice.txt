@@ -3,7 +3,7 @@
 	String: []string,
 	Kind: slice,
 	Size: 24,
-	Elem: {
+	Elem: reflect.Type {
 		FullName: string,
 		Name: string,
 		String: string,
