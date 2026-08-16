@@ -45,8 +45,11 @@ var funcNameCache syncutil.Map[uintptr, string]
 func getFuncName(p uintptr) string {
 	name, ok := funcNameCache.Load(p)
 	if !ok {
-		name = runtime.FuncForPC(p).Name()
-		funcNameCache.Store(p, name)
+		f := runtime.FuncForPC(p)
+		if f != nil {
+			name = f.Name()
+			funcNameCache.Store(p, name)
+		}
 	}
 	return name
 }
