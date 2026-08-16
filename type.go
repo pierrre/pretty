@@ -75,8 +75,8 @@ func NewByTypeWriters() ByTypeWriters {
 func (vws ByTypeWriters) WriteValue(st *State, v reflect.Value) bool {
 	if len(vws) != 0 {
 		typ := v.Type()
-		vw, ok := vws[typ]
-		if ok {
+		vw := vws[typ]
+		if vw != nil {
 			return vw.WriteValue(st, v)
 		}
 	}
