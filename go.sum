@@ -4,7 +4,7 @@ github.com/pierrre/assert v0.16.0 h1:wEcLpcXSPLoqvDy+HzDCwPkgxkZWeCiVF2bb/p+lMjA
 github.com/pierrre/assert v0.16.0/go.mod h1:aZP7GSl8BO1DtFPn7qkdSC+G+QQe4IOSuJCZERonpBk=
 github.com/pierrre/compare v1.6.2 h1:tzsbxsr+y91UYhSdlgU9iD61Zj4ipIZf6oQ2Xi4nI78=
 github.com/pierrre/compare v1.6.2/go.mod h1:ap/TwCW7/7CPkjqAYL2JiGykMx0LLfeQf88q72XIkoE=
-github.com/pierrre/go-libs v0.34.10 h1:Rjoxy8ycX+KYsYhdIr7AVkpVArff+UeYCpuFbhEWyOk=
-github.com/pierrre/go-libs v0.34.10/go.mod h1:Pzynark7W5pRgWs4OW19cv12j92WsO1LXsGvFYxmL50=
+github.com/pierrre/go-libs v0.35.1 h1:RTWALKKQLMogh06I++3LVWtll0ugZHKebUYf/BfFISk=
+github.com/pierrre/go-libs v0.35.1/go.mod h1:Ew9xuMSV33co0iFFO/MuMHui5tT6HeOCZKSmBvVZFuw=
 google.golang.org/protobuf v1.36.12 h1:pJOKDDOyeXErUroCihFAd5LQuwXBSpVnKGrj5o/fwxc=
 google.golang.org/protobuf v1.36.12/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
