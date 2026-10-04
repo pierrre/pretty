@@ -1,0 +1,8 @@
+[iter.Seq[interface {}]](func(func(interface {}) bool)) {
+	<recursion>,
+}
+	========== assertauto ==========
+[github.com/pierrre/assert/assertauto.allocsPerRun] {
+	Runs: [int] 100,
+	Allocs: [float64] 8,
+}

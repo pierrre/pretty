@@ -36,5 +36,20 @@ func init() {
 				vw.ValueWriters = ValueWriters{NewMaxDepthWriter(vw.Kind.Int)}
 			},
 		},
+		{
+			Name:  "WriterNested",
+			Value: maxDepthWriterTest{},
+			ConfigureWriter: func(vw *CommonWriter) {
+				vw.MaxDepth = nil
+				mdvw := NewMaxDepthWriter(nil)
+				mdvw.ValueWriter = NewKindWriter(mdvw)
+				mdvw.Max = 2
+				vw.ValueWriters = ValueWriters{mdvw}
+			},
+		},
 	})
 }
+
+type maxDepthWriterTestInner struct{ X, Y, Z int }
+
+type maxDepthWriterTest struct{ A, B, C maxDepthWriterTestInner }

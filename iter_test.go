@@ -33,16 +33,11 @@ func init() {
 		{
 			Name: "Large",
 			Value: func() iter.Seq[int] {
-				i := 0
 				return func(yield func(int) bool) {
-					for {
-						if i >= 100 {
+					for n := range 100 {
+						if !yield(n) {
 							return
 						}
-						if !yield(i) {
-							return
-						}
-						i++
 					}
 				}
 			}(),
@@ -100,16 +95,11 @@ func init() {
 		{
 			Name: "Large",
 			Value: func() iter.Seq2[int, int] {
-				i := 0
 				return func(yield func(int, int) bool) {
-					for {
-						if i >= 100 {
+					for n := range 100 {
+						if !yield(n, n) {
 							return
 						}
-						if !yield(i, i) {
-							return
-						}
-						i++
 					}
 				}
 			}(),

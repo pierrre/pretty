@@ -37,8 +37,8 @@ func (vw *RecursionWriter) WriteValue(st *State, v reflect.Value) bool {
 }
 
 func (vw *RecursionWriter) checkRecursion(st *State, v reflect.Value) (e VisitedEntry, visitedAdded bool, recursionDetected bool) {
-	switch v.Kind() { //nolint:exhaustive // Only handles pointer kinds.
-	case reflect.Pointer, reflect.Map, reflect.Slice:
+	switch v.Kind() { //nolint:exhaustive // Only handles pointer, map, slice and func kinds.
+	case reflect.Pointer, reflect.Map, reflect.Slice, reflect.Func:
 	default:
 		return VisitedEntry{}, false, false
 	}

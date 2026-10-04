@@ -65,7 +65,7 @@ func TestWriteErr(t *testing.T) {
 	assertauto.Equal(t, s)
 	assertauto.AllocsPerRun(t, 100, func() {
 		t.Helper()
-		Write(io.Discard, "test")
+		_ = WriteErr(io.Discard, "test")
 	})
 }
 

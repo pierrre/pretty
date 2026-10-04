@@ -1,6 +1,7 @@
 package pretty_test
 
 import (
+	"iter"
 	"reflect"
 
 	. "github.com/pierrre/pretty"
@@ -31,6 +32,16 @@ func init() {
 				v := make(map[int]any)
 				v[0] = v
 				return v
+			}(),
+		},
+		{
+			Name: "Func",
+			Value: func() any {
+				var f iter.Seq[any]
+				f = func(yield func(any) bool) {
+					yield(f)
+				}
+				return f
 			}(),
 		},
 		{
